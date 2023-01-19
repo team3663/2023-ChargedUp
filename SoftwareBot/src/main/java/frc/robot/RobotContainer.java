@@ -4,16 +4,15 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.*;
 import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import frc.robot.subsystems.drivetrain.GyroIO;
 import frc.robot.subsystems.drivetrain.SwerveModuleIOSim;
+import frc.robot.utility.ControllerHelper;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -23,16 +22,27 @@ import frc.robot.subsystems.drivetrain.SwerveModuleIOSim;
  */
 public class RobotContainer {
 
-    private final DrivetrainSubsystem drivetrainSubsystem;
-
     private final CommandXboxController driverController =
-            new CommandXboxController(OperatorConstants.kDriverControllerPort);
+            new CommandXboxController(ControllerPorts.DRIVER);
+
+    // Subsystems       
+    private DrivetrainSubsystem drivetrainSubsystem;        
+    
+    // Commands
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-//    drivetrainSubsystem = new DrivetrainSubsystem(new GyroIOPigeon2(Constants.DRIVETRAIN_GYRO_ID));
+
+        createSubsystems();
+        createCommands();
+        configureBindings();
+    }
+
+    private void createSubsystems()
+    {
+        // drivetrainSubsystem = new DrivetrainSubsystem(new GyroIOPigeon2(CanIds.DRIVETRAIN_GYRO));
 
         drivetrainSubsystem = new DrivetrainSubsystem(new GyroIO() {
         },
@@ -42,29 +52,17 @@ public class RobotContainer {
                 new SwerveModuleIOSim());
 
         drivetrainSubsystem.setDefaultCommand(new DefaultDrivetrainCommand(drivetrainSubsystem,
-                () -> modifyJoystickAxis(-driverController.getLeftY()) * drivetrainSubsystem.getMaxTranslationalVelocityMetersPerSecond(),
-                () -> modifyJoystickAxis(-driverController.getLeftX()) * drivetrainSubsystem.getMaxTranslationalVelocityMetersPerSecond(),
-                () -> modifyJoystickAxis(-driverController.getRightX()) * drivetrainSubsystem.getMaxAngularVelocityRadPerSec()
+                () -> ControllerHelper.modifyAxis(-driverController.getLeftY()) * drivetrainSubsystem.getMaxTranslationalVelocityMetersPerSecond(),
+                () -> ControllerHelper.modifyAxis(-driverController.getLeftX()) * drivetrainSubsystem.getMaxTranslationalVelocityMetersPerSecond(),
+                () -> ControllerHelper.modifyAxis(-driverController.getRightX()) * drivetrainSubsystem.getMaxAngularVelocityRadPerSec()
         ));
-
-        // Configure the trigger bindings
-        configureBindings();
     }
 
-    private double modifyJoystickAxis(double value) {
-        value = -MathUtil.applyDeadband(value, 0.1);
-        return Math.copySign(value * value, value);
+    private void createCommands()
+    {
+
     }
 
-    /**
-     * Use this method to define your trigger->command mappings. Triggers can be created via the
-     * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-     * predicate, or via the named factories in {@link
-     * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-     * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-     * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-     * joysticks}.
-     */
     private void configureBindings() {
 
         // Execute a simple statement when the B button is pressed.
