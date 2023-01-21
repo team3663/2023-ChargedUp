@@ -41,7 +41,7 @@ public class RobotContainer {
     private void createSubsystems() {
         if (Robot.isReal()) {
             drivetrainSubsystem = new DrivetrainSubsystem(
-                    new GyroIOPigeon(Constants.CanIds.DRIVETRAIN_PIGEON_ID),
+                    new GyroIOPigeon2(Constants.CanIds.DRIVETRAIN_PIGEON_ID),
                     new SwerveModuleIOFalcon500(Constants.CanIds.DRIVETRAIN_FRONT_LEFT_MODULE_DRIVE_MOTOR,
                             Constants.CanIds.DRIVETRAIN_FRONT_LEFT_MODULE_STEER_MOTOR,
                             Constants.CanIds.DRIVETRAIN_FRONT_LEFT_MODULE_STEER_ENCODER,
