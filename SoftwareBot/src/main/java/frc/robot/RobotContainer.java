@@ -7,11 +7,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants.*;
+import frc.robot.Constants.ControllerPorts;
 import frc.robot.commands.DefaultDrivetrainCommand;
-import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
-import frc.robot.subsystems.drivetrain.GyroIO;
-import frc.robot.subsystems.drivetrain.SwerveModuleIOSim;
+import frc.robot.subsystems.drivetrain.*;
 import frc.robot.utility.ControllerHelper;
 
 /**
@@ -26,8 +24,8 @@ public class RobotContainer {
             new CommandXboxController(ControllerPorts.DRIVER);
 
     // Subsystems       
-    private DrivetrainSubsystem drivetrainSubsystem;        
-    
+    private DrivetrainSubsystem drivetrainSubsystem;
+
     // Commands
 
     /**
@@ -40,16 +38,34 @@ public class RobotContainer {
         configureBindings();
     }
 
-    private void createSubsystems()
-    {
-        // drivetrainSubsystem = new DrivetrainSubsystem(new GyroIOPigeon2(CanIds.DRIVETRAIN_GYRO));
-
-        drivetrainSubsystem = new DrivetrainSubsystem(new GyroIO() {
-        },
-                new SwerveModuleIOSim(),
-                new SwerveModuleIOSim(),
-                new SwerveModuleIOSim(),
-                new SwerveModuleIOSim());
+    private void createSubsystems() {
+        if (Robot.isReal()) {
+            drivetrainSubsystem = new DrivetrainSubsystem(
+                    new GyroIOPigeon(Constants.CanIds.DRIVETRAIN_PIGEON_ID),
+                    new SwerveModuleIOFalcon500(Constants.CanIds.DRIVETRAIN_FRONT_LEFT_MODULE_DRIVE_MOTOR,
+                            Constants.CanIds.DRIVETRAIN_FRONT_LEFT_MODULE_STEER_MOTOR,
+                            Constants.CanIds.DRIVETRAIN_FRONT_LEFT_MODULE_STEER_ENCODER,
+                            Constants.FRONT_LEFT_MODULE_STEER_OFFSET),
+                    new SwerveModuleIOFalcon500(Constants.CanIds.DRIVETRAIN_FRONT_RIGHT_MODULE_DRIVE_MOTOR,
+                            Constants.CanIds.DRIVETRAIN_FRONT_RIGHT_MODULE_STEER_MOTOR,
+                            Constants.CanIds.DRIVETRAIN_FRONT_RIGHT_MODULE_STEER_ENCODER,
+                            Constants.FRONT_RIGHT_MODULE_STEER_OFFSET),
+                    new SwerveModuleIOFalcon500(Constants.CanIds.DRIVETRAIN_BACK_LEFT_MODULE_DRIVE_MOTOR,
+                            Constants.CanIds.DRIVETRAIN_BACK_LEFT_MODULE_STEER_MOTOR,
+                            Constants.CanIds.DRIVETRAIN_BACK_LEFT_MODULE_STEER_ENCODER,
+                            Constants.BACK_LEFT_MODULE_STEER_OFFSET),
+                    new SwerveModuleIOFalcon500(Constants.CanIds.DRIVETRAIN_BACK_RIGHT_MODULE_DRIVE_MOTOR,
+                            Constants.CanIds.DRIVETRAIN_BACK_RIGHT_MODULE_STEER_MOTOR,
+                            Constants.CanIds.DRIVETRAIN_BACK_RIGHT_MODULE_STEER_ENCODER,
+                            Constants.BACK_RIGHT_MODULE_STEER_OFFSET));
+        } else {
+            drivetrainSubsystem = new DrivetrainSubsystem(new GyroIO() {
+            },
+                    new SwerveModuleIOSim(),
+                    new SwerveModuleIOSim(),
+                    new SwerveModuleIOSim(),
+                    new SwerveModuleIOSim());
+        }
 
         drivetrainSubsystem.setDefaultCommand(new DefaultDrivetrainCommand(drivetrainSubsystem,
                 () -> ControllerHelper.modifyAxis(-driverController.getLeftY()) * drivetrainSubsystem.getMaxTranslationalVelocityMetersPerSecond(),
@@ -58,8 +74,7 @@ public class RobotContainer {
         ));
     }
 
-    private void createCommands()
-    {
+    private void createCommands() {
 
     }
 
