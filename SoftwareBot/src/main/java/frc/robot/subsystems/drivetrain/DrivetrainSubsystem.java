@@ -6,6 +6,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import java.util.function.Consumer;
+
 import org.littletonrobotics.junction.Logger;
 
 public class DrivetrainSubsystem extends SubsystemBase {
@@ -20,7 +23,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     private final SwerveModule[] swerveModules;
     private final SwerveDriveKinematics kinematics;
-    private final SwerveDriveOdometry odometry;
+    private SwerveDriveOdometry odometry;
+    private SwerveModulePosition[] modulePositions;
 
     private ChassisSpeeds targetChassisVelocity = new ChassisSpeeds();
 
@@ -55,7 +59,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         gyroIO.updateInputs(gyroInputs);
         Logger.getInstance().processInputs("Drivetrain/Gyro", gyroInputs);
 
-        SwerveModulePosition[] modulePositions = new SwerveModulePosition[swerveModules.length];
+        modulePositions = new SwerveModulePosition[swerveModules.length];
         for (int i = 0; i < swerveModules.length; ++i) {
             // Update all the sensor values of each module
             swerveModules[i].updateInputs();
@@ -87,6 +91,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
         Logger.getInstance().recordOutput("Drivetrain/Pose", pose);
     }
 
+    public Consumer<Pose2d> resetPoseAuto = (Pose2d newPose) -> odometry.resetPosition(newPose.getRotation(), modulePositions, newPose);
+
+    public Consumer<ChassisSpeeds> outputChassisSpeeds = (targetChassisVelocity) -> setTargetChassisVelocity(targetChassisVelocity);
+
+    public void resetPose (Pose2d newPose) {
+        odometry.resetPosition(newPose.getRotation(), modulePositions, newPose);
+    }
+
     public double getMaxTranslationalVelocityMetersPerSecond() {
         return MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND;
     }
@@ -101,5 +113,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public Pose2d getPose() {
         return odometry.getPoseMeters();
+    }
+
+    public SwerveDriveKinematics getKinematics () {
+        return kinematics;
+    }
+
+    public ChassisSpeeds getChassisSpeeds () {
+        return targetChassisVelocity;
     }
 }

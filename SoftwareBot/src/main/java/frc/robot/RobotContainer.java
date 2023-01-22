@@ -4,6 +4,15 @@
 
 package frc.robot;
 
+import java.util.HashMap;
+
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.auto.PIDConstants;
+import com.pathplanner.lib.auto.SwerveAutoBuilder;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -27,6 +36,10 @@ public class RobotContainer {
     private DrivetrainSubsystem drivetrainSubsystem;
 
     // Commands
+
+    // Auto resources
+    PathPlannerTrajectory examplePath = PathPlanner.loadPath("TestPath", new PathConstraints(4, 3));
+    HashMap<String, Command> eventMap = new HashMap<>();
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -74,14 +87,30 @@ public class RobotContainer {
         ));
     }
 
-    private void createCommands() {
+    private Command createAutoRoutine (PathPlannerTrajectory path) {
+        SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
+            () -> drivetrainSubsystem.getPose(),
+            drivetrainSubsystem.resetPoseAuto,
+            new PIDConstants(5.0, 0, 0),
+            new PIDConstants(0.5, 0, 0),
+            drivetrainSubsystem.outputChassisSpeeds,
+            eventMap,
+            false,
+            drivetrainSubsystem
+        );
 
+        return autoBuilder.fullAuto(path);
+    }
+
+    private void createCommands() {
+        
     }
 
     private void configureBindings() {
 
         // Execute a simple statement when the B button is pressed.
         driverController.b().onTrue(new InstantCommand(() -> System.out.println("B button clicked")));
+        driverController.start().onTrue(new InstantCommand(() -> drivetrainSubsystem.resetPose(new Pose2d())));
     }
 
     /**
@@ -91,6 +120,6 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An example command will be run in autonomous
-        return null;
+        return createAutoRoutine(examplePath);
     }
 }
