@@ -68,12 +68,19 @@ public class RobotContainer {
                             Constants.CanIds.DRIVETRAIN_BACK_RIGHT_MODULE_STEER_ENCODER,
                             Constants.BACK_RIGHT_MODULE_STEER_OFFSET));
         } else {
-            drivetrainSubsystem = new DrivetrainSubsystem(new GyroIO() {
-            },
+
+            GyroIOSim gyro = new GyroIOSim();
+            
+            drivetrainSubsystem = new DrivetrainSubsystem(gyro,
                     new SwerveModuleIOSim(),
                     new SwerveModuleIOSim(),
                     new SwerveModuleIOSim(),
                     new SwerveModuleIOSim());
+
+            // The simulated gyro needs the drivetrain (to get the pose) and the same angular velocity supplier that the default drive command uses.
+            gyro.initializeModel(drivetrainSubsystem, 
+                () -> ControllerHelper.modifyAxis(driverController.getRightX()) * drivetrainSubsystem.getMaxAngularVelocityRadPerSec()
+            );
         }
 
         drivetrainSubsystem.setDefaultCommand(new DefaultDrivetrainCommand(drivetrainSubsystem,
