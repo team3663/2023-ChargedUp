@@ -19,8 +19,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
 
     private final SwerveModule[] swerveModules;
+    private final SwerveModulePosition[] modulePositions;
     private final SwerveDriveKinematics kinematics;
     private final SwerveDriveOdometry odometry;
+
 
     private ChassisSpeeds targetChassisVelocity = new ChassisSpeeds();
 
@@ -33,6 +35,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 new SwerveModule("FrontRightModule", frontRightModuleIO),
                 new SwerveModule("BackLeftModule", backLeftModuleIO),
                 new SwerveModule("BackRightModule", backRightModuleIO)};
+
+        modulePositions = new SwerveModulePosition[swerveModules.length];
 
         this.kinematics = new SwerveDriveKinematics(
                 // Front Left (+x, +y)
@@ -55,7 +59,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
         gyroIO.updateInputs(gyroInputs);
         Logger.getInstance().processInputs("Drivetrain/Gyro", gyroInputs);
 
-        SwerveModulePosition[] modulePositions = new SwerveModulePosition[swerveModules.length];
         for (int i = 0; i < swerveModules.length; ++i) {
             // Update all the sensor values of each module
             swerveModules[i].updateInputs();
@@ -87,6 +90,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
         Logger.getInstance().recordOutput("Drivetrain/Pose", pose);
     }
 
+    public Pose2d getPose() {
+        return odometry.getPoseMeters();
+    }
+
+    public void resetPose (Pose2d newPose) {
+        odometry.resetPosition(newPose.getRotation(), modulePositions, newPose);
+    }
+
     public double getMaxTranslationalVelocityMetersPerSecond() {
         return MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND;
     }
@@ -95,11 +106,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
         return MAX_ANGULAR_VELOCITY_RAD_PER_SEC;
     }
 
+    public ChassisSpeeds getTargetChassisSpeeds () {
+        return targetChassisVelocity;
+    }
+
     public void setTargetChassisVelocity(ChassisSpeeds targetChassisVelocity) {
         this.targetChassisVelocity = targetChassisVelocity;
     }
 
-    public Pose2d getPose() {
-        return odometry.getPoseMeters();
+    public SwerveDriveKinematics getKinematics () {
+        return kinematics;
     }
 }
