@@ -6,9 +6,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import java.util.function.Consumer;
-
 import org.littletonrobotics.junction.Logger;
 
 public class DrivetrainSubsystem extends SubsystemBase {
@@ -22,9 +19,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
 
     private final SwerveModule[] swerveModules;
+    private final SwerveModulePosition[] modulePositions;
     private final SwerveDriveKinematics kinematics;
-    private SwerveDriveOdometry odometry;
-    private SwerveModulePosition[] modulePositions;
+    private final SwerveDriveOdometry odometry;
+
 
     private ChassisSpeeds targetChassisVelocity = new ChassisSpeeds();
 
@@ -37,6 +35,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 new SwerveModule("FrontRightModule", frontRightModuleIO),
                 new SwerveModule("BackLeftModule", backLeftModuleIO),
                 new SwerveModule("BackRightModule", backRightModuleIO)};
+
+        modulePositions = new SwerveModulePosition[swerveModules.length];
 
         this.kinematics = new SwerveDriveKinematics(
                 // Front Left (+x, +y)
@@ -59,7 +59,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
         gyroIO.updateInputs(gyroInputs);
         Logger.getInstance().processInputs("Drivetrain/Gyro", gyroInputs);
 
-        modulePositions = new SwerveModulePosition[swerveModules.length];
         for (int i = 0; i < swerveModules.length; ++i) {
             // Update all the sensor values of each module
             swerveModules[i].updateInputs();
@@ -91,9 +90,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
         Logger.getInstance().recordOutput("Drivetrain/Pose", pose);
     }
 
-    public Consumer<Pose2d> resetPoseAuto = (Pose2d newPose) -> odometry.resetPosition(newPose.getRotation(), modulePositions, newPose);
-
-    public Consumer<ChassisSpeeds> outputChassisSpeeds = (targetChassisVelocity) -> setTargetChassisVelocity(targetChassisVelocity);
+    public Pose2d getPose() {
+        return odometry.getPoseMeters();
+    }
 
     public void resetPose (Pose2d newPose) {
         odometry.resetPosition(newPose.getRotation(), modulePositions, newPose);
@@ -107,19 +106,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
         return MAX_ANGULAR_VELOCITY_RAD_PER_SEC;
     }
 
+    public ChassisSpeeds getTargetChassisSpeeds () {
+        return targetChassisVelocity;
+    }
+
     public void setTargetChassisVelocity(ChassisSpeeds targetChassisVelocity) {
         this.targetChassisVelocity = targetChassisVelocity;
     }
 
-    public Pose2d getPose() {
-        return odometry.getPoseMeters();
-    }
-
     public SwerveDriveKinematics getKinematics () {
         return kinematics;
-    }
-
-    public ChassisSpeeds getChassisSpeeds () {
-        return targetChassisVelocity;
     }
 }

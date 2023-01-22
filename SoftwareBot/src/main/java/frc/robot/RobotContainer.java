@@ -37,10 +37,6 @@ public class RobotContainer {
 
     // Commands
 
-    // Auto resources
-    PathPlannerTrajectory examplePath = PathPlanner.loadPath("TestPath", new PathConstraints(4, 3));
-    HashMap<String, Command> eventMap = new HashMap<>();
-
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
@@ -87,13 +83,17 @@ public class RobotContainer {
         ));
     }
 
-    private Command createAutoRoutine (PathPlannerTrajectory path) {
+    private Command createAutoRoutine () {
+
+        PathPlannerTrajectory path = PathPlanner.loadPath("TestPath", new PathConstraints(4, 3));
+        HashMap<String, Command> eventMap = new HashMap<>();
+
         SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
             () -> drivetrainSubsystem.getPose(),
-            drivetrainSubsystem.resetPoseAuto,
+            (pose) -> drivetrainSubsystem.resetPose(pose),
             new PIDConstants(5.0, 0, 0),
             new PIDConstants(0.5, 0, 0),
-            drivetrainSubsystem.outputChassisSpeeds,
+            (chassisSpeeds) -> drivetrainSubsystem.setTargetChassisVelocity(chassisSpeeds),
             eventMap,
             false,
             drivetrainSubsystem
@@ -108,8 +108,8 @@ public class RobotContainer {
 
     private void configureBindings() {
 
-        // Execute a simple statement when the B button is pressed.
-        driverController.b().onTrue(new InstantCommand(() -> System.out.println("B button clicked")));
+        // Button to reset the robot's pose to a default starting point.  Handy when running in the simulator and 
+        // you accidently lose the robot outside the game field, should NOT be configured in the competition bot.
         driverController.start().onTrue(new InstantCommand(() -> drivetrainSubsystem.resetPose(new Pose2d())));
     }
 
@@ -120,6 +120,6 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An example command will be run in autonomous
-        return createAutoRoutine(examplePath);
+        return createAutoRoutine();
     }
 }
