@@ -25,6 +25,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
 
     private ChassisSpeeds targetChassisVelocity = new ChassisSpeeds();
+    private double[] chassisVelocityLogged = new double[3];
 
     public DrivetrainSubsystem(GyroIO gyroIO,
                                SwerveModuleIO frontLeftModuleIO, SwerveModuleIO frontRightModuleIO,
@@ -80,7 +81,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
             swerveModules[i].setTargetState(optimizedModuleStates[i]);
         }
 
-        // TODO: Log out desired chassis velocity
+        // Copy components of chassis speeds into double array that we can send to AdvantageKit.
+        chassisVelocityLogged[0] = targetChassisVelocity.vxMetersPerSecond;
+        chassisVelocityLogged[1] = targetChassisVelocity.vyMetersPerSecond;
+        chassisVelocityLogged[2] = targetChassisVelocity.omegaRadiansPerSecond;
+
+        Logger.getInstance().recordOutput("Drivetrain/DesiredChassisVelocity", chassisVelocityLogged);
         Logger.getInstance().recordOutput("Drivetrain/DesiredModuleStates", moduleStates);
         Logger.getInstance().recordOutput("Drivetrain/OptimizedModuleStates", optimizedModuleStates);
 
