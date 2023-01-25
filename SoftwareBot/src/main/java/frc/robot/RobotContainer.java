@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerPorts;
 import frc.robot.commands.DefaultDrivetrainCommand;
+import frc.robot.commands.SwerveTestCommand;
 import frc.robot.subsystems.drivetrain.*;
 import frc.robot.utility.ControllerHelper;
 
@@ -36,6 +37,7 @@ public class RobotContainer {
     private DrivetrainSubsystem drivetrainSubsystem;
 
     // Commands
+    private SwerveTestCommand swerveTestCommand;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -110,7 +112,7 @@ public class RobotContainer {
     }
 
     private void createCommands() {
-        
+        swerveTestCommand = new SwerveTestCommand(drivetrainSubsystem);
     }
 
     private void configureBindings() {
@@ -118,6 +120,8 @@ public class RobotContainer {
         // Button to reset the robot's pose to a default starting point.  Handy when running in the simulator and 
         // you accidently lose the robot outside the game field, should NOT be configured in the competition bot.
         driverController.start().onTrue(new InstantCommand(() -> drivetrainSubsystem.resetPose(new Pose2d())));
+
+        driverController.a().whileTrue(swerveTestCommand);
     }
 
     /**
