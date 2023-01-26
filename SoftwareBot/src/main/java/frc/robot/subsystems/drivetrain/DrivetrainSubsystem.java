@@ -79,6 +79,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
             optimizedModuleStates[i] = SwerveModuleState.optimize(moduleStates[i], modulePositions[i].angle);
 
             swerveModules[i].setTargetState(optimizedModuleStates[i]);
+            // swerveModules[i].setTargetState(moduleStates[i]);
         }
 
         // Copy components of chassis speeds into double array that we can send to AdvantageKit.

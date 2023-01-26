@@ -24,8 +24,8 @@ public class SwerveModule {
     public void setTargetState(SwerveModuleState state) {
         double currentAngleRad = inputs.steerAngleRad;
         double targetAngleRad = MathUtil.inputModulus(state.angle.getRadians(), 0.0, 2.0 * Math.PI);
-        double absoluteAngleRad = currentAngleRad % (2.0 * Math.PI);
-        double errorRad = targetAngleRad - absoluteAngleRad;
+        double absoluteAngleRad = MathUtil.inputModulus(currentAngleRad, 0.0, 2.0 * Math.PI);
+        double errorRad = MathUtil.inputModulus(targetAngleRad - absoluteAngleRad, -Math.PI, Math.PI);
 
         double setpointRad = currentAngleRad + errorRad;
 
