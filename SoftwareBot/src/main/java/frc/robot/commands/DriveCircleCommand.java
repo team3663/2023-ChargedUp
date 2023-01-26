@@ -4,13 +4,13 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 
-public class SwerveTestCommand extends CommandBase {
+public class DriveCircleCommand extends CommandBase {
     private final DrivetrainSubsystem drivetrain;
 
     private double theta = 0;
     private double increment = (2 * Math.PI) / 90; // Step in 4 degree increments
 
-    public SwerveTestCommand(DrivetrainSubsystem drivetrain) {
+    public DriveCircleCommand(DrivetrainSubsystem drivetrain) {
         this.drivetrain = drivetrain;
 
         addRequirements(drivetrain);

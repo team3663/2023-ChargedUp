@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerPorts;
 import frc.robot.commands.DefaultDrivetrainCommand;
-import frc.robot.commands.SwerveTestCommand;
+import frc.robot.commands.DriveCircleCommand;
 import frc.robot.subsystems.drivetrain.*;
 import frc.robot.utility.ControllerHelper;
 
@@ -37,7 +37,7 @@ public class RobotContainer {
     private DrivetrainSubsystem drivetrainSubsystem;
 
     // Commands
-    private SwerveTestCommand swerveTestCommand;
+    private DriveCircleCommand swerveTestCommand;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -112,7 +112,7 @@ public class RobotContainer {
     }
 
     private void createCommands() {
-        swerveTestCommand = new SwerveTestCommand(drivetrainSubsystem);
+        swerveTestCommand = new DriveCircleCommand(drivetrainSubsystem);
     }
 
     private void configureBindings() {
