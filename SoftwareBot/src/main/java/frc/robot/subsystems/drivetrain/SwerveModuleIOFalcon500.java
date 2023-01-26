@@ -1,7 +1,10 @@
 package frc.robot.subsystems.drivetrain;
 
+import com.ctre.phoenix.ErrorCode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
@@ -24,7 +27,7 @@ public class SwerveModuleIOFalcon500 implements SwerveModuleIO {
     private static final double DRIVE_POSITION_COEFFICIENT = (1.0 / 2048.0) * (1.0 / DRIVE_GEAR_RATIO) * (Math.PI * DRIVE_WHEEL_DIAMETER_METERS);
     private static final double DRIVE_VELOCITY_COEFFICIENT = DRIVE_POSITION_COEFFICIENT * (1000.0 / 100.0);
 
-    private static final double STEER_GEAR_RATIO = 12.8;
+    private static final double STEER_GEAR_RATIO = (32.0 / 15.0) * (60.0 / 10.0);
 
     /**
      * A coefficient that converts encoder ticks of the steer motor to radians of the steering pulley of the module.
@@ -56,26 +59,29 @@ public class SwerveModuleIOFalcon500 implements SwerveModuleIO {
         // Configure the drive motor
         TalonFXConfiguration driveConfig = new TalonFXConfiguration();
         driveConfig.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice();
-        driveConfig.slot0.kP = 0.0;
-        driveConfig.slot0.kF = 1.0;
+        driveConfig.slot0.kP = 0.04;
+        driveConfig.slot0.kF = 0.045787;
         driveConfig.supplyCurrLimit.currentLimit = 40.0;
         driveConfig.supplyCurrLimit.enable = true;
         driveConfig.voltageCompSaturation = 12.0;
 
         driveMotor.configAllSettings(driveConfig);
         driveMotor.enableVoltageCompensation(true);
+        driveMotor.setNeutralMode(NeutralMode.Brake);
+        driveMotor.setInverted(TalonFXInvertType.Clockwise);
 
         // Configure the steer motor
         TalonFXConfiguration steerConfig = new TalonFXConfiguration();
         steerConfig.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice();
-        steerConfig.slot0.kP = 0.1;
-        steerConfig.slot0.kD = 0.0;
+        steerConfig.slot0.kP = 0.5;
+        steerConfig.slot0.kD = 0.4;
         steerConfig.supplyCurrLimit.currentLimit = 10.0;
         steerConfig.supplyCurrLimit.enable = true;
         steerConfig.voltageCompSaturation = 12.0;
 
         steerMotor.configAllSettings(steerConfig);
         steerMotor.enableVoltageCompensation(true);
+        steerMotor.setInverted(TalonFXInvertType.CounterClockwise);
 
         // Configure the steer encoder
         CANCoderConfiguration steerEncoderConfig = new CANCoderConfiguration();
@@ -86,8 +92,18 @@ public class SwerveModuleIOFalcon500 implements SwerveModuleIO {
 
         steerEncoder.configAllSettings(steerEncoderConfig);
 
+        // Workaround so that we always read a valid angle from the steer encoder
+        // when setting up the steer motor.
+        // TODO: Avoid using Thread.sleep and replace with an actual way to check if the
+        // steer encoder has received valid data
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            System.err.println("OOPS");
+        }
+
         // Synchronize steer motor encoder & steer absolute encoder for PID control
-        steerMotor.setSelectedSensorPosition(Units.degreesToRadians(steerEncoder.getPosition()) / STEER_POSITION_COEFFICIENT);
+        steerMotor.setSelectedSensorPosition(Units.degreesToRadians(steerEncoder.getAbsolutePosition()) / STEER_POSITION_COEFFICIENT);
     }
 
     @Override

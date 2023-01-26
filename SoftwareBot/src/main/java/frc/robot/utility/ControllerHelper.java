@@ -10,7 +10,7 @@ public class ControllerHelper {
      * @return clipped and scaled axis value to use
      */
     public static double modifyAxis(double value) {
-        value = -MathUtil.applyDeadband(value, 0.1);
+        value = MathUtil.applyDeadband(value, 0.1);
         return Math.copySign(value * value, value);
     }
 }

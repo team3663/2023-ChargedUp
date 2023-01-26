@@ -13,10 +13,10 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(311.75 - 180);// 311.75
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(311.92 - 180);// 311.92
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(275.27 - 180);// 275.27
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(285.03 - 180);// 285.03
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(131.5);// 311.75
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(130.6);// 311.92
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(95.3);// 275.27
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(112.5);// 285.03
 
     public static class ControllerPorts {
         public static final int DRIVER = 0;

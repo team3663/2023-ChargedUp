@@ -86,9 +86,9 @@ public class RobotContainer {
         }
 
         drivetrainSubsystem.setDefaultCommand(new DefaultDrivetrainCommand(drivetrainSubsystem,
-                () -> ControllerHelper.modifyAxis(driverController.getLeftY()) * drivetrainSubsystem.getMaxTranslationalVelocityMetersPerSecond(),
-                () -> ControllerHelper.modifyAxis(driverController.getLeftX()) * drivetrainSubsystem.getMaxTranslationalVelocityMetersPerSecond(),
-                () -> ControllerHelper.modifyAxis(driverController.getRightX()) * drivetrainSubsystem.getMaxAngularVelocityRadPerSec()
+                () -> ControllerHelper.modifyAxis(-driverController.getLeftY()) * drivetrainSubsystem.getMaxTranslationalVelocityMetersPerSecond(),
+                () -> ControllerHelper.modifyAxis(-driverController.getLeftX()) * drivetrainSubsystem.getMaxTranslationalVelocityMetersPerSecond(),
+                () -> ControllerHelper.modifyAxis(-driverController.getRightX()) * drivetrainSubsystem.getMaxAngularVelocityRadPerSec()
         ));
     }
 
