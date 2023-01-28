@@ -4,5 +4,18 @@
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/PPSwerveControllerCommand_field": "Field2d"
     }
+  },
+  "NetworkTables": {
+    "transitory": {
+      "AdvantageKit": {
+        "Drivetrain": {
+          "Gyro": {
+            "open": true
+          },
+          "open": true
+        },
+        "open": true
+      }
+    }
   }
 }

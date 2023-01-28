@@ -12,8 +12,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private static final double WHEELBASE_X_METERS = Units.inchesToMeters(28.0);
     private static final double WHEELBASE_Y_METERS = Units.inchesToMeters(28.0);
     private static final double MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND = Units.feetToMeters(13.8);
+
     private static final double MAX_ANGULAR_VELOCITY_RAD_PER_SEC = MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND /
             Math.hypot(WHEELBASE_X_METERS / 2.0, WHEELBASE_Y_METERS / 2.0);
+
+    
 
     private final GyroIO gyroIO;
     private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
