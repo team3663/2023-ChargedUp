@@ -4,7 +4,7 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface ArmIO {
     @AutoLog
-    class ArmIOInputs{
+    class ArmIOInputs {
         public double shoulderAngleRad;
         public double shoulderAngularVelRadPerSec;
         public double shoulderCurrentDrawAmps;
@@ -19,7 +19,6 @@ public interface ArmIO {
         public double wristAngularVelRadPerSec;
         public double wristCurrentDrawAmps;
         public double wristAppliedVoltage;
-
     }
 
     default void updateInputs(ArmIOInputs inputs) {

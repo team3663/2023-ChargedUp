@@ -5,7 +5,6 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 
 public class ArmSubsystem {
@@ -26,20 +25,20 @@ public class ArmSubsystem {
 
     private double[] targetAnglesLogged = new double[3];
 
-    public ArmSubsystem(ArmIO io){
+    public ArmSubsystem(ArmIO io) {
         this.io = io;
         this.kinematics = new ArmKinematics();
 
         // Create the mechanism object with a 2M x 2M canvas
         this.mechanism = new Mechanism2d(2, 2);
         MechanismRoot2d root = mechanism.getRoot("shoulder", SHOULDER_X_OFFSET, 0);
-
     }
 
-    public void periodic(){
+    public void periodic() {
         io.updateInputs(inputs);
         Logger.getInstance().processInputs("Arm/Inputs", inputs);
 
+        // Convert our target pose (task space) to an arm state object (c-space) and update the IO object with new values.
         ArmState currentState = kinematics.inverse(targetPose);
         io.setTargetAngles(currentState.shoulderAngleRad, currentState.elbowAngleRad, currentState.wristAngleRad);
 
