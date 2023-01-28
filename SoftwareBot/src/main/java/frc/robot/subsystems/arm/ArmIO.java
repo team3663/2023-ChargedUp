@@ -22,9 +22,9 @@ public interface ArmIO {
 
     }
 
-    default void updateInputs(ArmIOInputs inputs){
+    default void updateInputs(ArmIOInputs inputs) {
     }
 
-    default void setTargetAngles(double shoulderAngle, double elbowAngle, double wristAngle){
+    default void setTargetAngles(double shoulderAngle, double elbowAngle, double wristAngle) {
     }
 }

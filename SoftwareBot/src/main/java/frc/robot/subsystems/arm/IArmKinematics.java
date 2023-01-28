@@ -4,7 +4,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 
 public interface IArmKinematics {
 
-    public Pose2d armStateToPose(ArmState state);
+    // Forward kinematics - Convert from C-space to world space.
+    public Pose2d forward(ArmState state);
 
-    public ArmState poseToArmState(Pose2d pose);
+    // Inverse kinematics - Convert from world space to C-space.
+    public ArmState inverse(Pose2d pose);
 }
