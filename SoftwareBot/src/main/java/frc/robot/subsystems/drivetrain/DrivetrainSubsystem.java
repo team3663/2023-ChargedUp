@@ -1,5 +1,6 @@
 package frc.robot.subsystems.drivetrain;
 
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -25,6 +26,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private final SwerveModulePosition[] modulePositions;
     private final SwerveDriveKinematics kinematics;
     private final SwerveDriveOdometry odometry;
+    private final SwerveDrivePoseEstimator poseEstimator;
 
 
     private ChassisSpeeds targetChassisVelocity = new ChassisSpeeds();
@@ -55,6 +57,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
         this.odometry = new SwerveDriveOdometry(kinematics, new Rotation2d(), new SwerveModulePosition[]{
                 new SwerveModulePosition(), new SwerveModulePosition(), new SwerveModulePosition(), new SwerveModulePosition()
         });
+
+        // TODO: Provide better value for initial gyro
+        poseEstimator = new SwerveDrivePoseEstimator(kinematics, new Rotation2d(), modulePositions, odometry.getPoseMeters());
     }
 
     @Override
