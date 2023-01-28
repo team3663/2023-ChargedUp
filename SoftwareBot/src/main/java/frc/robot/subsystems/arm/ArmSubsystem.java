@@ -24,6 +24,8 @@ public class ArmSubsystem {
     private IArmKinematics kinematics;
     private Mechanism2d mechanism;
 
+    private double[] targetAnglesLogged = new double[3];
+
     public ArmSubsystem(ArmIO io){
         this.io = io;
         this.kinematics = new ArmKinematics();
@@ -38,10 +40,16 @@ public class ArmSubsystem {
         io.updateInputs(inputs);
         Logger.getInstance().processInputs("Arm/Inputs", inputs);
 
-        ArmState state = kinematics.inverse(targetPose);
-        io.setTargetAngles(state.shoulderAngleRad, state.elbowAngleRad, state.wristAngleRad);
+        ArmState currentState = kinematics.inverse(targetPose);
+        io.setTargetAngles(currentState.shoulderAngleRad, currentState.elbowAngleRad, currentState.wristAngleRad);
+
+        // Copy the target angles into an array we can pass to AdvantageKit to be logged.
+        targetAnglesLogged[0] = currentState.shoulderAngleRad;
+        targetAnglesLogged[1] = currentState.elbowAngleRad;
+        targetAnglesLogged[2] = currentState.wristAngleRad;
 
         Logger.getInstance().recordOutput("Arm/Pose", targetPose);
+        Logger.getInstance().recordOutput("Arm/TargetAngles", targetAnglesLogged);
         Logger.getInstance().recordOutput("Arm/Mechanism", mechanism);
     }
 
