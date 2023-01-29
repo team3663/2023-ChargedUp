@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.vision;
+package frc.robot.utility;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -10,9 +10,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
-import org.photonvision.RobotPoseEstimator;
-import org.photonvision.RobotPoseEstimator.PoseStrategy;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -28,7 +29,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.math.util.Units;
 
-public class VisionSubsystem extends SubsystemBase {
+public class PhotonVisionUtil extends SubsystemBase {
 
   private GenericEntry hasTargets;
   private GenericEntry targetID;
@@ -50,20 +51,21 @@ public class VisionSubsystem extends SubsystemBase {
   private double n_robotTheta;
   private double n_targetAmbiguity;
 
-  private PhotonCamera camera;
+  private PhotonCamera[] cameras;
 
-  private AprilTagFieldLayout  layout;
+  private AprilTagFieldLayout layout;
   private final Path fieldJsonPath = Paths.get(Filesystem.getDeployDirectory().toString(), "MS-Atrium.json");
-  private RobotPoseEstimator poseEstimator;
+  private PhotonPoseEstimator poseEstimator;
   private final Transform3d cameraPose = new Transform3d();
   private ArrayList<Pair<PhotonCamera, Transform3d>> cameraList = new ArrayList<Pair<PhotonCamera, Transform3d>>();
-  private Optional<Pair<Pose3d, Double>> robotPoseOptional;
+  private Optional<EstimatedRobotPose> estPose;
   private Pose3d robotPose;
 
   /** Creates a new VisionSubsystem. */
-  public VisionSubsystem(PhotonCamera[] cameras) {
+  public PhotonVisionUtil(PhotonCamera[] cameras) {
+    this.cameras = new PhotonCamera[cameras.length];
     for (int i = 0; i < cameras.length; i++) {
-      this.camera = cameras[i];
+      this.cameras[i] = cameras[i];
       cameraList.add(new Pair<PhotonCamera, Transform3d>(cameras[i], cameraPose));
     }
 
@@ -75,14 +77,16 @@ public class VisionSubsystem extends SubsystemBase {
 
     robotPose = new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0));
 
-    poseEstimator = new RobotPoseEstimator(layout, PoseStrategy.LOWEST_AMBIGUITY, cameraList);
+    // TODO: Add support for multiple cameras
+    poseEstimator = new PhotonPoseEstimator(layout, PoseStrategy.AVERAGE_BEST_TARGETS, cameras[0], cameraPose);
 
-    initTelemetry();
+    System.out.println("Telemetry is disabled");
+    // initTelemetry();
   }
 
   @Override
   public void periodic() {
-    PhotonPipelineResult data = camera.getLatestResult();
+    PhotonPipelineResult data = cameras[0].getLatestResult();
     n_hasTargets = data.hasTargets();
     if (n_hasTargets) {
       PhotonTrackedTarget chosenTarget = data.getBestTarget();
@@ -96,8 +100,8 @@ public class VisionSubsystem extends SubsystemBase {
       n_robotY = processDistance(robotPose.getY());
       n_robotTheta = ((double) Math.round(robotPose.getRotation().toRotation2d().getDegrees() * 100)) / 100;
 
-      robotPoseOptional = poseEstimator.update();
-      robotPose = robotPoseOptional.get().getFirst();
+      estPose = poseEstimator.update();
+      robotPose = estPose.get().estimatedPose;
     } else {
       n_targetID = 0;
       n_targetX = 0;
@@ -108,7 +112,7 @@ public class VisionSubsystem extends SubsystemBase {
       n_robotY = 0;
       n_robotTheta = 0;
     }
-    updateTelemetry();
+    // updateTelemetry();
   }
 
   private double processDistance (double dist) {
@@ -117,6 +121,10 @@ public class VisionSubsystem extends SubsystemBase {
     dp /= 100;    
 
     return dp;
+  }
+
+  public EstimatedRobotPose getRobotPose3d () {
+    return poseEstimator.update().get();
   }
 
   private void initTelemetry () {
@@ -178,10 +186,5 @@ public class VisionSubsystem extends SubsystemBase {
     robotX.setValue(n_robotX);
     robotY.setValue(n_robotY);
     robotTheta.setValue(n_robotTheta);
-  }
-
-  // this is useless, delete it.
-  public boolean exampleCondition () {
-    return false;
   }
 }

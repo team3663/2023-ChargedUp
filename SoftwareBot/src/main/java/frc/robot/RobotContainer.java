@@ -6,6 +6,8 @@ package frc.robot;
 
 import java.util.HashMap;
 
+import org.photonvision.PhotonCamera;
+
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -20,7 +22,7 @@ import frc.robot.Constants.ControllerPorts;
 import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DriveCircleCommand;
 import frc.robot.subsystems.drivetrain.*;
-import frc.robot.utility.ControllerHelper;
+import frc.robot.utility.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -39,6 +41,10 @@ public class RobotContainer {
     // Commands
     private DriveCircleCommand swerveTestCommand;
 
+    // Utilities/misc
+    private PhotonVisionUtil photonVision;
+    private PhotonCamera[] cameras = {new PhotonCamera("Left_Camera"), new PhotonCamera("Right_Camera")};
+
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
@@ -46,6 +52,7 @@ public class RobotContainer {
 
         createSubsystems();
         createCommands();
+        createUtilities();
         configureBindings();
     }
 
@@ -68,7 +75,9 @@ public class RobotContainer {
                     new SwerveModuleIOFalcon500(Constants.CanIds.DRIVETRAIN_BACK_RIGHT_MODULE_DRIVE_MOTOR,
                             Constants.CanIds.DRIVETRAIN_BACK_RIGHT_MODULE_STEER_MOTOR,
                             Constants.CanIds.DRIVETRAIN_BACK_RIGHT_MODULE_STEER_ENCODER,
-                            Constants.BACK_RIGHT_MODULE_STEER_OFFSET));
+                            Constants.BACK_RIGHT_MODULE_STEER_OFFSET),
+                    () -> photonVision.getRobotPose3d()
+                    );
         } else {
 
             GyroIOSim gyro = new GyroIOSim();
@@ -77,7 +86,9 @@ public class RobotContainer {
                     new SwerveModuleIOSim(),
                     new SwerveModuleIOSim(),
                     new SwerveModuleIOSim(),
-                    new SwerveModuleIOSim());
+                    new SwerveModuleIOSim(),
+                    () -> photonVision.getRobotPose3d()
+                    );
 
             // The simulated gyro needs the drivetrain (to get the pose) and the same angular velocity supplier that the default drive command uses.
             gyro.initializeModel(drivetrainSubsystem, 
@@ -113,6 +124,10 @@ public class RobotContainer {
 
     private void createCommands() {
         swerveTestCommand = new DriveCircleCommand(drivetrainSubsystem);
+    }
+
+    private void createUtilities () {
+        photonVision = new PhotonVisionUtil(cameras);
     }
 
     private void configureBindings() {
