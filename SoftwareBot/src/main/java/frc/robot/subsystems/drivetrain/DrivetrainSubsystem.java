@@ -6,6 +6,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.sim.SimModelData;
+
 import org.littletonrobotics.junction.Logger;
 
 public class DrivetrainSubsystem extends SubsystemBase {
@@ -80,9 +82,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         for (int i = 0; i < swerveModules.length; ++i) {
             // Optimize the module state for the current module position
             optimizedModuleStates[i] = SwerveModuleState.optimize(moduleStates[i], modulePositions[i].angle);
-
             swerveModules[i].setTargetState(optimizedModuleStates[i]);
-            // swerveModules[i].setTargetState(moduleStates[i]);
         }
 
         // Copy components of chassis speeds into double array that we can send to AdvantageKit.
@@ -97,6 +97,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // Update odometry
         Pose2d pose = odometry.update(new Rotation2d(gyroInputs.yawRadians), modulePositions);
 
+        // Update simulation model data
+        SimModelData.GetInstance().updateDrivetrainData(getPose(), targetChassisVelocity);
+    
         Logger.getInstance().recordOutput("Drivetrain/Pose", pose);
     }
 

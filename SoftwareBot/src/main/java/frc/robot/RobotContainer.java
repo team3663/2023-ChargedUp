@@ -78,11 +78,6 @@ public class RobotContainer {
                     new SwerveModuleIOSim(),
                     new SwerveModuleIOSim(),
                     new SwerveModuleIOSim());
-
-            // The simulated gyro needs the drivetrain (to get the pose) and the same angular velocity supplier that the default drive command uses.
-            gyro.initializeModel(drivetrainSubsystem, 
-                () -> ControllerHelper.modifyAxis(driverController.getRightX()) * drivetrainSubsystem.getMaxAngularVelocityRadPerSec()
-            );
         }
 
         drivetrainSubsystem.setDefaultCommand(new DefaultDrivetrainCommand(drivetrainSubsystem,
