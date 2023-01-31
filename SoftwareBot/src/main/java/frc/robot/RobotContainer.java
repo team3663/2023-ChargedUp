@@ -13,6 +13,7 @@ import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -114,7 +115,7 @@ public class RobotContainer {
 
         // Button to reset the robot's pose to a default starting point.  Handy when running in the simulator and 
         // you accidently lose the robot outside the game field, should NOT be configured in the competition bot.
-        driverController.start().onTrue(new InstantCommand(() -> drivetrainSubsystem.resetPose(new Pose2d())));
+        driverController.start().onTrue(new InstantCommand(() -> drivetrainSubsystem.resetPose(new Pose2d(8.0, 3.0, new Rotation2d(0.0)))));
 
         driverController.a().whileTrue(swerveTestCommand);
     }
