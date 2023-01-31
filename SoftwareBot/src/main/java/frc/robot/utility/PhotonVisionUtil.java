@@ -51,15 +51,21 @@ public class PhotonVisionUtil extends SubsystemBase {
   private double n_robotTheta;
   private double n_targetAmbiguity;
 
-  private PhotonCamera[] cameras;
+  private final PhotonCamera[] cameras;
 
-  private AprilTagFieldLayout layout;
+  private final AprilTagFieldLayout layout;
   private final Path fieldJsonPath = Paths.get(Filesystem.getDeployDirectory().toString(), "MS-Atrium.json");
-  private PhotonPoseEstimator poseEstimator;
   private final Transform3d cameraPose = new Transform3d();
-  private ArrayList<Pair<PhotonCamera, Transform3d>> cameraList = new ArrayList<Pair<PhotonCamera, Transform3d>>();
+  private final ArrayList<Pair<PhotonCamera, Transform3d>> cameraList = new ArrayList<Pair<PhotonCamera, Transform3d>>();
+
+  private final ArrayList<PhotonPoseEstimator> poseEstimators = new ArrayList<PhotonPoseEstimator>();
+  private ArrayList<PhotonPipelineResult> pipelineResults = new ArrayList<PhotonPipelineResult>();
+
   private Optional<EstimatedRobotPose> estPose;
   private Pose3d robotPose;
+
+  private boolean targetAcquired;
+  private PhotonTrackedTarget chosenTarget;
 
   /** Creates a new VisionSubsystem. */
   public PhotonVisionUtil(PhotonCamera[] cameras) {
@@ -77,20 +83,39 @@ public class PhotonVisionUtil extends SubsystemBase {
 
     robotPose = new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0));
 
-    // TODO: Add support for multiple cameras
-    poseEstimator = new PhotonPoseEstimator(layout, PoseStrategy.AVERAGE_BEST_TARGETS, cameras[0], cameraPose);
+    for (PhotonCamera c : cameras) {
+      PhotonPoseEstimator pe = new PhotonPoseEstimator(layout, PoseStrategy.AVERAGE_BEST_TARGETS, c, cameraPose);
+      poseEstimators.add(pe);
+    }
 
-    System.out.println("Telemetry is disabled");
-    // initTelemetry();
+    initTelemetry();
   }
 
   @Override
   public void periodic() {
-    PhotonPipelineResult data = cameras[0].getLatestResult();
-    n_hasTargets = data.hasTargets();
-    if (n_hasTargets) {
-      PhotonTrackedTarget chosenTarget = data.getBestTarget();
+    int missCounter = 0;
 
+    for (PhotonCamera c : cameras) {
+      PhotonPipelineResult pr = c.getLatestResult();
+      pipelineResults.add(pr);
+    }
+
+    for (int i = 0; i < pipelineResults.size(); i++) {
+      if (pipelineResults.get(i).hasTargets()) {
+        estPose = poseEstimators.get(i).update();
+        chosenTarget = pipelineResults.get(i).getBestTarget();
+        targetAcquired = true;
+      } else {
+        missCounter++;
+      }
+    }
+
+    // TODO: Make sure this actually works. It probably won't.
+    if  (missCounter == pipelineResults.size()) {
+      targetAcquired = false;
+    }
+
+    if (targetAcquired) {
       n_targetID = chosenTarget.getFiducialId();
       n_targetX = processDistance(chosenTarget.getBestCameraToTarget().getX());
       n_targetY = processDistance(chosenTarget.getBestCameraToTarget().getY());
@@ -100,7 +125,6 @@ public class PhotonVisionUtil extends SubsystemBase {
       n_robotY = processDistance(robotPose.getY());
       n_robotTheta = ((double) Math.round(robotPose.getRotation().toRotation2d().getDegrees() * 100)) / 100;
 
-      estPose = poseEstimator.update();
       robotPose = estPose.get().estimatedPose;
     } else {
       n_targetID = 0;
@@ -112,7 +136,7 @@ public class PhotonVisionUtil extends SubsystemBase {
       n_robotY = 0;
       n_robotTheta = 0;
     }
-    // updateTelemetry();
+    updateTelemetry();
   }
 
   private double processDistance (double dist) {
@@ -124,7 +148,19 @@ public class PhotonVisionUtil extends SubsystemBase {
   }
 
   public EstimatedRobotPose getRobotPose3d () {
-    return poseEstimator.update().get();
+    boolean gotEm = false;
+    int g = -1;
+    for (int i = 0; i < poseEstimators.size(); i++) {
+        if (pipelineResults.get(i).hasTargets()) {
+            gotEm = true;
+            g = i;
+        }
+    }
+    if (gotEm) {
+        return poseEstimators.get(g).update().get();
+    } else {
+        return new EstimatedRobotPose(new Pose3d(), 0);
+    }
   }
 
   private void initTelemetry () {
