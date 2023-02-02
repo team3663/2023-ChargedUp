@@ -32,15 +32,14 @@ public class ArmKinematics implements IArmKinematics {
         double IKShoulderAngleRad = armAngleConstraints[0];
         double IKElbowAngleRad = armAngleConstraints[2];
 
+        // This code is a mess
         IKElbowAngleRad = 1 / Math.cos(
             (Math.pow(pose.getX(), 2) + Math.pow(pose.getY(), 2) - Math.pow(armLengthConstants[0], 2) - Math.pow(armLengthConstants[1], 2))
             /
             (2 * armLengthConstants[0] * armLengthConstants[1])
         );
 
-        IKShoulderAngleRad = 1 / Math.sin(
-                (armLengthConstants[1] * Math.sin(IKElbowAngleRad)) / (pose.getX() * pose.getY())
-            )
+        IKShoulderAngleRad = 1 / Math.sin((armLengthConstants[1] * Math.sin(IKElbowAngleRad)) / (pose.getX() * pose.getY()))
             +
             Math.atan2(pose.getY(), pose.getX());
         
