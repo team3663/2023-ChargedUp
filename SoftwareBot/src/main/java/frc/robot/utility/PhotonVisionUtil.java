@@ -52,10 +52,10 @@ public class PhotonVisionUtil extends SubsystemBase {
   private double n_targetAmbiguity;
 
   private final PhotonCamera[] cameras;
+  private final Transform3d[] cameraPoses;
 
   private final AprilTagFieldLayout layout;
   private final Path fieldJsonPath = Paths.get(Filesystem.getDeployDirectory().toString(), "MS-Atrium.json");
-  private final Transform3d cameraPose = new Transform3d();
   private final ArrayList<Pair<PhotonCamera, Transform3d>> cameraList = new ArrayList<Pair<PhotonCamera, Transform3d>>();
 
   private final ArrayList<PhotonPoseEstimator> poseEstimators = new ArrayList<PhotonPoseEstimator>();
@@ -68,11 +68,13 @@ public class PhotonVisionUtil extends SubsystemBase {
   private PhotonTrackedTarget chosenTarget;
 
   /** Creates a new VisionSubsystem. */
-  public PhotonVisionUtil(PhotonCamera[] cameras) {
+  public PhotonVisionUtil(PhotonCamera[] cameras, Transform3d[] cameraPoses) {
     this.cameras = new PhotonCamera[cameras.length];
+    this.cameraPoses = new  Transform3d[cameraPoses.length];
     for (int i = 0; i < cameras.length; i++) {
       this.cameras[i] = cameras[i];
-      cameraList.add(new Pair<PhotonCamera, Transform3d>(cameras[i], cameraPose));
+      this.cameraPoses[i] = cameraPoses[i];
+      cameraList.add(new Pair<PhotonCamera, Transform3d>(cameras[i], cameraPoses[i]));
     }
 
     try {
@@ -83,8 +85,9 @@ public class PhotonVisionUtil extends SubsystemBase {
 
     robotPose = new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0));
 
-    for (PhotonCamera c : cameras) {
-      PhotonPoseEstimator pe = new PhotonPoseEstimator(layout, PoseStrategy.AVERAGE_BEST_TARGETS, c, cameraPose);
+    // for (PhotonCamera c : cameras) {
+    for (int i = 0; i < cameras.length; i++) {
+      PhotonPoseEstimator pe = new PhotonPoseEstimator(layout, PoseStrategy.AVERAGE_BEST_TARGETS, cameras[i], cameraPoses[i]);
       poseEstimators.add(pe);
     }
 
@@ -110,7 +113,7 @@ public class PhotonVisionUtil extends SubsystemBase {
       }
     }
 
-    // TODO: Make sure this actually works. It probably won't.
+    // TODO: Make sure this actually works; It probably won't
     if  (missCounter == pipelineResults.size()) {
       targetAcquired = false;
     }
@@ -148,15 +151,15 @@ public class PhotonVisionUtil extends SubsystemBase {
   }
 
   public EstimatedRobotPose getRobotPose3d () {
-    boolean gotEm = false;
+    boolean hasValidPose = false;
     int g = -1;
     for (int i = 0; i < poseEstimators.size(); i++) {
         if (pipelineResults.get(i).hasTargets()) {
-            gotEm = true;
+            hasValidPose = true;
             g = i;
         }
     }
-    if (gotEm) {
+    if (hasValidPose) {
         return poseEstimators.get(g).update().get();
     } else {
         return new EstimatedRobotPose(new Pose3d(), 0);

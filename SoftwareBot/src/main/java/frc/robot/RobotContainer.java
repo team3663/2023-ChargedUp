@@ -15,6 +15,10 @@ import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -22,7 +26,7 @@ import frc.robot.Constants.ControllerPorts;
 import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DriveCircleCommand;
 import frc.robot.subsystems.drivetrain.*;
-import frc.robot.utility.*;
+import frc.robot.utility.ControllerHelper;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -41,42 +45,52 @@ public class RobotContainer {
     // Commands
     private DriveCircleCommand swerveTestCommand;
 
-    // Utilities/misc
-    private PhotonVisionUtil photonVision;
-    private PhotonCamera[] cameras = {new PhotonCamera("Left_Camera"), new PhotonCamera("Right_Camera")};
-
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
+
         createSubsystems();
         createCommands();
-        createUtilities();
         configureBindings();
     }
 
     private void createSubsystems() {
         if (Robot.isReal()) {
+            // drivetrainSubsystem = new DrivetrainSubsystem(
+            //         new GyroIOPigeon2(Constants.CanIds.DRIVETRAIN_PIGEON_ID),
+            //         new SwerveModuleIOFalcon500(Constants.CanIds.DRIVETRAIN_FRONT_LEFT_MODULE_DRIVE_MOTOR,
+            //                 Constants.CanIds.DRIVETRAIN_FRONT_LEFT_MODULE_STEER_MOTOR,
+            //                 Constants.CanIds.DRIVETRAIN_FRONT_LEFT_MODULE_STEER_ENCODER,
+            //                 Constants.FRONT_LEFT_MODULE_STEER_OFFSET),
+            //         new SwerveModuleIOFalcon500(Constants.CanIds.DRIVETRAIN_FRONT_RIGHT_MODULE_DRIVE_MOTOR,
+            //                 Constants.CanIds.DRIVETRAIN_FRONT_RIGHT_MODULE_STEER_MOTOR,
+            //                 Constants.CanIds.DRIVETRAIN_FRONT_RIGHT_MODULE_STEER_ENCODER,
+            //                 Constants.FRONT_RIGHT_MODULE_STEER_OFFSET),
+            //         new SwerveModuleIOFalcon500(Constants.CanIds.DRIVETRAIN_BACK_LEFT_MODULE_DRIVE_MOTOR,
+            //                 Constants.CanIds.DRIVETRAIN_BACK_LEFT_MODULE_STEER_MOTOR,
+            //                 Constants.CanIds.DRIVETRAIN_BACK_LEFT_MODULE_STEER_ENCODER,
+            //                 Constants.BACK_LEFT_MODULE_STEER_OFFSET),
+            //         new SwerveModuleIOFalcon500(Constants.CanIds.DRIVETRAIN_BACK_RIGHT_MODULE_DRIVE_MOTOR,
+            //                 Constants.CanIds.DRIVETRAIN_BACK_RIGHT_MODULE_STEER_MOTOR,
+            //                 Constants.CanIds.DRIVETRAIN_BACK_RIGHT_MODULE_STEER_ENCODER,
+            //                 Constants.BACK_RIGHT_MODULE_STEER_OFFSET));
+            double cx = Units.inchesToMeters(10.5);
+            double cy = Units.inchesToMeters(11.75);
+            double cz = Units.inchesToMeters(30);
+
             drivetrainSubsystem = new DrivetrainSubsystem(
-                    new GyroIOPigeon2(Constants.CanIds.DRIVETRAIN_PIGEON_ID),
-                    new SwerveModuleIOFalcon500(Constants.CanIds.DRIVETRAIN_FRONT_LEFT_MODULE_DRIVE_MOTOR,
-                            Constants.CanIds.DRIVETRAIN_FRONT_LEFT_MODULE_STEER_MOTOR,
-                            Constants.CanIds.DRIVETRAIN_FRONT_LEFT_MODULE_STEER_ENCODER,
-                            Constants.FRONT_LEFT_MODULE_STEER_OFFSET),
-                    new SwerveModuleIOFalcon500(Constants.CanIds.DRIVETRAIN_FRONT_RIGHT_MODULE_DRIVE_MOTOR,
-                            Constants.CanIds.DRIVETRAIN_FRONT_RIGHT_MODULE_STEER_MOTOR,
-                            Constants.CanIds.DRIVETRAIN_FRONT_RIGHT_MODULE_STEER_ENCODER,
-                            Constants.FRONT_RIGHT_MODULE_STEER_OFFSET),
-                    new SwerveModuleIOFalcon500(Constants.CanIds.DRIVETRAIN_BACK_LEFT_MODULE_DRIVE_MOTOR,
-                            Constants.CanIds.DRIVETRAIN_BACK_LEFT_MODULE_STEER_MOTOR,
-                            Constants.CanIds.DRIVETRAIN_BACK_LEFT_MODULE_STEER_ENCODER,
-                            Constants.BACK_LEFT_MODULE_STEER_OFFSET),
-                    new SwerveModuleIOFalcon500(Constants.CanIds.DRIVETRAIN_BACK_RIGHT_MODULE_DRIVE_MOTOR,
-                            Constants.CanIds.DRIVETRAIN_BACK_RIGHT_MODULE_STEER_MOTOR,
-                            Constants.CanIds.DRIVETRAIN_BACK_RIGHT_MODULE_STEER_ENCODER,
-                            Constants.BACK_RIGHT_MODULE_STEER_OFFSET),
-                    () -> photonVision.getRobotPose3d()
-                    );
+                new GyroIO() {},
+                new SwerveModuleIO() {},
+                new SwerveModuleIO() {},
+                new SwerveModuleIO() {},
+                new SwerveModuleIO() {},
+                new PhotonCamera[] {new PhotonCamera("Left_Camera"), new PhotonCamera("Right_Camera")},
+                new Transform3d[] {
+                    new Transform3d(new Pose3d(), new Pose3d(-cx, cy, cz, new Rotation3d(0, 0, 0.5))),
+                    new Transform3d(new Pose3d(), new Pose3d(-cx, -cy, cz, new Rotation3d(0, 0, -0.5)))
+                }
+            );
         } else {
 
             GyroIOSim gyro = new GyroIOSim();
@@ -86,8 +100,9 @@ public class RobotContainer {
                     new SwerveModuleIOSim(),
                     new SwerveModuleIOSim(),
                     new SwerveModuleIOSim(),
-                    () -> photonVision.getRobotPose3d()
-                    );
+                    new PhotonCamera[] {new PhotonCamera("null")},
+                    new Transform3d[] {new Transform3d(), new Transform3d()}
+                );
 
             // The simulated gyro needs the drivetrain (to get the pose) and the same angular velocity supplier that the default drive command uses.
             gyro.initializeModel(drivetrainSubsystem, 
@@ -123,10 +138,6 @@ public class RobotContainer {
 
     private void createCommands() {
         swerveTestCommand = new DriveCircleCommand(drivetrainSubsystem);
-    }
-
-    private void createUtilities () {
-        photonVision = new PhotonVisionUtil(cameras);
     }
 
     private void configureBindings() {
