@@ -96,64 +96,64 @@ public class PhotonVisionUtil extends SubsystemBase {
 
   @Override
   public void periodic() {
-    int missCounter = 0;
+  //   int missCounter = 0;
 
-    for (PhotonCamera c : cameras) {
-      PhotonPipelineResult pr = c.getLatestResult();
-      pipelineResults.add(pr);
-    }
+  //   for (PhotonCamera c : cameras) {
+  //     PhotonPipelineResult pr = c.getLatestResult();
+  //     pipelineResults.add(pr);
+  //   }
 
-    for (int i = 0; i < pipelineResults.size(); i++) {
-      if (pipelineResults.get(i).hasTargets()) {
-        estPose = poseEstimators.get(i).update();
-        chosenTarget = pipelineResults.get(i).getBestTarget();
-        targetAcquired = true;
-      } else {
-        missCounter++;
-      }
-    }
+  //   for (int i = 0; i < pipelineResults.size(); i++) {
+  //     if (pipelineResults.get(i).hasTargets()) {
+  //       estPose = poseEstimators.get(i).update();
+  //       chosenTarget = pipelineResults.get(i).getBestTarget();
+  //       targetAcquired = true;
+  //     } else {
+  //       missCounter++;
+  //     }
+  //   }
 
-    // TODO: Make sure this actually works; It probably won't
-    if  (missCounter == pipelineResults.size()) {
-      targetAcquired = false;
-    }
+  //   // TODO: Make sure this actually works; It probably won't
+  //   if  (missCounter == pipelineResults.size()) {
+  //     targetAcquired = false;
+  //   }
 
-    if (targetAcquired) {
-      n_targetID = chosenTarget.getFiducialId();
-      n_targetX = processDistance(chosenTarget.getBestCameraToTarget().getX());
-      n_targetY = processDistance(chosenTarget.getBestCameraToTarget().getY());
-      n_targetZ = processDistance(chosenTarget.getBestCameraToTarget().getZ());
-      n_targetAmbiguity = chosenTarget.getPoseAmbiguity();
-      n_robotX = processDistance(robotPose.getX());
-      n_robotY = processDistance(robotPose.getY());
-      n_robotTheta = ((double) Math.round(robotPose.getRotation().toRotation2d().getDegrees() * 100)) / 100;
+  //   if (targetAcquired) {
+  //     n_targetID = chosenTarget.getFiducialId();
+  //     n_targetX = processDistance(chosenTarget.getBestCameraToTarget().getX());
+  //     n_targetY = processDistance(chosenTarget.getBestCameraToTarget().getY());
+  //     n_targetZ = processDistance(chosenTarget.getBestCameraToTarget().getZ());
+  //     n_targetAmbiguity = chosenTarget.getPoseAmbiguity();
+  //     n_robotX = processDistance(robotPose.getX());
+  //     n_robotY = processDistance(robotPose.getY());
+  //     n_robotTheta = ((double) Math.round(robotPose.getRotation().toRotation2d().getDegrees() * 100)) / 100;
 
-      robotPose = estPose.get().estimatedPose;
-    } else {
-      n_targetID = 0;
-      n_targetX = 0;
-      n_targetY = 0;
-      n_targetZ = 0;
-      n_targetAmbiguity = 0;
-      n_robotX = 0;
-      n_robotY = 0;
-      n_robotTheta = 0;
-    }
-    updateTelemetry();
-  }
+  //     robotPose = estPose.get().estimatedPose;
+  //   } else {
+  //     n_targetID = 0;
+  //     n_targetX = 0;
+  //     n_targetY = 0;
+  //     n_targetZ = 0;
+  //     n_targetAmbiguity = 0;
+  //     n_robotX = 0;
+  //     n_robotY = 0;
+  //     n_robotTheta = 0;
+  //   }
+  //   updateTelemetry();
+  // }
 
-  private double processDistance (double dist) {
-    double dp = Units.metersToInches(dist);
-    dp = (double) Math.round(dp *= 100);
-    dp /= 100;    
+  // private double processDistance (double dist) {
+  //   double dp = Units.metersToInches(dist);
+  //   dp = (double) Math.round(dp *= 100);
+  //   dp /= 100;    
 
-    return dp;
+  //   return dp;
   }
 
   public EstimatedRobotPose getRobotPose3d () {
     boolean hasValidPose = false;
     int g = -1;
-    for (int i = 0; i < poseEstimators.size(); i++) {
+    for (int i = 0; i < pipelineResults.size(); i++) {
         if (pipelineResults.get(i).hasTargets()) {
             hasValidPose = true;
             g = i;
