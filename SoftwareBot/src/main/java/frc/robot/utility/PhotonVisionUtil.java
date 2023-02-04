@@ -59,7 +59,7 @@ public class PhotonVisionUtil extends SubsystemBase {
   private final Transform3d[] cameraPoses;
 
   private final AprilTagFieldLayout layout;
-  private final Path fieldJsonPath = Paths.get(Filesystem.getDeployDirectory().toString(), "MS-Atrium.json");
+  private final Path fieldJsonPath = Paths.get(Filesystem.getDeployDirectory().toString(), "MS-Atrium-Temp.json");
   private final ArrayList<Pair<PhotonCamera, Transform3d>> cameraList = new ArrayList<Pair<PhotonCamera, Transform3d>>();
 
   private final ArrayList<PhotonPoseEstimator> poseEstimators = new ArrayList<PhotonPoseEstimator>();
@@ -88,7 +88,6 @@ public class PhotonVisionUtil extends SubsystemBase {
 
     robotPose = new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0));
 
-    // for (PhotonCamera c : cameras) {
     for (int i = 0; i < cameras.length; i++) {
       PhotonPoseEstimator pe = new PhotonPoseEstimator(layout, PoseStrategy.AVERAGE_BEST_TARGETS, cameras[i], cameraPoses[i]);
       poseEstimators.add(pe);
@@ -162,7 +161,7 @@ public class PhotonVisionUtil extends SubsystemBase {
     return dp;
   }
 
-  // This might be really buggy
+  // TODO: Make sure this works
   public Optional<EstimatedRobotPose> getEstPose (ArrayList<Optional<EstimatedRobotPose>> poseGuesses) {
     int c = poseGuesses.size();
 
