@@ -1,11 +1,13 @@
 package frc.robot.subsystems.drivetrain;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.sim.SimModelData;
 
 public class GyroIOSim implements GyroIO {
 
     private Timer timer = new Timer();
+    private double currentYawRads = 0;
 
     public GyroIOSim() {
         timer.start();
@@ -27,11 +29,10 @@ public class GyroIOSim implements GyroIO {
         double elapsedTime = timer.get();
         timer.reset();
 
-        // Calculate how much the robot would have rotated at the requested rate during the elapsed time.
+        // Calculate how much the robot would have rotated at the requested rate during the elapsed time
+        // and add it to the current yaw to get the new value.       
         double deltaYaw = requestedVelocity * elapsedTime;
-
-        // Now add the yaw delta to the current rotation value from the pose to get the new
-        // yaw value the gyro sim should return.
-        inputs.yawRadians = simData.driveTrainPose.getRotation().getRadians() + deltaYaw;
+        currentYawRads = MathUtil.inputModulus(currentYawRads + deltaYaw, -Math.PI, Math.PI);
+        inputs.yawRadians = currentYawRads;
     }
 }
