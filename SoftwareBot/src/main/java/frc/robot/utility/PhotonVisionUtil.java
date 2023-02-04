@@ -121,7 +121,11 @@ public class PhotonVisionUtil extends SubsystemBase {
       }
     }
 
-    estPose = getEstPose(poseGuesses);
+    if (!poseGuesses.isEmpty()) {
+      if (poseGuesses.get(0).isPresent()) {
+        estPose = poseGuesses.get(0);
+      }
+    }
 
     if  (missCounter == pipelineResults.size()) {
       targetAcquired = false;
@@ -161,7 +165,7 @@ public class PhotonVisionUtil extends SubsystemBase {
     return dp;
   }
 
-  // TODO: Make sure this works
+  // This doesn't work
   public Optional<EstimatedRobotPose> getEstPose (ArrayList<Optional<EstimatedRobotPose>> poseGuesses) {
     int c = poseGuesses.size();
 
@@ -174,13 +178,15 @@ public class PhotonVisionUtil extends SubsystemBase {
     double avgTime = 0;
 
     for (int i = 0; i < c; i++) {
-      avgX += poseGuesses.get(i).get().estimatedPose.getX();
-      avgY += poseGuesses.get(i).get().estimatedPose.getY();
-      avgZ += poseGuesses.get(i).get().estimatedPose.getZ();
-      avgAngleX += poseGuesses.get(i).get().estimatedPose.getRotation().getX();
-      avgAngleY += poseGuesses.get(i).get().estimatedPose.getRotation().getY();
-      avgAngleZ += poseGuesses.get(i).get().estimatedPose.getRotation().getZ();
-      avgTime += poseGuesses.get(i).get().timestampSeconds;
+      if (poseGuesses.get(i).isPresent()) {
+        avgX += poseGuesses.get(i).get().estimatedPose.getX();
+        avgY += poseGuesses.get(i).get().estimatedPose.getY();
+        avgZ += poseGuesses.get(i).get().estimatedPose.getZ();
+        avgAngleX += poseGuesses.get(i).get().estimatedPose.getRotation().getX();
+        avgAngleY += poseGuesses.get(i).get().estimatedPose.getRotation().getY();
+        avgAngleZ += poseGuesses.get(i).get().estimatedPose.getRotation().getZ();
+        avgTime += poseGuesses.get(i).get().timestampSeconds;
+      }
     }
 
     avgX /= c;
