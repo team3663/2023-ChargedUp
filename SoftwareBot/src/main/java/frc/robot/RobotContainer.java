@@ -19,6 +19,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerPorts;
 import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DriveCircleCommand;
+import frc.robot.subsystems.arm.ArmIO;
+import frc.robot.subsystems.arm.ArmIOSim;
+import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drivetrain.*;
 import frc.robot.utility.ControllerHelper;
 
@@ -35,6 +38,7 @@ public class RobotContainer {
 
     // Subsystems       
     private DrivetrainSubsystem drivetrainSubsystem;
+    private ArmSubsystem armSubsystem;
 
     // Commands
     private DriveCircleCommand swerveTestCommand;
@@ -72,7 +76,7 @@ public class RobotContainer {
         } else {
 
             GyroIOSim gyro = new GyroIOSim();
-            
+
             drivetrainSubsystem = new DrivetrainSubsystem(gyro,
                     new SwerveModuleIOSim(),
                     new SwerveModuleIOSim(),
@@ -80,10 +84,15 @@ public class RobotContainer {
                     new SwerveModuleIOSim());
 
             // The simulated gyro needs the drivetrain (to get the pose) and the same angular velocity supplier that the default drive command uses.
-            gyro.initializeModel(drivetrainSubsystem, 
+            gyro.initializeModel(drivetrainSubsystem,
                 () -> ControllerHelper.modifyAxis(driverController.getRightX()) * drivetrainSubsystem.getMaxAngularVelocityRadPerSec()
             );
+
+            armSubsystem = new ArmSubsystem(new ArmIOSim());
         }
+
+        armSubsystem = armSubsystem != null ? armSubsystem : new ArmSubsystem(new ArmIO() {
+        });
 
         drivetrainSubsystem.setDefaultCommand(new DefaultDrivetrainCommand(drivetrainSubsystem,
                 () -> ControllerHelper.modifyAxis(-driverController.getLeftY()) * drivetrainSubsystem.getMaxTranslationalVelocityMetersPerSecond(),
@@ -92,20 +101,20 @@ public class RobotContainer {
         ));
     }
 
-    private Command createAutoRoutine () {
+    private Command createAutoRoutine() {
 
         PathPlannerTrajectory path = PathPlanner.loadPath("TestPath", new PathConstraints(4, 3));
         HashMap<String, Command> eventMap = new HashMap<>();
 
         SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
-            () -> drivetrainSubsystem.getPose(),
-            (pose) -> drivetrainSubsystem.resetPose(pose),
-            new PIDConstants(5.0, 0, 0),
-            new PIDConstants(0.5, 0, 0),
-            (chassisSpeeds) -> drivetrainSubsystem.setTargetChassisVelocity(chassisSpeeds),
-            eventMap,
-            false,
-            drivetrainSubsystem
+                () -> drivetrainSubsystem.getPose(),
+                (pose) -> drivetrainSubsystem.resetPose(pose),
+                new PIDConstants(5.0, 0, 0),
+                new PIDConstants(0.5, 0, 0),
+                (chassisSpeeds) -> drivetrainSubsystem.setTargetChassisVelocity(chassisSpeeds),
+                eventMap,
+                false,
+                drivetrainSubsystem
         );
 
         return autoBuilder.fullAuto(path);
