@@ -11,6 +11,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utility.PhotonVisionUtil;
 
+import frc.robot.Robot;
+import frc.robot.sim.SimModelData;
+
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonCamera;
 
@@ -93,7 +96,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
         for (int i = 0; i < swerveModules.length; ++i) {
             // Optimize the module state for the current module position
             optimizedModuleStates[i] = SwerveModuleState.optimize(moduleStates[i], modulePositions[i].angle);
-
             swerveModules[i].setTargetState(optimizedModuleStates[i]);
         }
 
@@ -115,6 +117,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
         }
         pose = poseEstimator.getEstimatedPosition();
 
+        // Update simulation model data
+        SimModelData.GetInstance().updateDrivetrainData(getPose(), targetChassisVelocity);
+    
         Logger.getInstance().recordOutput("Drivetrain/Pose", pose);
     }
 

@@ -19,6 +19,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -99,11 +100,6 @@ public class RobotContainer {
                     new PhotonCamera[] {new PhotonCamera("null")},
                     new Transform3d[] {new Transform3d(), new Transform3d()}
                 );
-
-            // The simulated gyro needs the drivetrain (to get the pose) and the same angular velocity supplier that the default drive command uses.
-            gyro.initializeModel(drivetrainSubsystem, 
-                () -> ControllerHelper.modifyAxis(driverController.getRightX()) * drivetrainSubsystem.getMaxAngularVelocityRadPerSec()
-            );
         }
 
         drivetrainSubsystem.setDefaultCommand(new DefaultDrivetrainCommand(drivetrainSubsystem,
@@ -140,7 +136,7 @@ public class RobotContainer {
 
         // Button to reset the robot's pose to a default starting point.  Handy when running in the simulator and 
         // you accidently lose the robot outside the game field, should NOT be configured in the competition bot.
-        driverController.start().onTrue(new InstantCommand(() -> drivetrainSubsystem.resetPose(new Pose2d())));
+        driverController.start().onTrue(new InstantCommand(() -> drivetrainSubsystem.resetPose(new Pose2d(8.0, 3.0, new Rotation2d(0.0)))));
 
         driverController.a().whileTrue(swerveTestCommand);
     }
