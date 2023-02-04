@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utility.PhotonVisionUtil;
 
@@ -71,46 +72,50 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // // Update gyroscope sensor values
-        // gyroIO.updateInputs(gyroInputs);
-        // Logger.getInstance().processInputs("Drivetrain/Gyro", gyroInputs);
+        // Update gyroscope sensor values
+        gyroIO.updateInputs(gyroInputs);
+        Logger.getInstance().processInputs("Drivetrain/Gyro", gyroInputs);
 
-        // for (int i = 0; i < swerveModules.length; ++i) {
-        //     // Update all the sensor values of each module
-        //     swerveModules[i].updateInputs();
+        for (int i = 0; i < swerveModules.length; ++i) {
+            // Update all the sensor values of each module
+            swerveModules[i].updateInputs();
 
-        //     // Read the current module position
-        //     modulePositions[i] = swerveModules[i].getCurrentPosition();
-        // }
+            // Read the current module position
+            modulePositions[i] = swerveModules[i].getCurrentPosition();
+        }
 
-        // // Calculate each module's target state based on the target chassis velocity
-        // SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(targetChassisVelocity);
-        // SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND);
+        // Calculate each module's target state based on the target chassis velocity
+        SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(targetChassisVelocity);
+        SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND);
 
-        // // Set the target state for each module
-        // SwerveModuleState[] optimizedModuleStates = new SwerveModuleState[swerveModules.length];
-        // for (int i = 0; i < swerveModules.length; ++i) {
-        //     // Optimize the module state for the current module position
-        //     optimizedModuleStates[i] = SwerveModuleState.optimize(moduleStates[i], modulePositions[i].angle);
+        // Set the target state for each module
+        SwerveModuleState[] optimizedModuleStates = new SwerveModuleState[swerveModules.length];
+        for (int i = 0; i < swerveModules.length; ++i) {
+            // Optimize the module state for the current module position
+            optimizedModuleStates[i] = SwerveModuleState.optimize(moduleStates[i], modulePositions[i].angle);
 
-        //     swerveModules[i].setTargetState(optimizedModuleStates[i]);
-        // }
+            swerveModules[i].setTargetState(optimizedModuleStates[i]);
+        }
 
-        // // Copy components of chassis speeds into double array that we can send to AdvantageKit.
-        // chassisVelocityLogged[0] = targetChassisVelocity.vxMetersPerSecond;
-        // chassisVelocityLogged[1] = targetChassisVelocity.vyMetersPerSecond;
-        // chassisVelocityLogged[2] = targetChassisVelocity.omegaRadiansPerSecond;
+        // Copy components of chassis speeds into double array that we can send to AdvantageKit.
+        chassisVelocityLogged[0] = targetChassisVelocity.vxMetersPerSecond;
+        chassisVelocityLogged[1] = targetChassisVelocity.vyMetersPerSecond;
+        chassisVelocityLogged[2] = targetChassisVelocity.omegaRadiansPerSecond;
 
-        // Logger.getInstance().recordOutput("Drivetrain/DesiredChassisVelocity", chassisVelocityLogged);
-        // Logger.getInstance().recordOutput("Drivetrain/DesiredModuleStates", moduleStates);
-        // Logger.getInstance().recordOutput("Drivetrain/OptimizedModuleStates", optimizedModuleStates);
+        Logger.getInstance().recordOutput("Drivetrain/DesiredChassisVelocity", chassisVelocityLogged);
+        Logger.getInstance().recordOutput("Drivetrain/DesiredModuleStates", moduleStates);
+        Logger.getInstance().recordOutput("Drivetrain/OptimizedModuleStates", optimizedModuleStates);
 
-        // // Update pose estimation
-        // Pose2d pose = poseEstimator.update(new Rotation2d(gyroInputs.yawRadians), modulePositions);
-        // poseEstimator.addVisionMeasurement(photonvision.getRobotPose3d().estimatedPose.toPose2d(), photonvision.getRobotPose3d().timestampSeconds);
-        // pose = poseEstimator.getEstimatedPosition();
+        // Update pose estimation
+        Pose2d pose = poseEstimator.update(new Rotation2d(gyroInputs.yawRadians), modulePositions);
+        if (photonvision.getRobotPose3d().isPresent()) {
+            if (Timer.getFPGATimestamp() - photonvision.getRobotPose3d().get().timestampSeconds <= 1) {
+                poseEstimator.addVisionMeasurement(photonvision.getRobotPose3d().get().estimatedPose.toPose2d(), photonvision.getRobotPose3d().get().timestampSeconds);
+            }
+        }
+        pose = poseEstimator.getEstimatedPosition();
 
-        // Logger.getInstance().recordOutput("Drivetrain/Pose", pose);
+        Logger.getInstance().recordOutput("Drivetrain/Pose", pose);
     }
 
     public Pose2d getPose() {
