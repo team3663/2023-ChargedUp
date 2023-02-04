@@ -109,12 +109,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
     public void resetPose (Pose2d newPose) {
-        if (Robot.isReal()) {
-            odometry.resetPosition(new Rotation2d(gyroInputs.yawRadians), modulePositions, newPose);
-        } else {
-            // If we are running in the simulator make sure the pose and gyro rotation values are the same.
-            odometry.resetPosition(newPose.getRotation(), modulePositions, newPose);
-        }
+        odometry.resetPosition(new Rotation2d(gyroInputs.yawRadians), modulePositions, newPose);
     }
 
     public double getMaxTranslationalVelocityMetersPerSecond() {
