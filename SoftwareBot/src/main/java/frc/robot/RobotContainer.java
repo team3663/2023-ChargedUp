@@ -85,7 +85,9 @@ public class RobotContainer {
                 new SwerveModuleIO() {},
                 new SwerveModuleIO() {},
                 new SwerveModuleIO() {},
-                new PhotonCamera[] {new PhotonCamera("Left_Camera"), new PhotonCamera("Right_Camera")},
+                new PhotonCamera[] {
+                    new PhotonCamera("Left_Camera"),
+                    new PhotonCamera("Right_Camera")},
                 new Transform3d[] {
                     new Transform3d(new Pose3d(), new Pose3d(-cx, cy, cz, new Rotation3d(0, 0, 0.5))),
                     new Transform3d(new Pose3d(), new Pose3d(-cx, -cy, cz, new Rotation3d(0, 0, -0.5)))

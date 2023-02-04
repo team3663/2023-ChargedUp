@@ -40,6 +40,8 @@ public class PhotonVisionUtil extends SubsystemBase {
   private GenericEntry robotY;
   private GenericEntry robotTheta;
   private GenericEntry targetAmbiguity;
+  private GenericEntry activeCameras;
+  private GenericEntry targetCount;
 
   private boolean n_hasTargets;
   private int n_targetID;
@@ -50,6 +52,8 @@ public class PhotonVisionUtil extends SubsystemBase {
   private double n_robotY;
   private double n_robotTheta;
   private double n_targetAmbiguity;
+  private int n_activeCameras;
+  private int n_targetCount;
 
   private final PhotonCamera[] cameras;
   private final Transform3d[] cameraPoses;
@@ -95,7 +99,10 @@ public class PhotonVisionUtil extends SubsystemBase {
 
   @Override
   public void periodic() {
+    ArrayList<Optional<EstimatedRobotPose>> poseGuesses = new ArrayList<Optional<EstimatedRobotPose>>();
     ArrayList<PhotonPipelineResult> pipelineResults = new ArrayList<PhotonPipelineResult>();
+    n_activeCameras = 0;
+    n_targetCount = 0;
     int missCounter = 0;
 
     for (PhotonCamera c : cameras) {
@@ -105,15 +112,18 @@ public class PhotonVisionUtil extends SubsystemBase {
 
     for (int i = 0; i < pipelineResults.size(); i++) {
       if (pipelineResults.get(i).hasTargets()) {
-        estPose = poseEstimators.get(i).update();
+        poseGuesses.add(poseEstimators.get(i).update());
         chosenTarget = pipelineResults.get(i).getBestTarget();
         targetAcquired = true;
+        n_activeCameras++;
+        n_targetCount += pipelineResults.get(i).targets.size();
       } else {
         missCounter++;
       }
     }
 
-    // TODO: Make sure this actually works; It probably won't
+    estPose = getEstPose(poseGuesses);
+
     if  (missCounter == pipelineResults.size()) {
       targetAcquired = false;
     }
@@ -150,6 +160,40 @@ public class PhotonVisionUtil extends SubsystemBase {
     dp /= 100;    
 
     return dp;
+  }
+
+  // This might be really buggy
+  public Optional<EstimatedRobotPose> getEstPose (ArrayList<Optional<EstimatedRobotPose>> poseGuesses) {
+    int c = poseGuesses.size();
+
+    double avgX = 0;
+    double avgY = 0;
+    double avgZ = 0;
+    double avgAngleX = 0;
+    double avgAngleY = 0;
+    double avgAngleZ = 0;
+    double avgTime = 0;
+
+    for (int i = 0; i < c; i++) {
+      avgX += poseGuesses.get(i).get().estimatedPose.getX();
+      avgY += poseGuesses.get(i).get().estimatedPose.getY();
+      avgZ += poseGuesses.get(i).get().estimatedPose.getZ();
+      avgAngleX += poseGuesses.get(i).get().estimatedPose.getRotation().getX();
+      avgAngleY += poseGuesses.get(i).get().estimatedPose.getRotation().getY();
+      avgAngleZ += poseGuesses.get(i).get().estimatedPose.getRotation().getZ();
+      avgTime += poseGuesses.get(i).get().timestampSeconds;
+    }
+
+    avgX /= c;
+    avgY /= c;
+    avgZ /= c;
+    avgAngleX /= c;
+    avgAngleY /= c;
+    avgAngleZ /= c;
+    avgTime /= c;
+
+    Pose3d estPose = new Pose3d(avgX, avgY, avgZ, new Rotation3d(avgAngleX, avgAngleY, avgAngleZ));
+    return Optional.of(new EstimatedRobotPose(estPose, avgTime));
   }
 
   public Optional<EstimatedRobotPose> getRobotPose3d () {
@@ -208,6 +252,16 @@ public class PhotonVisionUtil extends SubsystemBase {
       .withPosition(2, 1)
       .withSize(1, 1)
       .getEntry();
+
+    activeCameras = visionTab.add("Active Cameras", 0)
+      .withPosition(0, 2)
+      .withSize(1, 1)
+      .getEntry();
+
+    targetCount = visionTab.add("Target Sightings", 0)
+      .withPosition(1, 2)
+      .withSize(1, 1)
+      .getEntry();
   }
 
   private void updateTelemetry () {
@@ -220,5 +274,7 @@ public class PhotonVisionUtil extends SubsystemBase {
     robotX.setValue(n_robotX);
     robotY.setValue(n_robotY);
     robotTheta.setValue(n_robotTheta);
+    activeCameras.setValue(n_activeCameras);
+    targetCount.setValue(n_targetCount);
   }
 }
