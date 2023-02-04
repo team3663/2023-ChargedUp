@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.sim.SimModelData;
 
 import org.littletonrobotics.junction.Logger;
@@ -108,7 +109,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
     public void resetPose (Pose2d newPose) {
-        odometry.resetPosition(new Rotation2d(gyroInputs.yawRadians), modulePositions, newPose);
+        if (Robot.isReal()) {
+            odometry.resetPosition(new Rotation2d(gyroInputs.yawRadians), modulePositions, newPose);
+        } else {
+            // If we are running in the simulator make sure the pose and gyro rotation values are the same.
+            odometry.resetPosition(newPose.getRotation(), modulePositions, newPose);
+        }
     }
 
     public double getMaxTranslationalVelocityMetersPerSecond() {
