@@ -110,3 +110,8 @@ repositories {
         }
     }
 }
+
+// Allow the AdvantageKit shims to work.
+configurations.all {
+    exclude group: "edu.wpi.first.wpilibj"
+}
