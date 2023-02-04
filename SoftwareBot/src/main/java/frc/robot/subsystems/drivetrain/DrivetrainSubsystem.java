@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utility.PhotonVisionUtil;
 
-import frc.robot.Robot;
 import frc.robot.sim.SimModelData;
 
 import org.littletonrobotics.junction.Logger;
