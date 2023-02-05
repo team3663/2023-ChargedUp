@@ -10,7 +10,6 @@ import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 
@@ -19,7 +18,11 @@ public final class AutoCommandFactory {
     private static PathConstraints pathConstraints = new PathConstraints(4.0, 3.0);
     
 
-    public static CommandBase createTestPathAuto(DrivetrainSubsystem drivetrain) {
+    public static Command createNullAuto() {
+        return null;
+    }
+    
+    public static Command createTestAuto(DrivetrainSubsystem drivetrain) {
 
         PathPlannerTrajectory path = PathPlanner.loadPath("TestPath", pathConstraints);
         HashMap<String, Command> eventMap = new HashMap<>();
