@@ -4,29 +4,19 @@
 
 package frc.robot;
 
-import java.util.HashMap;
-
-import org.photonvision.PhotonCamera;
-
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.auto.PIDConstants;
-import com.pathplanner.lib.auto.SwerveAutoBuilder;
-
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+
 import frc.robot.Constants.ControllerPorts;
+import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DriveCircleCommand;
-import frc.robot.subsystems.drivetrain.*;
+import frc.robot.subsystems.SubsystemFactory;
+import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
+import frc.robot.utility.AutoCommandChooser;
 import frc.robot.utility.ControllerHelper;
 
 /**
@@ -37,14 +27,14 @@ import frc.robot.utility.ControllerHelper;
  */
 public class RobotContainer {
 
-    private final CommandXboxController driverController =
-            new CommandXboxController(ControllerPorts.DRIVER);
+    private final CommandXboxController driverController = new CommandXboxController(ControllerPorts.DRIVER);
+    private AutoCommandChooser autoChooser;
 
     // Subsystems       
     private DrivetrainSubsystem drivetrainSubsystem;
 
     // Commands
-    private DriveCircleCommand swerveTestCommand;
+    private DriveCircleCommand driveCircleCommand;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -54,91 +44,45 @@ public class RobotContainer {
         createSubsystems();
         createCommands();
         configureBindings();
+        setupAutoChooser();
     }
 
     private void createSubsystems() {
-        if (Robot.isReal()) {
-            double cx = Units.inchesToMeters(10.5);
-            double cy = Units.inchesToMeters(11.75);
-            double cz = Units.inchesToMeters(30);
 
-            drivetrainSubsystem = new DrivetrainSubsystem(
-                new GyroIOPigeon2(Constants.CanIds.DRIVETRAIN_PIGEON_ID),
-                new SwerveModuleIOFalcon500(Constants.CanIds.DRIVETRAIN_FRONT_LEFT_MODULE_DRIVE_MOTOR,
-                        Constants.CanIds.DRIVETRAIN_FRONT_LEFT_MODULE_STEER_MOTOR,
-                        Constants.CanIds.DRIVETRAIN_FRONT_LEFT_MODULE_STEER_ENCODER,
-                        Constants.FRONT_LEFT_MODULE_STEER_OFFSET),
-                new SwerveModuleIOFalcon500(Constants.CanIds.DRIVETRAIN_FRONT_RIGHT_MODULE_DRIVE_MOTOR,
-                        Constants.CanIds.DRIVETRAIN_FRONT_RIGHT_MODULE_STEER_MOTOR,
-                        Constants.CanIds.DRIVETRAIN_FRONT_RIGHT_MODULE_STEER_ENCODER,
-                        Constants.FRONT_RIGHT_MODULE_STEER_OFFSET),
-                new SwerveModuleIOFalcon500(Constants.CanIds.DRIVETRAIN_BACK_LEFT_MODULE_DRIVE_MOTOR,
-                        Constants.CanIds.DRIVETRAIN_BACK_LEFT_MODULE_STEER_MOTOR,
-                        Constants.CanIds.DRIVETRAIN_BACK_LEFT_MODULE_STEER_ENCODER,
-                        Constants.BACK_LEFT_MODULE_STEER_OFFSET),
-                new SwerveModuleIOFalcon500(Constants.CanIds.DRIVETRAIN_BACK_RIGHT_MODULE_DRIVE_MOTOR,
-                        Constants.CanIds.DRIVETRAIN_BACK_RIGHT_MODULE_STEER_MOTOR,
-                        Constants.CanIds.DRIVETRAIN_BACK_RIGHT_MODULE_STEER_ENCODER,
-                        Constants.BACK_RIGHT_MODULE_STEER_OFFSET),
-                new PhotonCamera[] {
-                    new PhotonCamera("Left_Camera"),
-                    new PhotonCamera("Right_Camera")
-                },
-                new Transform3d[] {
-                    new Transform3d(new Pose3d(), new Pose3d(-cx, cy, cz, new Rotation3d(0, 0, 0.5))),
-                    new Transform3d(new Pose3d(), new Pose3d(-cx, -cy, cz, new Rotation3d(0, 0, -0.5)))
-                }
-            );
-        } else {
-            GyroIOSim gyro = new GyroIOSim();
-            
-            drivetrainSubsystem = new DrivetrainSubsystem(gyro,
-                    new SwerveModuleIOSim(),
-                    new SwerveModuleIOSim(),
-                    new SwerveModuleIOSim(),
-                    new SwerveModuleIOSim(),
-                    new PhotonCamera[] {new PhotonCamera("null")},
-                    new Transform3d[] {new Transform3d(), new Transform3d()}
-                );
-        }
+        drivetrainSubsystem = SubsystemFactory.createDrivetrain();
+    }
 
+    private void createCommands() {
+
+        // Create the default drivce command and attach it to the drivetrain subsystem.
         drivetrainSubsystem.setDefaultCommand(new DefaultDrivetrainCommand(drivetrainSubsystem,
                 () -> ControllerHelper.modifyAxis(-driverController.getLeftY()) * drivetrainSubsystem.getMaxTranslationalVelocityMetersPerSecond(),
                 () -> ControllerHelper.modifyAxis(-driverController.getLeftX()) * drivetrainSubsystem.getMaxTranslationalVelocityMetersPerSecond(),
                 () -> ControllerHelper.modifyAxis(-driverController.getRightX()) * drivetrainSubsystem.getMaxAngularVelocityRadPerSec()
         ));
-    }
 
-    private Command createAutoRoutine () {
-
-        PathPlannerTrajectory path = PathPlanner.loadPath("TestPath", new PathConstraints(4, 3));
-        HashMap<String, Command> eventMap = new HashMap<>();
-
-        SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
-            () -> drivetrainSubsystem.getPose(),
-            (pose) -> drivetrainSubsystem.resetPose(pose),
-            new PIDConstants(5.0, 0, 0),
-            new PIDConstants(0.5, 0, 0),
-            (chassisSpeeds) -> drivetrainSubsystem.setTargetChassisVelocity(chassisSpeeds),
-            eventMap,
-            false,
-            drivetrainSubsystem
-        );
-
-        return autoBuilder.fullAuto(path);
-    }
-
-    private void createCommands() {
-        swerveTestCommand = new DriveCircleCommand(drivetrainSubsystem);
+        driveCircleCommand = new DriveCircleCommand(drivetrainSubsystem);
     }
 
     private void configureBindings() {
 
         // Button to reset the robot's pose to a default starting point.  Handy when running in the simulator and 
         // you accidently lose the robot outside the game field, should NOT be configured in the competition bot.
-        driverController.start().onTrue(new InstantCommand(() -> drivetrainSubsystem.resetPose(new Pose2d(0.0, 0.0, new Rotation2d(0.0)))));
+        driverController.start().onTrue(new InstantCommand(() -> drivetrainSubsystem.resetPose(new Pose2d(8.0, 3.0, new Rotation2d(0.0)))));
 
-        driverController.a().whileTrue(swerveTestCommand);
+        driverController.a().whileTrue(driveCircleCommand);
+    }
+
+    private void setupAutoChooser()
+    {
+        autoChooser = new AutoCommandChooser();
+
+        // Register all the supported auto commands
+        autoChooser.registerDefaultCreator("Do Nothing", () -> AutoCommandFactory.createNullAuto());
+        autoChooser.registerCreator("Test Path", () -> AutoCommandFactory.createTestAuto(drivetrainSubsystem));
+
+        // Setup the chooser in shuffleboard
+        autoChooser.setup("Driver", 0, 0, 2, 1);
     }
 
     /**
@@ -147,7 +91,6 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        // An example command will be run in autonomous
-        return createAutoRoutine();
+        return autoChooser.getAutonomousCommand();
     }
 }
