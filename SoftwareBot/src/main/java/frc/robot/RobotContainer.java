@@ -13,7 +13,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-
 import frc.robot.Constants.ControllerPorts;
 import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
@@ -23,6 +22,7 @@ import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import frc.robot.utility.AutoCommandChooser;
 import frc.robot.utility.ControllerHelper;
 import frc.robot.utility.PhotonVisionUtil;
+import frc.robot.utility.RobotIdentity;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -55,7 +55,9 @@ public class RobotContainer {
     }
 
     private void createSubsystems() {
-        photonvision = new PhotonVisionUtil(
+        RobotIdentity identity = RobotIdentity.getIdentity();
+
+        photonvision = new PhotonVisionUtil(        
             new PhotonCamera[] {
                 new PhotonCamera("Left_Camera"),
                 new PhotonCamera("Right_Camera")
@@ -65,7 +67,8 @@ public class RobotContainer {
                 new Transform3d(new Pose3d(), Constants.CameraPoses.RIGHT_CAMERA_POSE)
             }
         );
-        drivetrainSubsystem = SubsystemFactory.createDrivetrain(photonvision);
+        
+        drivetrainSubsystem = SubsystemFactory.createDrivetrain(identity, photonvision);
     }
 
     private void createCommands() {
@@ -89,8 +92,7 @@ public class RobotContainer {
         driverController.a().whileTrue(driveCircleCommand);
     }
 
-    private void setupAutoChooser()
-    {
+    private void setupAutoChooser() {
         autoChooser = new AutoCommandChooser();
 
         // Register all the supported auto commands

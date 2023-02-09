@@ -7,9 +7,13 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
+import frc.robot.utility.MacAddressUtil;
+import frc.robot.utility.RobotIdentity;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
+
+import java.util.stream.Collectors;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -31,6 +35,9 @@ public class Robot extends LoggedRobot {
         Logger logger = Logger.getInstance();
 
         logger.addDataReceiver(new NT4Publisher());
+
+        logger.recordMetadata("RobotMacAddresses", MacAddressUtil.getMacAddresses().stream().collect(Collectors.joining(", ", "[", "]")));
+        logger.recordMetadata("RobotIdentity", RobotIdentity.getIdentity().toString());
 
         logger.start();
 

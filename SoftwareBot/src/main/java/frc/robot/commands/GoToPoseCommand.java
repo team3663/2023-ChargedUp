@@ -12,6 +12,8 @@ public class GoToPoseCommand extends CommandBase {
   /** Creates a new GoToPoseCommand. */
   public GoToPoseCommand(DrivetrainSubsystem drivetrain) {
     this.drivetrain = drivetrain;
+
+    addRequirements(this.drivetrain);
   }
 
   // Called when the command is initially scheduled.
