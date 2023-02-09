@@ -4,18 +4,15 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utility.PhotonVisionUtil;
 
 import frc.robot.sim.SimModelData;
 
 import org.littletonrobotics.junction.Logger;
-import org.photonvision.PhotonCamera;
 
 public class DrivetrainSubsystem extends SubsystemBase {
     private static final double WHEELBASE_X_METERS = Units.inchesToMeters(28.0);
@@ -42,7 +39,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public DrivetrainSubsystem(GyroIO gyroIO,
                                SwerveModuleIO frontLeftModuleIO, SwerveModuleIO frontRightModuleIO,
                                SwerveModuleIO backLeftModuleIO, SwerveModuleIO backRightModuleIO,
-                               PhotonCamera[] cameras, Transform3d[] cameraPoses) {
+                               PhotonVisionUtil photonvision) {
         this.gyroIO = gyroIO;
 
         this.swerveModules = new SwerveModule[]{new SwerveModule("FrontLeftModule", frontLeftModuleIO),
@@ -71,7 +68,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         poseEstimator = new SwerveDrivePoseEstimator(kinematics, new Rotation2d(), modulePositions, new Pose2d(),
             VecBuilder.fill(0.01, 0.01, 0.001), VecBuilder.fill(0.1, 0.1, 0.1));
 
-        photonvision = new PhotonVisionUtil(cameras, cameraPoses);
+        this.photonvision = photonvision;
     }
 
     @Override

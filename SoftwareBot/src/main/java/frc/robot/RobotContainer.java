@@ -4,8 +4,12 @@
 
 package frc.robot;
 
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -18,6 +22,7 @@ import frc.robot.subsystems.SubsystemFactory;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import frc.robot.utility.AutoCommandChooser;
 import frc.robot.utility.ControllerHelper;
+import frc.robot.utility.PhotonVisionUtil;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -33,6 +38,9 @@ public class RobotContainer {
     // Subsystems       
     private DrivetrainSubsystem drivetrainSubsystem;
 
+    // Utilities
+    private PhotonVisionUtil photonvision;
+
     // Commands
     private DriveCircleCommand driveCircleCommand;
 
@@ -40,7 +48,6 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-
         createSubsystems();
         createCommands();
         configureBindings();
@@ -48,8 +55,17 @@ public class RobotContainer {
     }
 
     private void createSubsystems() {
-
-        drivetrainSubsystem = SubsystemFactory.createDrivetrain();
+        photonvision = new PhotonVisionUtil(
+            new PhotonCamera[] {
+                new PhotonCamera("Left_Camera"),
+                new PhotonCamera("Right_Camera")
+            },
+            new Transform3d[] {
+                new Transform3d(new Pose3d(), Constants.CameraPoses.LEFT_CAMERA_POSE),
+                new Transform3d(new Pose3d(), Constants.CameraPoses.RIGHT_CAMERA_POSE)
+            }
+        );
+        drivetrainSubsystem = SubsystemFactory.createDrivetrain(photonvision);
     }
 
     private void createCommands() {
@@ -83,6 +99,10 @@ public class RobotContainer {
 
         // Setup the chooser in shuffleboard
         autoChooser.setup("Driver", 0, 0, 2, 1);
+    }
+
+    public PhotonVisionUtil gePhotonVision () {
+        return photonvision;
     }
 
     /**
