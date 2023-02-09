@@ -112,9 +112,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // Update pose estimation
         Pose2d pose = poseEstimator.update(new Rotation2d(gyroInputs.yawRadians), modulePositions);
         if (photonvision.getRobotPose3d().isPresent()) {
-            if (Timer.getFPGATimestamp() - photonvision.getRobotPose3d().get().timestampSeconds <= 1) {
-                poseEstimator.addVisionMeasurement(photonvision.getRobotPose3d().get().estimatedPose.toPose2d(), photonvision.getRobotPose3d().get().timestampSeconds);
-            }
+            poseEstimator.addVisionMeasurement(photonvision.getRobotPose3d().get().estimatedPose.toPose2d(), photonvision.getRobotPose3d().get().timestampSeconds);
+            Logger.getInstance().recordOutput("Drivetrain/VisionPoseMeasurement", photonvision.getRobotPose3d().get().estimatedPose.toPose2d());
         }
         pose = poseEstimator.getEstimatedPosition();
 

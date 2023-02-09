@@ -64,7 +64,7 @@ public class PhotonVisionUtil extends SubsystemBase {
 
   private final ArrayList<PhotonPoseEstimator> poseEstimators = new ArrayList<PhotonPoseEstimator>();
 
-  private Optional<EstimatedRobotPose> estPose;
+  private Optional<EstimatedRobotPose> estPose = Optional.empty();
   private Pose3d robotPose;
 
   private boolean targetAcquired;
@@ -89,7 +89,7 @@ public class PhotonVisionUtil extends SubsystemBase {
     robotPose = new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0));
 
     for (int i = 0; i < cameras.length; i++) {
-      PhotonPoseEstimator pe = new PhotonPoseEstimator(layout, PoseStrategy.AVERAGE_BEST_TARGETS, cameras[i], cameraPoses[i]);
+      PhotonPoseEstimator pe = new PhotonPoseEstimator(layout, PoseStrategy.LOWEST_AMBIGUITY, cameras[i], cameraPoses[i]);
       poseEstimators.add(pe);
     }
 
@@ -131,6 +131,7 @@ public class PhotonVisionUtil extends SubsystemBase {
       targetAcquired = false;
     }
 
+    /*
     if (targetAcquired) {
       n_hasTargets= true;
       n_targetID = chosenTarget.getFiducialId();
@@ -155,6 +156,7 @@ public class PhotonVisionUtil extends SubsystemBase {
       n_robotTheta = 0;
     }
     updateTelemetry();
+    */
   }
 
   private double processDistance (double dist) {
