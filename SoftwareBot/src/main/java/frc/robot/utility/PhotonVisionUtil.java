@@ -19,6 +19,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -89,8 +90,9 @@ public class PhotonVisionUtil extends SubsystemBase {
     robotPose = new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0));
 
     for (int i = 0; i < cameras.length; i++) {
-      PhotonPoseEstimator pe = new PhotonPoseEstimator(layout, PoseStrategy.LOWEST_AMBIGUITY, cameras[i], cameraPoses[i]);
+      PhotonPoseEstimator pe = new PhotonPoseEstimator(layout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, cameras[i], cameraPoses[i]);
       poseEstimators.add(pe);
+      pe.setReferencePose(new Pose2d());
     }
 
     initTelemetry();
@@ -165,6 +167,12 @@ public class PhotonVisionUtil extends SubsystemBase {
     dp /= 100;    
 
     return dp;
+  }
+
+  public void setReferencePose(Pose2d pose) {
+    for (PhotonPoseEstimator pe : poseEstimators) {
+      pe.setReferencePose(pose);
+    }
   }
 
   // This doesn't work

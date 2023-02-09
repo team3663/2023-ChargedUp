@@ -69,7 +69,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         );
 
         poseEstimator = new SwerveDrivePoseEstimator(kinematics, new Rotation2d(), modulePositions, new Pose2d(),
-            VecBuilder.fill(0.1, 0.1, 0.1), VecBuilder.fill(0.9, 0.9, 2.0));
+            VecBuilder.fill(0.01, 0.01, 0.001), VecBuilder.fill(0.1, 0.1, 0.1));
 
         photonvision = new PhotonVisionUtil(cameras, cameraPoses);
     }
@@ -116,6 +116,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
             Logger.getInstance().recordOutput("Drivetrain/VisionPoseMeasurement", photonvision.getRobotPose3d().get().estimatedPose.toPose2d());
         }
         pose = poseEstimator.getEstimatedPosition();
+
+        photonvision.setReferencePose(pose);
 
         // Update simulation model data
         SimModelData.GetInstance().updateDrivetrainData(getPose(), targetChassisVelocity);
