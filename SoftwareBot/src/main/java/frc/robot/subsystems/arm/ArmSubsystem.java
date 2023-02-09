@@ -64,6 +64,7 @@ public class ArmSubsystem extends SubsystemBase {
     private final MechanismRoot2d targetPositionRoot;
     private final MechanismLigament2d targetPositionLigament;
 
+    private final PIDController shoulderController = new PIDController(1.0, 0.0, 0.0);
     private final PIDController elbowController = new PIDController(10.0, 1.0, 2.0);
     private final PIDController wristController = new PIDController(1.0, 0.0, 0.0);
 
@@ -96,6 +97,7 @@ public class ArmSubsystem extends SubsystemBase {
 //        io.setTargetAngles(currentState.shoulderAngleRad, currentState.elbowAngleRad, currentState.wristAngleRad);
 
         inputs.shoulderAngleRad = targetState.shoulderAngleRad;
+        io.setShoulderVoltage(shoulderController.calculate(inputs.shoulderAngleRad, targetState.shoulderAngleRad));
         io.setElbowVoltage(elbowController.calculate(inputs.elbowAngleRad, targetState.elbowAngleRad));
         io.setWristVoltage(wristController.calculate(inputs.wristAngleRad, targetState.wristAngleRad));
 
@@ -112,7 +114,7 @@ public class ArmSubsystem extends SubsystemBase {
         currentIntakeLigament.setAngle(Units.radiansToDegrees(-inputs.wristAngleRad));
 
         targetPositionRoot.setPosition(-targetPose.getX() + 2, targetPose.getY() + 2);
-        targetPositionLigament.setAngle(targetPose.getRotation().getDegrees() + 180.0);
+        targetPositionLigament.setAngle(targetPose.getRotation().getDegrees());
 
         targetArmLigament.setAngle(Units.radiansToDegrees(targetState.shoulderAngleRad));
         targetForearmLigament.setAngle(Units.radiansToDegrees(Math.PI - targetState.elbowAngleRad));

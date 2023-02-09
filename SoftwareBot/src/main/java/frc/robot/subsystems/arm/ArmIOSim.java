@@ -26,13 +26,16 @@ public class ArmIOSim implements ArmIO {
     private static final Translation2d SHOULDER_ARM_CG_OFFSET = new Translation2d(Units.inchesToMeters(22.0), 0.0);
     private static final Translation2d SHOULDER_ELBOW_OFFSET = new Translation2d(Units.inchesToMeters(44.0), 0.0);
     private static final DCMotor SHOULDER_MOTOR = DCMotor.getFalcon500(2).withReduction(100.0);
+    private static final double SHOULDER_CURRENT_LIMIT = 20.0;
 
     private static final Translation2d ELBOW_FOREARM_CG_OFFSET = new Translation2d(Units.inchesToMeters(18.0), 0.0);
     private static final Translation2d ELBOW_WRIST_OFFSET = new Translation2d(Units.inchesToMeters(36.0), 0.0);
-    private static final DCMotor ELBOW_MOTOR = DCMotor.getFalcon500(2).withReduction(10.0);
+    private static final DCMotor ELBOW_MOTOR = DCMotor.getFalcon500(2).withReduction(100.0);
+    private static final double ELBOW_CURRENT_LIMIT = 10.0;
 
     private static final Translation2d WRIST_INTAKE_CG_OFFSET = new Translation2d(Units.inchesToMeters(4.0), 0.0);
-    private static final DCMotor WRIST_MOTOR = DCMotor.getFalcon500(1).withReduction(10.0);
+    private static final DCMotor WRIST_MOTOR = DCMotor.getFalcon500(1).withReduction(50.0);
+    private static final double WRIST_CURRENT_LIMIT = 10.0;
 
     private double shoulderVolts = 0.0;
     private double elbowVolts = 0.0;
@@ -60,17 +63,17 @@ public class ArmIOSim implements ArmIO {
         inputs.shoulderAngleRad = xNext.get(0, 0);
         inputs.shoulderAngularVelRadPerSec = xNext.get(1, 0);
         inputs.shoulderAppliedVoltage = shoulderVolts;
-        inputs.shoulderCurrentDrawAmps = 0.0;
+        inputs.shoulderCurrentDrawAmps = Math.min(Math.abs(SHOULDER_MOTOR.getCurrent(inputs.shoulderAngularVelRadPerSec, inputs.shoulderAppliedVoltage)), SHOULDER_CURRENT_LIMIT);
 
         inputs.elbowAngleRad = xNext.get(2, 0);
         inputs.elbowAngularVelRadPerSec = xNext.get(3, 0);
         inputs.elbowAppliedVoltage = elbowVolts;
-        inputs.elbowCurrentDrawAmps = 0.0;
+        inputs.elbowCurrentDrawAmps = Math.min(Math.abs(ELBOW_MOTOR.getCurrent(inputs.elbowAngularVelRadPerSec, inputs.elbowAppliedVoltage)), ELBOW_CURRENT_LIMIT);
 
         inputs.wristAngleRad = xNext.get(4, 0);
         inputs.wristAngularVelRadPerSec = xNext.get(5, 0);
         inputs.wristAppliedVoltage = wristVolts;
-        inputs.wristCurrentDrawAmps = 0.0;
+        inputs.wristCurrentDrawAmps = Math.min(Math.abs(WRIST_MOTOR.getCurrent(inputs.wristAngularVelRadPerSec, inputs.wristAppliedVoltage)), WRIST_CURRENT_LIMIT);
     }
 
     private static Matrix<N6, N1> calculateDynamics(Matrix<N6, N1> x, Matrix<N3, N1> u) {
@@ -103,12 +106,17 @@ public class ArmIOSim implements ArmIO {
         // Shoulder
         double shoulderAppliedVolts = u.get(0, 0);
         double shoulderAngularVelocity = x.get(1, 0);
-        xDot.set(0, 0, x.get(1, 0));
+        double shoulderCurrentDraw = MathUtil.clamp(SHOULDER_MOTOR.getCurrent(shoulderAngularVelocity, shoulderAppliedVolts), -SHOULDER_CURRENT_LIMIT, SHOULDER_CURRENT_LIMIT);
+        double shoulderTorque = SHOULDER_MOTOR.getTorque(shoulderCurrentDraw);
+
+        double shoulderAngularAcceleration = shoulderTorque / shoulderMomentOfInertia;
+        xDot.set(0, 0, shoulderAngularVelocity);
+        xDot.set(1, 0, shoulderAngularAcceleration);
 
         // Elbow
         double elbowAppliedVolts = u.get(1, 0);
         double elbowAngularVelocity = x.get(3, 0);
-        double elbowCurrentDraw = MathUtil.clamp(ELBOW_MOTOR.getCurrent(elbowAngularVelocity, elbowAppliedVolts), -40, 40);
+        double elbowCurrentDraw = MathUtil.clamp(ELBOW_MOTOR.getCurrent(elbowAngularVelocity, elbowAppliedVolts), -ELBOW_CURRENT_LIMIT, ELBOW_CURRENT_LIMIT);
         double elbowTorque = ELBOW_MOTOR.getTorque(elbowCurrentDraw);
         elbowTorque += elbowCg.getNorm() * 9.81 * elbowCg.getAngle().getCos();
 
@@ -119,9 +127,8 @@ public class ArmIOSim implements ArmIO {
         // Wrist
         double wristAppliedVolts = u.get(2, 0);
         double wristAngularVelocity = x.get(5, 0);
-        double wristCurrentDraw = MathUtil.clamp(WRIST_MOTOR.getCurrent(wristAngularVelocity, wristAppliedVolts), -40, 40);
+        double wristCurrentDraw = MathUtil.clamp(WRIST_MOTOR.getCurrent(wristAngularVelocity, wristAppliedVolts), -WRIST_CURRENT_LIMIT, WRIST_CURRENT_LIMIT);
         double wristTorque = WRIST_MOTOR.getTorque(wristCurrentDraw);
-//        System.out.println(wristTorque);
 
         Rotation2d intakeAngle = new Rotation2d(shoulderAngleRad + (Math.PI - elbowAngleRad) - wristAngleRad);
         wristTorque += wristIntakeCgDistance * 9.81 * intakeAngle.getCos();
