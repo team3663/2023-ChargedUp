@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-
 import frc.robot.Constants.ControllerPorts;
 import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
@@ -18,6 +17,7 @@ import frc.robot.subsystems.SubsystemFactory;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import frc.robot.utility.AutoCommandChooser;
 import frc.robot.utility.ControllerHelper;
+import frc.robot.utility.RobotIdentity;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -48,8 +48,9 @@ public class RobotContainer {
     }
 
     private void createSubsystems() {
+        RobotIdentity identity = RobotIdentity.getIdentity();
 
-        drivetrainSubsystem = SubsystemFactory.createDrivetrain();
+        drivetrainSubsystem = SubsystemFactory.createDrivetrain(identity);
     }
 
     private void createCommands() {
@@ -73,8 +74,7 @@ public class RobotContainer {
         driverController.a().whileTrue(driveCircleCommand);
     }
 
-    private void setupAutoChooser()
-    {
+    private void setupAutoChooser() {
         autoChooser = new AutoCommandChooser();
 
         // Register all the supported auto commands
