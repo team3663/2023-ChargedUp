@@ -91,10 +91,8 @@ public class SwerveModuleIOFalcon500 implements SwerveModuleIO {
 
         steerEncoder.configAllSettings(steerEncoderConfig);
 
-        // Workaround so that we always read a valid angle from the steer encoder
-        // when setting up the steer motor.
-        // TODO: Avoid using Thread.sleep and replace with an actual way to check if the
-        // steer encoder has received valid data
+        // Workaround so that we always read a valid angle from the steer encoder when setting up the steer motor.
+        // Avoid using Thread.sleep and replace with an actual way to check if the steer encoder has received valid data
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
