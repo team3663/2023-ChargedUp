@@ -24,6 +24,12 @@ public interface ArmIO {
     default void updateInputs(ArmIOInputs inputs) {
     }
 
-    default void setTargetAngles(double shoulderAngle, double elbowAngle, double wristAngle) {
+    default void setShoulderVoltage(double volts) {
+    }
+
+    default void setElbowVoltage(double volts) {
+    }
+
+    default void setWristVoltage(double volts) {
     }
 }
