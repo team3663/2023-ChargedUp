@@ -69,6 +69,7 @@ public class RobotContainer {
             }
         );
 
+        armSubsystem = SubsystemFactory.createArm(identity);
         drivetrainSubsystem = SubsystemFactory.createDrivetrain(identity, photonvision);
     }
 

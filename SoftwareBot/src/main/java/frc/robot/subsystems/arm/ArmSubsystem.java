@@ -94,7 +94,6 @@ public class ArmSubsystem extends SubsystemBase {
 
         // Convert our target pose (task space) to an arm state object (c-space) and update the IO object with new values.
         ArmState targetState = kinematics.inverse(targetPose);
-//        io.setTargetAngles(currentState.shoulderAngleRad, currentState.elbowAngleRad, currentState.wristAngleRad);
 
         inputs.shoulderAngleRad = targetState.shoulderAngleRad;
         io.setShoulderVoltage(shoulderController.calculate(inputs.shoulderAngleRad, targetState.shoulderAngleRad));
