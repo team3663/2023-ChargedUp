@@ -122,11 +122,19 @@ public class DrivetrainSubsystem extends SubsystemBase {
         Logger.getInstance().recordOutput("Drivetrain/Pose", pose);
     }
 
+    public void drive(ChassisSpeeds chassisSpeeds) {
+        this.targetChassisVelocity = chassisSpeeds;
+    }
+
     public Pose2d getPose() {
         return poseEstimator.getEstimatedPosition();
     }
 
     public void resetPose (Pose2d newPose) {
+        poseEstimator.resetPosition(new Rotation2d(), modulePositions, newPose);
+    }
+
+    public void resetPose () {
         poseEstimator.resetPosition(new Rotation2d(), modulePositions, new Pose2d());
     }
 
