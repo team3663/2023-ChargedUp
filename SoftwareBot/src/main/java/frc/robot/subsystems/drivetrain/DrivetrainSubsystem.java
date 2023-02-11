@@ -28,6 +28,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private final SwerveModule[] swerveModules;
     private final SwerveModulePosition[] modulePositions;
     private final SwerveDriveKinematics kinematics;
+    private final SwerveDriveOdometry odometry;
     private final SwerveDrivePoseEstimator poseEstimator;
 
 
@@ -65,7 +66,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 new Translation2d(-WHEELBASE_X_METERS / 2.0, -WHEELBASE_Y_METERS / 2.0)
         );
 
-        poseEstimator = new SwerveDrivePoseEstimator(kinematics, new Rotation2d(), modulePositions, new Pose2d(),
+        Rotation2d initialGyroAngle = new Rotation2d();
+        this.odometry = new SwerveDriveOdometry(kinematics, initialGyroAngle, modulePositions);
+
+        poseEstimator = new SwerveDrivePoseEstimator(kinematics, initialGyroAngle, modulePositions, new Pose2d(),
             VecBuilder.fill(0.01, 0.01, 0.001), VecBuilder.fill(0.1, 0.1, 0.1));
 
         this.photonvision = photonvision;
@@ -106,20 +110,25 @@ public class DrivetrainSubsystem extends SubsystemBase {
         Logger.getInstance().recordOutput("Drivetrain/DesiredModuleStates", moduleStates);
         Logger.getInstance().recordOutput("Drivetrain/OptimizedModuleStates", optimizedModuleStates);
 
-        // Update pose estimation
-        Pose2d pose = poseEstimator.update(new Rotation2d(gyroInputs.yawRadians), modulePositions);
+       // Update odometry and log out pose pased on odometry alone
+       Pose2d odometryPose = odometry.update(new Rotation2d(gyroInputs.yawRadians), modulePositions);
+       Logger.getInstance().recordOutput("Drivetrain/OdometryPose", odometryPose);
+
+        // Calculate updated pose
+        Pose2d newPose = poseEstimator.update(new Rotation2d(gyroInputs.yawRadians), modulePositions);
+
         if (photonvision.getRobotPose3d().isPresent()) {
             poseEstimator.addVisionMeasurement(photonvision.getRobotPose3d().get().estimatedPose.toPose2d(), photonvision.getRobotPose3d().get().timestampSeconds);
-            Logger.getInstance().recordOutput("Drivetrain/VisionPoseMeasurement", photonvision.getRobotPose3d().get().estimatedPose.toPose2d());
+            
+            Logger.getInstance().recordOutput("Drivetrain/PhotonPose", photonvision.getRobotPose3d().get().estimatedPose.toPose2d());
         }
-        pose = poseEstimator.getEstimatedPosition();
+        newPose = poseEstimator.getEstimatedPosition();
+        Logger.getInstance().recordOutput("Drivetrain/Pose", newPose);
 
-        photonvision.setReferencePose(pose);
+        photonvision.setReferencePose(newPose);
 
         // Update simulation model data
         SimModelData.GetInstance().updateDrivetrainData(getPose(), targetChassisVelocity);
-    
-        Logger.getInstance().recordOutput("Drivetrain/Pose", pose);
     }
 
     public Pose2d getPose() {
@@ -127,7 +136,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
     public void resetPose (Pose2d newPose) {
-        poseEstimator.resetPosition(new Rotation2d(), modulePositions, new Pose2d());
+
+        Rotation2d newGyroYaw = new Rotation2d(gyroInputs.yawRadians);
+
+        poseEstimator.resetPosition(newGyroYaw, modulePositions, newPose);
+        odometry.resetPosition(newGyroYaw, modulePositions, newPose);
     }
 
     public double getMaxTranslationalVelocityMetersPerSecond() {
@@ -141,8 +154,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public ChassisSpeeds getTargetChassisSpeeds () {
         return targetChassisVelocity;
     }
-
-    public void setTargetChassisVelocity(ChassisSpeeds targetChassisVelocity) {
+        public void setTargetChassisVelocity(ChassisSpeeds targetChassisVelocity) {
         this.targetChassisVelocity = targetChassisVelocity;
     }
 
