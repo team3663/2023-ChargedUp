@@ -110,11 +110,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
         Logger.getInstance().recordOutput("Drivetrain/DesiredModuleStates", moduleStates);
         Logger.getInstance().recordOutput("Drivetrain/OptimizedModuleStates", optimizedModuleStates);
 
-       // Update odometry and log out pose pased on odometry alone
+       // Update odometry and log out pose based on odometry alone
        Pose2d odometryPose = odometry.update(new Rotation2d(gyroInputs.yawRadians), modulePositions);
        Logger.getInstance().recordOutput("Drivetrain/OdometryPose", odometryPose);
 
-        // Calculate updated pose
+        // Calculate new pose using estimator
         Pose2d newPose = poseEstimator.update(new Rotation2d(gyroInputs.yawRadians), modulePositions);
 
         if (photonvision.getRobotPose3d().isPresent()) {
@@ -122,6 +122,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
             
             Logger.getInstance().recordOutput("Drivetrain/PhotonPose", photonvision.getRobotPose3d().get().estimatedPose.toPose2d());
         }
+        
         newPose = poseEstimator.getEstimatedPosition();
         Logger.getInstance().recordOutput("Drivetrain/Pose", newPose);
 
@@ -137,10 +138,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public Pose2d getPose() {
         return poseEstimator.getEstimatedPosition();
-    }
-
-    public void resetPose () {
-        poseEstimator.resetPosition(new Rotation2d(), modulePositions, new Pose2d());
     }
 
     public void resetPose (Pose2d newPose) {
