@@ -43,7 +43,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
                                PhotonVisionUtil photonvision) {
         this.gyroIO = gyroIO;
 
-        this.swerveModules = new SwerveModule[]{new SwerveModule("FrontLeftModule", frontLeftModuleIO),
+        this.swerveModules = new SwerveModule[]{
+                new SwerveModule("FrontLeftModule", frontLeftModuleIO),
                 new SwerveModule("FrontRightModule", frontRightModuleIO),
                 new SwerveModule("BackLeftModule", backLeftModuleIO),
                 new SwerveModule("BackRightModule", backRightModuleIO)
@@ -77,6 +78,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        photonvision.update();
         // Update gyroscope sensor values
         gyroIO.updateInputs(gyroInputs);
         Logger.getInstance().processInputs("Drivetrain/Gyro", gyroInputs);
@@ -119,7 +121,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
         if (photonvision.getRobotPose3d().isPresent()) {
             poseEstimator.addVisionMeasurement(photonvision.getRobotPose3d().get().estimatedPose.toPose2d(), photonvision.getRobotPose3d().get().timestampSeconds);
-            
             Logger.getInstance().recordOutput("Drivetrain/PhotonPose", photonvision.getRobotPose3d().get().estimatedPose.toPose2d());
         }
         
