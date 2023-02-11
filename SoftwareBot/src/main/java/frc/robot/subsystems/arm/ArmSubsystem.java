@@ -6,16 +6,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
 public class ArmSubsystem extends SubsystemBase {
-
-    // Distance from center of robot to shoulder joint along X axis.
-    private static final double SHOULDER_X_OFFSET = Units.inchesToMeters(12);
 
     // Lengths of arms three linkages (arm, forearm & hand)
     private static final double ARM_LENGTH_METERS = Units.inchesToMeters(40);
