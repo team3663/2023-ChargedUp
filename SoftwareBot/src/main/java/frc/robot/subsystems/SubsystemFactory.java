@@ -2,11 +2,12 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants;
 import frc.robot.subsystems.drivetrain.*;
+import frc.robot.utility.PhotonVisionUtil;
 import frc.robot.utility.RobotIdentity;
 
 public final class SubsystemFactory {
 
-    public static DrivetrainSubsystem createDrivetrain(RobotIdentity identity) {
+    public static DrivetrainSubsystem createDrivetrain(RobotIdentity identity, PhotonVisionUtil photonvision) {
         switch (identity) {
             case ROBOT_2022:
                 return new DrivetrainSubsystem(
@@ -26,14 +27,16 @@ public final class SubsystemFactory {
                         new SwerveModuleIOFalcon500(Constants.CanIds.DRIVETRAIN_BACK_RIGHT_MODULE_DRIVE_MOTOR,
                                 Constants.CanIds.DRIVETRAIN_BACK_RIGHT_MODULE_STEER_MOTOR,
                                 Constants.CanIds.DRIVETRAIN_BACK_RIGHT_MODULE_STEER_ENCODER,
-                                Constants.BACK_RIGHT_MODULE_STEER_OFFSET));
+                                Constants.BACK_RIGHT_MODULE_STEER_OFFSET),
+                        photonvision);
             case SIMULATION:
                 return new DrivetrainSubsystem(
                         new GyroIOSim(),
                         new SwerveModuleIOSim(),
                         new SwerveModuleIOSim(),
                         new SwerveModuleIOSim(),
-                        new SwerveModuleIOSim());
+                        new SwerveModuleIOSim(),
+                        photonvision);
             default:
                 return new DrivetrainSubsystem(
                         new GyroIO() {
@@ -45,7 +48,8 @@ public final class SubsystemFactory {
                         new SwerveModuleIO() {
                         },
                         new SwerveModuleIO() {
-                        });
+                        },
+                        photonvision);
         }
     }
 }

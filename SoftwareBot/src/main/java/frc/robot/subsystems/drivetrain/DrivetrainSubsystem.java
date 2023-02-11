@@ -1,11 +1,15 @@
 package frc.robot.subsystems.drivetrain;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.utility.PhotonVisionUtil;
+
 import frc.robot.sim.SimModelData;
 
 import org.littletonrobotics.junction.Logger;
@@ -18,31 +22,37 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private static final double MAX_ANGULAR_VELOCITY_RAD_PER_SEC = MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND /
             Math.hypot(WHEELBASE_X_METERS / 2.0, WHEELBASE_Y_METERS / 2.0);
 
-    
-
     private final GyroIO gyroIO;
     private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
 
     private final SwerveModule[] swerveModules;
     private final SwerveModulePosition[] modulePositions;
     private final SwerveDriveKinematics kinematics;
-    private final SwerveDriveOdometry odometry;
+    private final SwerveDrivePoseEstimator poseEstimator;
 
 
     private ChassisSpeeds targetChassisVelocity = new ChassisSpeeds();
     private double[] chassisVelocityLogged = new double[3];
 
+    private final PhotonVisionUtil photonvision;
+
     public DrivetrainSubsystem(GyroIO gyroIO,
                                SwerveModuleIO frontLeftModuleIO, SwerveModuleIO frontRightModuleIO,
-                               SwerveModuleIO backLeftModuleIO, SwerveModuleIO backRightModuleIO) {
+                               SwerveModuleIO backLeftModuleIO, SwerveModuleIO backRightModuleIO,
+                               PhotonVisionUtil photonvision) {
         this.gyroIO = gyroIO;
 
         this.swerveModules = new SwerveModule[]{new SwerveModule("FrontLeftModule", frontLeftModuleIO),
                 new SwerveModule("FrontRightModule", frontRightModuleIO),
                 new SwerveModule("BackLeftModule", backLeftModuleIO),
-                new SwerveModule("BackRightModule", backRightModuleIO)};
+                new SwerveModule("BackRightModule", backRightModuleIO)
+        };
 
         modulePositions = new SwerveModulePosition[swerveModules.length];
+
+        for (int i = 0; i < swerveModules.length; ++i) {
+            modulePositions[i] = new SwerveModulePosition();
+        }
 
         this.kinematics = new SwerveDriveKinematics(
                 // Front Left (+x, +y)
@@ -54,9 +64,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 // Back Right (-x, -y)
                 new Translation2d(-WHEELBASE_X_METERS / 2.0, -WHEELBASE_Y_METERS / 2.0)
         );
-        this.odometry = new SwerveDriveOdometry(kinematics, new Rotation2d(), new SwerveModulePosition[]{
-                new SwerveModulePosition(), new SwerveModulePosition(), new SwerveModulePosition(), new SwerveModulePosition()
-        });
+
+        poseEstimator = new SwerveDrivePoseEstimator(kinematics, new Rotation2d(), modulePositions, new Pose2d(),
+            VecBuilder.fill(0.01, 0.01, 0.001), VecBuilder.fill(0.1, 0.1, 0.1));
+
+        this.photonvision = photonvision;
     }
 
     @Override
@@ -94,8 +106,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
         Logger.getInstance().recordOutput("Drivetrain/DesiredModuleStates", moduleStates);
         Logger.getInstance().recordOutput("Drivetrain/OptimizedModuleStates", optimizedModuleStates);
 
-        // Update odometry
-        Pose2d pose = odometry.update(new Rotation2d(gyroInputs.yawRadians), modulePositions);
+        // Update pose estimation
+        Pose2d pose = poseEstimator.update(new Rotation2d(gyroInputs.yawRadians), modulePositions);
+        if (photonvision.getRobotPose3d().isPresent()) {
+            poseEstimator.addVisionMeasurement(photonvision.getRobotPose3d().get().estimatedPose.toPose2d(), photonvision.getRobotPose3d().get().timestampSeconds);
+            Logger.getInstance().recordOutput("Drivetrain/VisionPoseMeasurement", photonvision.getRobotPose3d().get().estimatedPose.toPose2d());
+        }
+        pose = poseEstimator.getEstimatedPosition();
+
+        photonvision.setReferencePose(pose);
 
         // Update simulation model data
         SimModelData.GetInstance().updateDrivetrainData(getPose(), targetChassisVelocity);
@@ -104,11 +123,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
     public Pose2d getPose() {
-        return odometry.getPoseMeters();
+        return poseEstimator.getEstimatedPosition();
     }
 
     public void resetPose (Pose2d newPose) {
-        odometry.resetPosition(new Rotation2d(gyroInputs.yawRadians), modulePositions, newPose);
+        poseEstimator.resetPosition(new Rotation2d(), modulePositions, new Pose2d());
     }
 
     public double getMaxTranslationalVelocityMetersPerSecond() {
