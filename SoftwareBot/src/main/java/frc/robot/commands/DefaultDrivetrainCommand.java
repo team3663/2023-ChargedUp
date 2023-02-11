@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
@@ -7,11 +8,17 @@ import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import java.util.function.DoubleSupplier;
 
 public class DefaultDrivetrainCommand extends CommandBase {
+    private static final double MAX_LINEAR_ACCELERATION_METERS_PER_SEC = 6.0;
+    private static final double MAX_ANGULAR_ACCELERATION_RAD_PER_SEC = 50;
+
     private final DrivetrainSubsystem drivetrain;
     private final DoubleSupplier xVelocitySupplier;
     private final DoubleSupplier yVelocitySupplier;
     private final DoubleSupplier angularVelocitySupplier;
-
+    private final SlewRateLimiter xVelocityLimiter = new SlewRateLimiter(MAX_LINEAR_ACCELERATION_METERS_PER_SEC);
+    private final SlewRateLimiter yVelocityLimiter = new SlewRateLimiter(MAX_LINEAR_ACCELERATION_METERS_PER_SEC);
+    private final SlewRateLimiter angularVelocityLimiter = new SlewRateLimiter(MAX_ANGULAR_ACCELERATION_RAD_PER_SEC);
+    
     public DefaultDrivetrainCommand(DrivetrainSubsystem drivetrain,
                                     DoubleSupplier xVelocitySupplier,
                                     DoubleSupplier yVelocitySupplier,
@@ -25,12 +32,19 @@ public class DefaultDrivetrainCommand extends CommandBase {
     }
 
     @Override
+    public void initialize() {
+        xVelocityLimiter.reset(xVelocitySupplier.getAsDouble());
+        yVelocityLimiter.reset(yVelocitySupplier.getAsDouble());
+        angularVelocityLimiter.reset(angularVelocitySupplier.getAsDouble());
+    }
+
+    @Override
     public void execute() {
         ChassisSpeeds chassisVelocity = ChassisSpeeds.fromFieldRelativeSpeeds(
-                xVelocitySupplier.getAsDouble(),
-                yVelocitySupplier.getAsDouble(),
-                angularVelocitySupplier.getAsDouble(),
-                drivetrain.getPose().getRotation()
+            xVelocityLimiter.calculate(xVelocitySupplier.getAsDouble()),
+            yVelocityLimiter.calculate(yVelocitySupplier.getAsDouble()),
+            angularVelocityLimiter.calculate(angularVelocitySupplier.getAsDouble()),
+            drivetrain.getPose().getRotation()
         );
 
         drivetrain.setTargetChassisVelocity(chassisVelocity);

@@ -6,9 +6,14 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+
+import frc.robot.utility.MacAddressUtil;
+import frc.robot.utility.RobotIdentity;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
+
+import java.util.stream.Collectors;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -31,6 +36,9 @@ public class Robot extends LoggedRobot {
 
         logger.addDataReceiver(new NT4Publisher());
 
+        logger.recordMetadata("RobotMacAddresses", MacAddressUtil.getMacAddresses().stream().collect(Collectors.joining(", ", "[", "]")));
+        logger.recordMetadata("RobotIdentity", RobotIdentity.getIdentity().toString());
+
         logger.start();
 
 
@@ -52,6 +60,7 @@ public class Robot extends LoggedRobot {
         // commands, running already-scheduled commands, removing finished or interrupted commands,
         // and running subsystem periodic() methods.  This must be called from the robot's periodic
         // block in order for anything in the Command-based framework to work.
+        
         CommandScheduler.getInstance().run();
     }
 
@@ -131,3 +140,23 @@ public class Robot extends LoggedRobot {
     public void simulationPeriodic() {
     }
 }
+
+/*
+ * ##################################################
+ * 
+ * ╔═══╗╔═══╗╔═══╗
+ * ║╔═╗║║╔═╗║║╔═╗║                                   
+ * ║║ ╚╝║╚═╝║║╚═╝║                       /\          
+ * ║║ ╔╗║╔══╝║╔╗╔╝                      /  \         
+ * ║╚═╝║║║   ║║║╚╗                     /    \        
+ * ╚═══╝╚╝   ╚╝╚═╝      /\            /      \       
+ * ____________________/  \          /        \  /\__
+ *                         \        /          \/    
+ *                          \      /                 
+ *                           \    /                  
+ * CPR 3663                   \  /                   
+ *                             \/                    
+ * "Bringing Robotics to LIFE!"                      
+ * 
+ * ##################################################
+ */
