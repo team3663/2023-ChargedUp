@@ -15,6 +15,7 @@ import frc.robot.Constants.ControllerPorts;
 import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DriveCircleCommand;
+import frc.robot.commands.SetArmPoseCommand;
 import frc.robot.subsystems.SubsystemFactory;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
@@ -44,6 +45,8 @@ public class RobotContainer {
 
     // Commands
     private DriveCircleCommand driveCircleCommand;
+    private SetArmPoseCommand retractArmCommand;
+    private SetArmPoseCommand extendArmCommand;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -83,6 +86,9 @@ public class RobotContainer {
         ));
 
         driveCircleCommand = new DriveCircleCommand(drivetrainSubsystem);
+
+        retractArmCommand = new SetArmPoseCommand(armSubsystem, new Pose2d(0.7, 0.7, Rotation2d.fromDegrees(90.0)));
+        extendArmCommand = new SetArmPoseCommand(armSubsystem, new Pose2d(1.0, 1.0, Rotation2d.fromDegrees(0.0)));
     }
 
     private void configureBindings() {
@@ -92,6 +98,9 @@ public class RobotContainer {
         driverController.start().onTrue(new InstantCommand(() -> drivetrainSubsystem.resetPose(new Pose2d(8.0, 3.0, new Rotation2d(0.0)))));
 
         driverController.a().whileTrue(driveCircleCommand);
+
+        driverController.b().onTrue(extendArmCommand);
+        driverController.x().onTrue(retractArmCommand);
     }
 
     private void setupAutoChooser() {

@@ -66,7 +66,8 @@ public class ArmSubsystem extends SubsystemBase {
 
     public ArmSubsystem(ArmIO io) {
         this.io = io;
-        this.kinematics = new ArmKinematics(armLengthConstants, armAngleConstraints);
+ //       this.kinematics = new ArmKinematics(armLengthConstants, armAngleConstraints);
+        this.kinematics = new SimpleArmKinematics(ARM_LENGTH_METERS, FOREARM_LENGTH_METERS);
 
         // Create the mechanism object with a 2M x 2M canvas
         this.mechanism = new Mechanism2d(4, 4);
