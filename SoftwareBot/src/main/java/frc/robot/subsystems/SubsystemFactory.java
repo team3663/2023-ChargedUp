@@ -1,6 +1,9 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
+import frc.robot.subsystems.arm.ArmIO;
+import frc.robot.subsystems.arm.ArmIOSim;
+import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drivetrain.*;
 import frc.robot.utility.PhotonVisionUtil;
 import frc.robot.utility.RobotIdentity;
@@ -50,6 +53,16 @@ public final class SubsystemFactory {
                         new SwerveModuleIO() {
                         },
                         photonvision);
+        }
+    }
+
+    public static ArmSubsystem createArm(RobotIdentity identity) {
+        switch (identity) {
+            case SIMULATION:
+                return new ArmSubsystem(new ArmIOSim());
+            default:
+                return new ArmSubsystem(new ArmIO() {
+                });
         }
     }
 }
