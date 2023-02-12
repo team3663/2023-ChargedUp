@@ -4,44 +4,8 @@
         "ID": 1,
         "pose": {
           "translation": {
-            "x": 3,
-            "y": 6,
-            "z": 0.6858
-          },
-          "rotation": {
-            "quaternion": {
-              "W": 0.0,
-              "X": 0.0,
-              "Y": 0.0,
-              "Z": 1.0
-            }
-          }
-        }
-      },
-      {
-        "ID": 2,
-        "pose": {
-          "translation": {
-            "x": 6,
-            "y": 3,
-            "z": 0.6858
-          },
-          "rotation": {
-            "quaternion": {
-              "W": 0.0,
-              "X": 0.0,
-              "Y": 0.0,
-              "Z": 1.0
-            }
-          }
-        }
-      },
-      {
-        "ID": 3,
-        "pose": {
-          "translation": {
-            "x": 3,
-            "y": 0,
+            "x": 0.0,
+            "y": 4.2037,
             "z": 0.6858
           },
           "rotation": {
@@ -53,10 +17,28 @@
             }
           }
         }
+      },
+      {
+        "ID": 2,
+        "pose": {
+          "translation": {
+            "x": 9.4361,
+            "y": 3.6576,
+            "z": 0.6858
+          },
+          "rotation": {
+            "quaternion": {
+              "W": 0.0,
+              "X": 0.0,
+              "Y": 0.0,
+              "Z": 1.0
+            }
+          }
+        }
       }
     ],
     "field": {
-      "length": 6,
-      "width": 6
+      "length": 9.4361,
+      "width": 7.62
     }
   }
