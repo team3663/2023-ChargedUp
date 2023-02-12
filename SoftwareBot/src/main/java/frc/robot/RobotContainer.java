@@ -5,9 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -17,14 +15,13 @@ import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DriveCircleCommand;
 import frc.robot.commands.GoToPoseCommand;
+import frc.robot.photonvision.IPhotonVision;
 import frc.robot.subsystems.SubsystemFactory;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import frc.robot.utility.AutoCommandChooser;
 import frc.robot.utility.ControllerHelper;
-import frc.robot.utility.PhotonVisionUtil;
 import frc.robot.utility.RobotIdentity;
-import org.photonvision.PhotonCamera;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -42,7 +39,7 @@ public class RobotContainer {
     private ArmSubsystem armSubsystem;
 
     // Utilities
-    private PhotonVisionUtil photonvision;
+    private IPhotonVision photonvision;
 
     // Commands
     private DriveCircleCommand driveCircleCommand;
@@ -62,16 +59,7 @@ public class RobotContainer {
     private void createSubsystems() {
         RobotIdentity identity = RobotIdentity.getIdentity();
 
-        photonvision = new PhotonVisionUtil(
-            new PhotonCamera[] {
-                new PhotonCamera("Left_Camera"),
-                new PhotonCamera("Right_Camera")
-            },
-            new Transform3d[] {
-                new Transform3d(new Pose3d(), Constants.CameraPoses.LEFT_CAMERA_POSE),
-                new Transform3d(new Pose3d(), Constants.CameraPoses.RIGHT_CAMERA_POSE)
-            }
-        );
+        photonvision = SubsystemFactory.createPhotonvision(identity);
 
         armSubsystem = SubsystemFactory.createArm(identity);
         drivetrainSubsystem = SubsystemFactory.createDrivetrain(identity, photonvision);
@@ -113,10 +101,6 @@ public class RobotContainer {
 
         // Setup the chooser in shuffleboard
         autoChooser.setup("Driver", 0, 0, 2, 1);
-    }
-
-    public PhotonVisionUtil gePhotonVision () {
-        return photonvision;
     }
 
     /**

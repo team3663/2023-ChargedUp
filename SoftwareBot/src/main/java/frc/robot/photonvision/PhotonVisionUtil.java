@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.utility;
+package frc.robot.photonvision;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -23,7 +23,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.Filesystem;
-public class PhotonVisionUtil{
+
+public class PhotonVisionUtil implements IPhotonVision {
 
   private final PhotonCamera[] cameras;
   private final Transform3d[] cameraPoses;
@@ -59,6 +60,7 @@ public class PhotonVisionUtil{
     }
   }
 
+  @Override
   public void update() {
     ArrayList<Optional<EstimatedRobotPose>> poseGuesses = new ArrayList<Optional<EstimatedRobotPose>>();
     ArrayList<PhotonPipelineResult> pipelineResults = new ArrayList<PhotonPipelineResult>();
@@ -86,12 +88,14 @@ public class PhotonVisionUtil{
     }
   }
 
+  @Override
   public void setReferencePose(Pose2d pose) {
     for (PhotonPoseEstimator pe : poseEstimators) {
       pe.setReferencePose(pose);
     }
   }
 
+  @Override
   public Optional<EstimatedRobotPose> getRobotPose3d () {
     if (estPose != null) {
       return estPose;

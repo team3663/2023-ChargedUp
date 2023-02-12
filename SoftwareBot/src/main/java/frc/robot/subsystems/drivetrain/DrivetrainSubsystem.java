@@ -8,8 +8,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.utility.PhotonVisionUtil;
-
+import frc.robot.photonvision.IPhotonVision;
 import frc.robot.sim.SimModelData;
 
 import org.littletonrobotics.junction.Logger;
@@ -35,12 +34,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private ChassisSpeeds targetChassisVelocity = new ChassisSpeeds();
     private double[] chassisVelocityLogged = new double[3];
 
-    private final PhotonVisionUtil photonvision;
+    private final IPhotonVision photonvision;
 
     public DrivetrainSubsystem(GyroIO gyroIO,
                                SwerveModuleIO frontLeftModuleIO, SwerveModuleIO frontRightModuleIO,
                                SwerveModuleIO backLeftModuleIO, SwerveModuleIO backRightModuleIO,
-                               PhotonVisionUtil photonvision) {
+                               IPhotonVision photonvision) {
         this.gyroIO = gyroIO;
 
         this.swerveModules = new SwerveModule[]{
