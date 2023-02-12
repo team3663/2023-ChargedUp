@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -15,6 +16,7 @@ import frc.robot.Constants.ControllerPorts;
 import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DriveCircleCommand;
+import frc.robot.commands.GoToPoseCommand;
 import frc.robot.subsystems.SubsystemFactory;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
@@ -44,6 +46,8 @@ public class RobotContainer {
 
     // Commands
     private DriveCircleCommand driveCircleCommand;
+    private GoToPoseCommand goToPoseCommand;
+    private GoToPoseCommand goToOtherPoseCommand;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -83,15 +87,20 @@ public class RobotContainer {
         ));
 
         driveCircleCommand = new DriveCircleCommand(drivetrainSubsystem);
+
+        goToPoseCommand = new GoToPoseCommand(drivetrainSubsystem, new Translation2d(1, 1), new Rotation2d(0.5));
+        goToOtherPoseCommand = new GoToPoseCommand(drivetrainSubsystem, new Translation2d(0, 0), new Rotation2d(-0.5));
     }
 
     private void configureBindings() {
 
         // Button to reset the robot's pose to a default starting point.  Handy when running in the simulator and 
         // you accidently lose the robot outside the game field, should NOT be configured in the competition bot.
-        driverController.start().onTrue(new InstantCommand(() -> drivetrainSubsystem.resetPose(new Pose2d(8.0, 3.0, new Rotation2d(0.0)))));
+        driverController.start().onTrue(new InstantCommand(() -> drivetrainSubsystem.resetPose(new Pose2d())));
 
         driverController.a().whileTrue(driveCircleCommand);
+        driverController.b().onTrue(goToPoseCommand);
+        driverController.y().onTrue(goToOtherPoseCommand);
     }
 
     private void setupAutoChooser() {
@@ -100,6 +109,7 @@ public class RobotContainer {
         // Register all the supported auto commands
         autoChooser.registerDefaultCreator("Do Nothing", () -> AutoCommandFactory.createNullAuto());
         autoChooser.registerCreator("Test Path", () -> AutoCommandFactory.createTestAuto(drivetrainSubsystem));
+        autoChooser.registerCreator("Rotation Test Path", () -> AutoCommandFactory.createRotationTestAuto(drivetrainSubsystem));
 
         // Setup the chooser in shuffleboard
         autoChooser.setup("Driver", 0, 0, 2, 1);

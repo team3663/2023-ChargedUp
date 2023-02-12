@@ -40,6 +40,24 @@ public final class AutoCommandFactory {
         return builder.fullAuto(path);
     }
 
+    public static Command createRotationTestAuto(DrivetrainSubsystem drivetrain) {
+
+        PathPlannerTrajectory path = PathPlanner.loadPath("RotationTestPath", pathConstraints);
+        HashMap<String, Command> eventMap = new HashMap<>();
+
+        SwerveAutoBuilder builder = new SwerveAutoBuilder(
+                () -> drivetrain.getPose(),
+                (pose) -> drivetrain.resetPose(pose),
+                new PIDConstants(5.0, 0, 0),
+                new PIDConstants(0.5, 0, 0),
+                (chassisSpeeds) -> drivetrain.setTargetChassisVelocity(chassisSpeeds),
+                eventMap,
+                false,
+                drivetrain);
+
+        return builder.fullAuto(path);
+    }
+
     // Default constructor that just throws an exception if you attempt to create an
     // instace of this class.
     private AutoCommandFactory() {

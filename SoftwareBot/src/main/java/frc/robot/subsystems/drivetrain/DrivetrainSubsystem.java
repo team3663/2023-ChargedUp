@@ -43,7 +43,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
                                PhotonVisionUtil photonvision) {
         this.gyroIO = gyroIO;
 
-        this.swerveModules = new SwerveModule[]{new SwerveModule("FrontLeftModule", frontLeftModuleIO),
+        this.swerveModules = new SwerveModule[]{
+                new SwerveModule("FrontLeftModule", frontLeftModuleIO),
                 new SwerveModule("FrontRightModule", frontRightModuleIO),
                 new SwerveModule("BackLeftModule", backLeftModuleIO),
                 new SwerveModule("BackRightModule", backRightModuleIO)
@@ -77,6 +78,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        photonvision.update();
         // Update gyroscope sensor values
         gyroIO.updateInputs(gyroInputs);
         Logger.getInstance().processInputs("Drivetrain/Gyro", gyroInputs);
@@ -110,18 +112,18 @@ public class DrivetrainSubsystem extends SubsystemBase {
         Logger.getInstance().recordOutput("Drivetrain/DesiredModuleStates", moduleStates);
         Logger.getInstance().recordOutput("Drivetrain/OptimizedModuleStates", optimizedModuleStates);
 
-       // Update odometry and log out pose pased on odometry alone
+       // Update odometry and log out pose based on odometry alone
        Pose2d odometryPose = odometry.update(new Rotation2d(gyroInputs.yawRadians), modulePositions);
        Logger.getInstance().recordOutput("Drivetrain/OdometryPose", odometryPose);
 
-        // Calculate updated pose
+        // Calculate new pose using estimator
         Pose2d newPose = poseEstimator.update(new Rotation2d(gyroInputs.yawRadians), modulePositions);
 
         if (photonvision.getRobotPose3d().isPresent()) {
             poseEstimator.addVisionMeasurement(photonvision.getRobotPose3d().get().estimatedPose.toPose2d(), photonvision.getRobotPose3d().get().timestampSeconds);
-            
             Logger.getInstance().recordOutput("Drivetrain/PhotonPose", photonvision.getRobotPose3d().get().estimatedPose.toPose2d());
         }
+        
         newPose = poseEstimator.getEstimatedPosition();
         Logger.getInstance().recordOutput("Drivetrain/Pose", newPose);
 
@@ -131,12 +133,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
         SimModelData.GetInstance().updateDrivetrainData(getPose(), targetChassisVelocity);
     }
 
+    public void drive(ChassisSpeeds chassisSpeeds) {
+        this.targetChassisVelocity = chassisSpeeds;
+    }
+
     public Pose2d getPose() {
         return poseEstimator.getEstimatedPosition();
     }
 
     public void resetPose (Pose2d newPose) {
-
         Rotation2d newGyroYaw = new Rotation2d(gyroInputs.yawRadians);
 
         poseEstimator.resetPosition(newGyroYaw, modulePositions, newPose);
