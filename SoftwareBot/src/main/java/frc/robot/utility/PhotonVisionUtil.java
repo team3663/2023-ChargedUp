@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -62,6 +63,8 @@ public class PhotonVisionUtil{
     ArrayList<Optional<EstimatedRobotPose>> poseGuesses = new ArrayList<Optional<EstimatedRobotPose>>();
     ArrayList<PhotonPipelineResult> pipelineResults = new ArrayList<PhotonPipelineResult>();
 
+    int targetSightings = 0;
+
     for (PhotonCamera c : cameras) {
       PhotonPipelineResult pr = c.getLatestResult();
       pipelineResults.add(pr);
@@ -69,9 +72,12 @@ public class PhotonVisionUtil{
 
     for (int i = 0; i < pipelineResults.size(); i++) {
       if (pipelineResults.get(i).hasTargets()) {
+        targetSightings++;
         poseGuesses.add(poseEstimators.get(i).update());
       }
     }
+
+    Logger.getInstance().recordOutput("PhotonVision/TargetSightings", targetSightings);
 
     if (!poseGuesses.isEmpty()) {
       if (poseGuesses.get(0).isPresent()) {
