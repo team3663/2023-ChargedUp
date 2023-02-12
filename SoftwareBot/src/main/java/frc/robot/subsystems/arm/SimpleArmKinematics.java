@@ -30,7 +30,7 @@ public class SimpleArmKinematics implements IArmKinematics {
         double y = pose.getY();
     
         double q2 = Math.acos((x * x + y * y - l1 * l1 - l2 * l2) / (2 * l1 * l2));
-        double q1 = Math.atan2(y, x) - Math.atan2(l2 * Math.sin(q2), l1 + l2 * Math.cos(q2));
+        double q1 = Math.asin((l2 * Math.sin(q2)) / (x * x + y * y)) + Math.atan2(x,y);
     
         return new ArmState( q1, q2, 0);
       }

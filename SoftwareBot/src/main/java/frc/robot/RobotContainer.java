@@ -105,8 +105,9 @@ public class RobotContainer {
 
         driverController.a().whileTrue(driveCircleCommand);
 
-        driverController.b().onTrue(extendArmCommand);
-        driverController.x().onTrue(retractArmCommand);
+        driverController.rightBumper().onTrue(extendArmCommand);
+        driverController.leftBumper().onTrue(retractArmCommand);
+        
         driverController.b().onTrue(goToPoseCommand);
         driverController.y().onTrue(goToOtherPoseCommand);
     }
