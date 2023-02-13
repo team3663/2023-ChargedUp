@@ -28,7 +28,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     private final ArmIO io;
     private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
-    private Pose2d targetPose = new Pose2d(0.7, 0.7, Rotation2d.fromDegrees(90.0));
+    private Pose2d targetPose = new Pose2d(0.1, 0.4, Rotation2d.fromDegrees(90.0));
     private IArmKinematics kinematics;
     private Mechanism2d mechanism;
 
@@ -69,9 +69,9 @@ public class ArmSubsystem extends SubsystemBase {
  //       this.kinematics = new ArmKinematics(armLengthConstants, armAngleConstraints);
         this.kinematics = new SimpleArmKinematics(ARM_LENGTH_METERS, FOREARM_LENGTH_METERS);
 
-        // Create the mechanism object with a 2M x 2M canvas
-        this.mechanism = new Mechanism2d(4, 4);
-        MechanismRoot2d root = mechanism.getRoot("shoulder", 2, 2);
+        // Create the mechanism object with a 4M x 3M canvas
+        this.mechanism = new Mechanism2d(4, 3);
+        MechanismRoot2d root = mechanism.getRoot("shoulder", 2, 1);
         root.append(currentArmLigament);
         currentArmLigament.append(currentForearmLigament);
         currentForearmLigament.append(currentIntakeLigament);
@@ -92,7 +92,6 @@ public class ArmSubsystem extends SubsystemBase {
         // Convert our target pose (task space) to an arm state object (c-space) and update the IO object with new values.
         ArmState targetState = kinematics.inverse(targetPose);
 
-        inputs.shoulderAngleRad = targetState.shoulderAngleRad;
         io.setShoulderVoltage(shoulderController.calculate(inputs.shoulderAngleRad, targetState.shoulderAngleRad));
         io.setElbowVoltage(elbowController.calculate(inputs.elbowAngleRad, targetState.elbowAngleRad));
         io.setWristVoltage(wristController.calculate(inputs.wristAngleRad, targetState.wristAngleRad));
@@ -106,15 +105,15 @@ public class ArmSubsystem extends SubsystemBase {
         Logger.getInstance().recordOutput("Arm/TargetAngles", targetAnglesLogged);
 
         currentArmLigament.setAngle(Units.radiansToDegrees(inputs.shoulderAngleRad));
-        currentForearmLigament.setAngle(Units.radiansToDegrees(Math.PI - inputs.elbowAngleRad));
-        currentIntakeLigament.setAngle(Units.radiansToDegrees(-inputs.wristAngleRad));
+        currentForearmLigament.setAngle(Units.radiansToDegrees(inputs.elbowAngleRad));
+        currentIntakeLigament.setAngle(Units.radiansToDegrees(inputs.wristAngleRad));
 
-        targetPositionRoot.setPosition(-targetPose.getX() + 2, targetPose.getY() + 2);
+        targetPositionRoot.setPosition(targetPose.getX() + 2, targetPose.getY() + 1);
         targetPositionLigament.setAngle(targetPose.getRotation().getDegrees());
 
         targetArmLigament.setAngle(Units.radiansToDegrees(targetState.shoulderAngleRad));
-        targetForearmLigament.setAngle(Units.radiansToDegrees(Math.PI - targetState.elbowAngleRad));
-        targetIntakeLigament.setAngle(Units.radiansToDegrees(-targetState.wristAngleRad));
+        targetForearmLigament.setAngle(Units.radiansToDegrees(targetState.elbowAngleRad));
+        targetIntakeLigament.setAngle(Units.radiansToDegrees(targetState.wristAngleRad));
         Logger.getInstance().recordOutput("Arm/Mechanism", mechanism);
     }
 

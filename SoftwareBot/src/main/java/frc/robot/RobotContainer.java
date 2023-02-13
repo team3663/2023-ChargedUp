@@ -44,8 +44,6 @@ public class RobotContainer {
 
     // Commands
     private DriveCircleCommand driveCircleCommand;
-    private SetArmPoseCommand retractArmCommand;
-    private SetArmPoseCommand extendArmCommand;
     private GoToPoseCommand goToPoseCommand;
     private GoToPoseCommand goToOtherPoseCommand;
 
@@ -79,8 +77,6 @@ public class RobotContainer {
 
         driveCircleCommand = new DriveCircleCommand(drivetrainSubsystem);
 
-        retractArmCommand = new SetArmPoseCommand(armSubsystem, new Pose2d(0.7, 0.7, Rotation2d.fromDegrees(90.0)));
-        extendArmCommand = new SetArmPoseCommand(armSubsystem, new Pose2d(1.0, 1.0, Rotation2d.fromDegrees(0.0)));
         goToPoseCommand = new GoToPoseCommand(drivetrainSubsystem, new Translation2d(1, 1), new Rotation2d(0.5));
         goToOtherPoseCommand = new GoToPoseCommand(drivetrainSubsystem, new Translation2d(0, 0), new Rotation2d(-0.5));
     }
@@ -93,8 +89,10 @@ public class RobotContainer {
 
         driverController.a().whileTrue(driveCircleCommand);
 
-        driverController.rightBumper().onTrue(extendArmCommand);
-        driverController.leftBumper().onTrue(retractArmCommand);
+        driverController.povLeft().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(0.1, 0.4, Rotation2d.fromDegrees(90.0))));
+        driverController.povRight().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(1.5, 0.5, Rotation2d.fromDegrees(0.0))));
+        driverController.povUp().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(1.5, 1.0, Rotation2d.fromDegrees(45.0))));
+        driverController.povDown().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(1.5, 0.2, Rotation2d.fromDegrees(0.0))));
         
         driverController.b().onTrue(goToPoseCommand);
         driverController.y().onTrue(goToOtherPoseCommand);
