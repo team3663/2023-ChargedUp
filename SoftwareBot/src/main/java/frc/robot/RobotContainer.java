@@ -14,6 +14,7 @@ import frc.robot.Constants.ControllerPorts;
 import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DriveCircleCommand;
+import frc.robot.commands.SetArmPoseCommand;
 import frc.robot.commands.GoToPoseCommand;
 import frc.robot.photonvision.IPhotonVision;
 import frc.robot.subsystems.SubsystemFactory;
@@ -87,6 +88,12 @@ public class RobotContainer {
         driverController.start().onTrue(new InstantCommand(() -> drivetrainSubsystem.resetPose(new Pose2d())));
 
         driverController.a().whileTrue(driveCircleCommand);
+
+        driverController.povLeft().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(0.1, 0.4, Rotation2d.fromDegrees(90.0))));
+        driverController.povRight().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(1.5, 0.5, Rotation2d.fromDegrees(0.0))));
+        driverController.povUp().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(1.5, 1.0, Rotation2d.fromDegrees(45.0))));
+        driverController.povDown().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(1.5, 0.2, Rotation2d.fromDegrees(0.0))));
+        
         driverController.b().onTrue(goToPoseCommand);
         driverController.y().onTrue(goToOtherPoseCommand);
     }
