@@ -48,7 +48,19 @@ public final class Constants {
     }
 
     public static class CameraPoses {
-        public static final Pose3d LEFT_CAMERA_POSE = new Pose3d(-Units.inchesToMeters(10.5), Units.inchesToMeters(11.75), Units.inchesToMeters(30), new Rotation3d(0, 0, 0.5));
-        public static final Pose3d RIGHT_CAMERA_POSE = new Pose3d(-Units.inchesToMeters(10.5), -Units.inchesToMeters(11.75), Units.inchesToMeters(30), new Rotation3d(0, 0, -0.5));
+        public static final Pose3d LEFT_CAMERA_POSE = new Pose3d(
+            -Units.inchesToMeters(10.5),
+            Units.inchesToMeters(11.75),
+            Units.inchesToMeters(30),
+            new Rotation3d(0, 0, Math.PI / 2)
+            // new Rotation3d(0, 0, 0.5)
+        );
+        public static final Pose3d RIGHT_CAMERA_POSE = new Pose3d(
+            -Units.inchesToMeters(10.5),
+            -Units.inchesToMeters(11.75),
+            Units.inchesToMeters(30),
+            new Rotation3d(0, 0, -Math.PI / 2)
+            // new Rotation3d(0, 0, -0.5)
+        );
     }
 }

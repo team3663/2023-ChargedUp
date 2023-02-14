@@ -76,6 +76,7 @@ public class PhotonVisionUtil implements IPhotonVision {
       if (pipelineResults.get(i).hasTargets()) {
         targetSightings++;
         poseGuesses.add(poseEstimators.get(i).update());
+        Logger.getInstance().recordOutput("PhotonVision/TargetAngle", pipelineResults.get(i).getBestTarget().getYaw());
       }
     }
 

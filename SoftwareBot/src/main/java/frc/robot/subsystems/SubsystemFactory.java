@@ -31,9 +31,11 @@ public final class SubsystemFactory {
                         new Transform3d(new Pose3d(), Constants.CameraPoses.RIGHT_CAMERA_POSE)
                     }
                 );
+                break;
 
             default:
                 photon = new IPhotonVision() {};
+                break;
         }
 
         return photon;
