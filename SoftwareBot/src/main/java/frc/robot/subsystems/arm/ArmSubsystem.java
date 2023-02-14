@@ -48,9 +48,9 @@ public class ArmSubsystem extends SubsystemBase {
     private final MechanismRoot2d targetPositionRoot;
     private final MechanismLigament2d targetPositionLigament;
 
-    private final PIDController shoulderController = new PIDController(1.0, 0.0, 0.0);
-    private final PIDController elbowController = new PIDController(10.0, 1.0, 2.0);
-    private final PIDController wristController = new PIDController(1.0, 0.0, 0.0);
+    private final PIDController shoulderController = new PIDController(10.0, 0.0, 3.0);
+    private final PIDController elbowController = new PIDController(30.0, 4.0, 9.0);
+    private final PIDController wristController = new PIDController(5.0, 0.0, 0.5);
 
     public ArmSubsystem(ArmIO io) {
         this.io = io;
