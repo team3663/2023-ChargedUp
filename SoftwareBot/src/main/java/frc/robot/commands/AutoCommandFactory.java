@@ -3,6 +3,8 @@ package frc.robot.commands;
 
 import java.util.HashMap;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -10,12 +12,12 @@ import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.wpilibj2.command.Command;
-
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 
 public final class AutoCommandFactory {
 
-    private static PathConstraints pathConstraints = new PathConstraints(4.0, 3.0);
+    private static PathConstraints pathConstraints = new PathConstraints(1.0, 1.0);
     
 
     public static Command createNullAuto() {
@@ -37,7 +39,7 @@ public final class AutoCommandFactory {
                 false,
                 drivetrain);
 
-        return builder.fullAuto(path);
+        return new InstantCommand(() -> Logger.getInstance().recordOutput("Drivetrain/Trajectory", path)).andThen(builder.fullAuto(path));
     }
 
     public static Command createRotationTestAuto(DrivetrainSubsystem drivetrain) {
@@ -55,7 +57,7 @@ public final class AutoCommandFactory {
                 false,
                 drivetrain);
 
-        return builder.fullAuto(path);
+                return new InstantCommand(() -> Logger.getInstance().recordOutput("Drivetrain/Trajectory", path)).andThen(builder.fullAuto(path));
     }
 
     // Default constructor that just throws an exception if you attempt to create an

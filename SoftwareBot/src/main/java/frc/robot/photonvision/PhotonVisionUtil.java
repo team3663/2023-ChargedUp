@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Optional;
 
-import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -34,7 +34,7 @@ public class PhotonVisionUtil implements IPhotonVision {
 
   private final ArrayList<PhotonPoseEstimator> poseEstimators = new ArrayList<PhotonPoseEstimator>();
 
-  private Optional<EstimatedRobotPose> estPose = Optional.empty();
+  private Optional<EstimatedRobotPose> estPose;
 
   /** Creates a new VisionSubsystem. */
   public PhotonVisionUtil(PhotonCamera[] cameras, Transform3d[] cameraPoses) {
@@ -62,10 +62,8 @@ public class PhotonVisionUtil implements IPhotonVision {
 
   @Override
   public void update() {
-    ArrayList<Optional<EstimatedRobotPose>> poseGuesses = new ArrayList<Optional<EstimatedRobotPose>>();
+    ArrayList<EstimatedRobotPose> poseGuesses = new ArrayList<EstimatedRobotPose>();
     ArrayList<PhotonPipelineResult> pipelineResults = new ArrayList<PhotonPipelineResult>();
-
-    int targetSightings = 0;
 
     for (PhotonCamera c : cameras) {
       PhotonPipelineResult pr = c.getLatestResult();
@@ -73,22 +71,12 @@ public class PhotonVisionUtil implements IPhotonVision {
     }
 
     for (int i = 0; i < pipelineResults.size(); i++) {
-      if (pipelineResults.get(i).hasTargets()) {
-        targetSightings++;
-        poseGuesses.add(poseEstimators.get(i).update());
-        Logger.getInstance().recordOutput("PhotonVision/TargetAngle", pipelineResults.get(i).getBestTarget().getYaw());
-      }
+      poseEstimators.get(i).update().ifPresent(poseGuesses::add);
     }
 
-    Logger.getInstance().recordOutput("PhotonVision/TargetSightings", targetSightings);
-
-    if (!poseGuesses.isEmpty()) {
-      if (poseGuesses.get(0).isPresent()) {
-        estPose = poseGuesses.get(0);
-      }
-    } else {
-      estPose = Optional.empty();
-    }
+    estPose = poseGuesses.stream().filter(est -> est.targetsUsed.size() > 1).max(Comparator.comparingInt(est -> est.targetsUsed.size()));
+    
+    // TODO: Add function for target/pose tallying
   }
 
   @Override
