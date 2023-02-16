@@ -15,12 +15,16 @@ import edu.wpi.first.math.geometry.Rotation2d;
 
 public class SimpleArmKinematics implements IArmKinematics {
 
-    private final double armLength;
-    private final double forearmLength;
+    private final ArmLinkage arm;
+    private final ArmLinkage forearm;
+    @SuppressWarnings("unused")
+    private final ArmLinkage hand;
 
-    public SimpleArmKinematics(double armLength, double forearmLength) {
-        this.armLength = armLength;
-        this.forearmLength = forearmLength;
+
+    public SimpleArmKinematics(ArmLinkage arm, ArmLinkage forearm, ArmLinkage hand) {
+        this.arm = arm;
+        this.forearm = forearm;
+        this.hand = hand;
     }
 
     /**
@@ -33,8 +37,8 @@ public class SimpleArmKinematics implements IArmKinematics {
     @Override
     public Pose2d forward(ArmState state) {
         
-        double x = armLength * Math.cos(state.shoulderAngleRad) + forearmLength * Math.cos(state.shoulderAngleRad + state.elbowAngleRad);
-        double y = armLength * Math.sin(state.shoulderAngleRad) + forearmLength * Math.sin(state.shoulderAngleRad + state.elbowAngleRad);
+        double x = arm.lengthMeters * Math.cos(state.shoulderAngleRad) + forearm.lengthMeters * Math.cos(state.shoulderAngleRad + state.elbowAngleRad);
+        double y = arm.lengthMeters * Math.sin(state.shoulderAngleRad) + forearm.lengthMeters * Math.sin(state.shoulderAngleRad + state.elbowAngleRad);
 
         // Determine the hand angle (relative to x axis)
         double handAngle = state.shoulderAngleRad + state.elbowAngleRad + state.wristAngleRad;
@@ -57,10 +61,10 @@ public class SimpleArmKinematics implements IArmKinematics {
     
         // Calculate the elbow angle, there are two possible symetrical solutions for the elbow angle, we choose the negative one since
         // it gives us poses using higher shoulder angles, which we prefer.
-        double elbowAngle = -Math.acos((x * x + y * y - armLength * armLength - forearmLength * forearmLength) / (2 * armLength * forearmLength));
+        double elbowAngle = -Math.acos((x * x + y * y - arm.lengthMeters * arm.lengthMeters - forearm.lengthMeters * forearm.lengthMeters) / (2 * arm.lengthMeters * forearm.lengthMeters));
 
         // Calculate the shoulder angle based on the elbow angle we just found.
-        double shoulderAngle = Math.atan2(y,x) - Math.atan2(forearmLength * Math.sin(elbowAngle), armLength + forearmLength * Math.cos(elbowAngle));
+        double shoulderAngle = Math.atan2(y,x) - Math.atan2(forearm.lengthMeters * Math.sin(elbowAngle), arm.lengthMeters + forearm.lengthMeters * Math.cos(elbowAngle));
 
         // Calculate the angle of the forearm, this is the sum of the shoulder and elbow angles.
         double forearmAngle = shoulderAngle + elbowAngle;
