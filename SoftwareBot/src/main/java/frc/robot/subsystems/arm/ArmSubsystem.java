@@ -34,21 +34,6 @@ public class ArmSubsystem extends SubsystemBase {
 
     private double[] targetAnglesLogged = new double[3];
 
-    /**
-     * Contains the lengths of each arm segment in meters
-     * [0] is the arm, [1] is the forearm, and [2] is the hand
-     */
-    // private double[] armLengthConstants = {ARM_LENGTH_METERS, FOREARM_LENGTH_METERS, HAND_LENGTH_METERS};
-    /**
-     * Contains the angle constraints of each joint
-     * [0]/[1] are shoulder min/max, [2]/[3] are elbow min/max, [4]/[5] are wrist min/max
-     */
-    // private double[] armAngleConstraints = {
-    //         SHOULDER_MIN_ANGLE_RAD, SHOULDER_MAX_ANGLE_RAD,
-    //         ELBOW_MIN_ANGLE_RAD, ELBOW_MAX_ANGLE_RAD,
-    //         WRIST_MIN_ANGLE_RAD, WRIST_MAX_ANGLE_RAD
-    // };
-
     private final ArmLinkage arm = new ArmLinkage(ARM_LENGTH_METERS, SHOULDER_MIN_ANGLE_RAD, SHOULDER_MAX_ANGLE_RAD);
     private final ArmLinkage forearm = new ArmLinkage(FOREARM_LENGTH_METERS, ELBOW_MIN_ANGLE_RAD, ELBOW_MAX_ANGLE_RAD);
     private final ArmLinkage hand = new ArmLinkage(HAND_LENGTH_METERS, WRIST_MIN_ANGLE_RAD, WRIST_MAX_ANGLE_RAD);
@@ -70,7 +55,6 @@ public class ArmSubsystem extends SubsystemBase {
 
     public ArmSubsystem(ArmIO io) {
         this.io = io;
- //       this.kinematics = new ArmKinematics(armLengthConstants, armAngleConstraints);
         this.kinematics = new SimpleArmKinematics(arm, forearm, hand);
 
         // Create the mechanism object with a 4M x 3M canvas
