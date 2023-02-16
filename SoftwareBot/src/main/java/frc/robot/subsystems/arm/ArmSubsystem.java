@@ -19,12 +19,12 @@ public class ArmSubsystem extends SubsystemBase {
     private static final double HAND_LENGTH_METERS = Units.inchesToMeters(15);
 
     // angle constraints for each joint
-    // private static final double SHOULDER_MIN_ANGLE_RAD = Units.degreesToRadians(15);
-    // private static final double SHOULDER_MAX_ANGLE_RAD = Units.degreesToRadians(90);
-    // private static final double ELBOW_MIN_ANGLE_RAD = Units.degreesToRadians(10);
-    // private static final double ELBOW_MAX_ANGLE_RAD = Units.degreesToRadians(100);
-    // private static final double WRIST_MIN_ANGLE_RAD = Units.degreesToRadians(-90);
-    // private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(90);
+    private static final double SHOULDER_MIN_ANGLE_RAD = Units.degreesToRadians(15);
+    private static final double SHOULDER_MAX_ANGLE_RAD = Units.degreesToRadians(90);
+    private static final double ELBOW_MIN_ANGLE_RAD = Units.degreesToRadians(10);
+    private static final double ELBOW_MAX_ANGLE_RAD = Units.degreesToRadians(100);
+    private static final double WRIST_MIN_ANGLE_RAD = Units.degreesToRadians(-90);
+    private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(90);
 
     private final ArmIO io;
     private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
@@ -49,6 +49,10 @@ public class ArmSubsystem extends SubsystemBase {
     //         WRIST_MIN_ANGLE_RAD, WRIST_MAX_ANGLE_RAD
     // };
 
+    private final ArmLinkage arm = new ArmLinkage(ARM_LENGTH_METERS, SHOULDER_MIN_ANGLE_RAD, SHOULDER_MAX_ANGLE_RAD);
+    private final ArmLinkage forearm = new ArmLinkage(FOREARM_LENGTH_METERS, ELBOW_MIN_ANGLE_RAD, ELBOW_MAX_ANGLE_RAD);
+    private final ArmLinkage hand = new ArmLinkage(HAND_LENGTH_METERS, WRIST_MIN_ANGLE_RAD, WRIST_MAX_ANGLE_RAD);
+
     private final MechanismLigament2d currentArmLigament = new MechanismLigament2d("CurrentArm", ARM_LENGTH_METERS, 90.0, 10, new Color8Bit(0, 0, 255));
     private final MechanismLigament2d currentForearmLigament = new MechanismLigament2d("CurrentForearm", FOREARM_LENGTH_METERS, 0.0, 10, new Color8Bit(0, 255, 0));
     private final MechanismLigament2d currentIntakeLigament = new MechanismLigament2d("CurrentIntake", HAND_LENGTH_METERS, 0.0, 10, new Color8Bit(255, 0, 0));
@@ -67,7 +71,7 @@ public class ArmSubsystem extends SubsystemBase {
     public ArmSubsystem(ArmIO io) {
         this.io = io;
  //       this.kinematics = new ArmKinematics(armLengthConstants, armAngleConstraints);
-        this.kinematics = new SimpleArmKinematics(ARM_LENGTH_METERS, FOREARM_LENGTH_METERS);
+        this.kinematics = new SimpleArmKinematics(arm, forearm, hand);
 
         // Create the mechanism object with a 4M x 3M canvas
         this.mechanism = new Mechanism2d(4, 3);
