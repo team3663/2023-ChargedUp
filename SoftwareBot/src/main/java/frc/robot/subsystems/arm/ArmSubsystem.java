@@ -19,12 +19,12 @@ public class ArmSubsystem extends SubsystemBase {
     private static final double HAND_LENGTH_METERS = Units.inchesToMeters(15);
 
     // angle constraints for each joint
-    private static final double SHOULDER_MIN_ANGLE_RAD = Units.degreesToRadians(15);
-    private static final double SHOULDER_MAX_ANGLE_RAD = Units.degreesToRadians(90);
-    private static final double ELBOW_MIN_ANGLE_RAD = Units.degreesToRadians(10);
-    private static final double ELBOW_MAX_ANGLE_RAD = Units.degreesToRadians(100);
-    private static final double WRIST_MIN_ANGLE_RAD = Units.degreesToRadians(-90);
-    private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(90);
+    // private static final double SHOULDER_MIN_ANGLE_RAD = Units.degreesToRadians(15);
+    // private static final double SHOULDER_MAX_ANGLE_RAD = Units.degreesToRadians(90);
+    // private static final double ELBOW_MIN_ANGLE_RAD = Units.degreesToRadians(10);
+    // private static final double ELBOW_MAX_ANGLE_RAD = Units.degreesToRadians(100);
+    // private static final double WRIST_MIN_ANGLE_RAD = Units.degreesToRadians(-90);
+    // private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(90);
 
     private final ArmIO io;
     private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
@@ -38,16 +38,16 @@ public class ArmSubsystem extends SubsystemBase {
      * Contains the lengths of each arm segment in meters
      * [0] is the arm, [1] is the forearm, and [2] is the hand
      */
-    private double[] armLengthConstants = {ARM_LENGTH_METERS, FOREARM_LENGTH_METERS, HAND_LENGTH_METERS};
+    // private double[] armLengthConstants = {ARM_LENGTH_METERS, FOREARM_LENGTH_METERS, HAND_LENGTH_METERS};
     /**
      * Contains the angle constraints of each joint
      * [0]/[1] are shoulder min/max, [2]/[3] are elbow min/max, [4]/[5] are wrist min/max
      */
-    private double[] armAngleConstraints = {
-            SHOULDER_MIN_ANGLE_RAD, SHOULDER_MAX_ANGLE_RAD,
-            ELBOW_MIN_ANGLE_RAD, ELBOW_MAX_ANGLE_RAD,
-            WRIST_MIN_ANGLE_RAD, WRIST_MAX_ANGLE_RAD
-    };
+    // private double[] armAngleConstraints = {
+    //         SHOULDER_MIN_ANGLE_RAD, SHOULDER_MAX_ANGLE_RAD,
+    //         ELBOW_MIN_ANGLE_RAD, ELBOW_MAX_ANGLE_RAD,
+    //         WRIST_MIN_ANGLE_RAD, WRIST_MAX_ANGLE_RAD
+    // };
 
     private final MechanismLigament2d currentArmLigament = new MechanismLigament2d("CurrentArm", ARM_LENGTH_METERS, 90.0, 10, new Color8Bit(0, 0, 255));
     private final MechanismLigament2d currentForearmLigament = new MechanismLigament2d("CurrentForearm", FOREARM_LENGTH_METERS, 0.0, 10, new Color8Bit(0, 255, 0));
