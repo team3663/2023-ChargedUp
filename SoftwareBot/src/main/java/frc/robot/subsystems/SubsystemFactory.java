@@ -23,12 +23,10 @@ public final class SubsystemFactory {
             case ROBOT_2022:
                 photon = new PhotonVisionUtil(
                     new PhotonCamera[] {
-                        new PhotonCamera("Left_Camera"),
-                        new PhotonCamera("Right_Camera")
+                        new PhotonCamera("ArduCam"),
                     },
                     new Transform3d[] {
-                        new Transform3d(new Pose3d(), Constants.CameraPoses.LEFT_CAMERA_POSE),
-                        new Transform3d(new Pose3d(), Constants.CameraPoses.RIGHT_CAMERA_POSE)
+                        new Transform3d(new Pose3d(), Constants.CameraPoses.ARDUCAM_POSE),
                     }
                 );
                 break;

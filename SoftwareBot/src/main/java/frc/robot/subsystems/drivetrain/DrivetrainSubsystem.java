@@ -70,7 +70,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         this.odometry = new SwerveDriveOdometry(kinematics, initialGyroAngle, modulePositions);
 
         poseEstimator = new SwerveDrivePoseEstimator(kinematics, initialGyroAngle, modulePositions, new Pose2d(),
-            VecBuilder.fill(0.01, 0.01, 0.001), VecBuilder.fill(0.1, 0.1, 0.1));
+            VecBuilder.fill(0.005, 0.005, 0.0005), VecBuilder.fill(0.5, 0.5, 0.5));
 
         this.photonvision = photonvision;
     }

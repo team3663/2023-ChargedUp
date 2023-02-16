@@ -48,7 +48,7 @@ public final class Constants {
     }
 
     public static class CameraPoses {
-        public static final Pose3d LEFT_CAMERA_POSE = new Pose3d(
+        public static final Pose3d ARDUCAM_POSE = new Pose3d(
             -Units.inchesToMeters(10.5),
             Units.inchesToMeters(11.75),
             Units.inchesToMeters(30),

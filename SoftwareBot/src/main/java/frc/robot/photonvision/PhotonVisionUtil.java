@@ -20,7 +20,6 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.Filesystem;
 
@@ -54,7 +53,8 @@ public class PhotonVisionUtil implements IPhotonVision {
     }
 
     for (int i = 0; i < cameras.length; i++) {
-      PhotonPoseEstimator pe = new PhotonPoseEstimator(layout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, cameras[i], cameraPoses[i]);
+      PhotonPoseEstimator pe = new PhotonPoseEstimator(layout, PoseStrategy.MULTI_TAG_PNP, cameras[i], cameraPoses[i]);
+      pe.setLastPose(new Pose2d());
       poseEstimators.add(pe);
       pe.setReferencePose(new Pose2d());
     }
@@ -86,6 +86,8 @@ public class PhotonVisionUtil implements IPhotonVision {
       if (poseGuesses.get(0).isPresent()) {
         estPose = poseGuesses.get(0);
       }
+    } else {
+      estPose = Optional.empty();
     }
   }
 
@@ -101,8 +103,7 @@ public class PhotonVisionUtil implements IPhotonVision {
     if (estPose != null) {
       return estPose;
     } else {
-      EstimatedRobotPose e  = new EstimatedRobotPose(new Pose3d(), 0);
-      return Optional.of(e);
+      return Optional.empty();
     }
   }
 }
