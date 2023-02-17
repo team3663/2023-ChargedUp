@@ -10,5 +10,5 @@ public interface IPhotonVision {
  
     default public void update() {}
     default public void setReferencePose(Pose2d pose) {}
-    default public Optional<EstimatedRobotPose> getRobotPose3d() { return null; }
+    default public Optional<EstimatedRobotPose> getRobotPose3d() { return Optional.empty(); }
 }
