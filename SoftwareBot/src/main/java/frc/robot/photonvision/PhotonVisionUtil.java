@@ -75,8 +75,6 @@ public class PhotonVisionUtil implements IPhotonVision {
     }
 
     estPose = poseGuesses.stream().filter(est -> est.targetsUsed.size() > 1).max(Comparator.comparingInt(est -> est.targetsUsed.size()));
-    
-    // TODO: Add function for target/pose tallying
   }
 
   @Override

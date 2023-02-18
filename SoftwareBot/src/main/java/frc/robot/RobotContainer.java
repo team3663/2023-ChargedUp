@@ -89,17 +89,16 @@ public class RobotContainer {
             driverController.start().onTrue(new InstantCommand(() -> drivetrainSubsystem.resetPose(new Pose2d())));
         }
 
-        // TODO: Make sure this doesn't cause an exception
         driverController.back().onTrue(new InstantCommand(
             () -> drivetrainSubsystem.resetPose(new Pose2d(drivetrainSubsystem.getPose().getX(), drivetrainSubsystem.getPose().getY(), new Rotation2d()))
         ));
 
         driverController.a().whileTrue(driveCircleCommand);
 
-        driverController.povLeft().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(0.1, 0.4, Rotation2d.fromDegrees(90.0))));
-        driverController.povRight().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(1.5, 0.5, Rotation2d.fromDegrees(0.0))));
-        driverController.povUp().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(1.5, 1.0, Rotation2d.fromDegrees(45.0))));
-        driverController.povDown().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(1.5, 0.2, Rotation2d.fromDegrees(0.0))));
+        driverController.povLeft().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(0.11, 0.16, Rotation2d.fromDegrees(110.0))));
+        driverController.povRight().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(.51, 0.81, Rotation2d.fromDegrees(0.0))));
+        // driverController.povUp().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(1.5, 1.0, Rotation2d.fromDegrees(45.0))));
+        // driverController.povDown().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(1.5, 0.2, Rotation2d.fromDegrees(0.0))));
         
         driverController.b().onTrue(goToPoseCommand);
         driverController.y().onTrue(goToOtherPoseCommand);

@@ -10,6 +10,9 @@
  */
 package frc.robot.subsystems.arm;
 
+import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 
@@ -17,7 +20,6 @@ public class SimpleArmKinematics implements IArmKinematics {
 
     private final ArmLinkage arm;
     private final ArmLinkage forearm;
-    @SuppressWarnings("unused")
     private final ArmLinkage hand;
 
 
@@ -36,7 +38,6 @@ public class SimpleArmKinematics implements IArmKinematics {
      */
     @Override
     public Pose2d forward(ArmState state) {
-        
         double x = arm.lengthMeters * Math.cos(state.shoulderAngleRad) + forearm.lengthMeters * Math.cos(state.shoulderAngleRad + state.elbowAngleRad);
         double y = arm.lengthMeters * Math.sin(state.shoulderAngleRad) + forearm.lengthMeters * Math.sin(state.shoulderAngleRad + state.elbowAngleRad);
 
@@ -71,7 +72,25 @@ public class SimpleArmKinematics implements IArmKinematics {
 
         // Now calculate the wrist angle that gives the desired hand angle based on the forearm angle we just calculated
         double wristAngle = handAngle - forearmAngle;
+
+        double shoulderAngleClamped = MathUtil.clamp(shoulderAngle, arm.minAngleRad, arm.maxAngleRad);
+        double elbowAngleClamped = MathUtil.clamp(elbowAngle, forearm.minAngleRad, forearm.maxAngleRad);
+        double wristAngleClamped = MathUtil.clamp(wristAngle, hand.minAngleRad, hand.maxAngleRad);
+
+        if (shoulderAngleClamped != shoulderAngle) {
+            System.out.println("Invalid shoulder angle");
+        }
+        if (elbowAngleClamped != elbowAngle) {
+            System.out.println("Invalid elbow angle");
+        }
+        if (wristAngleClamped != wristAngle) {
+            System.out.println("Invalid wrist angle");
+        }
     
-        return new ArmState( shoulderAngle, elbowAngle, wristAngle);
+        Logger.getInstance().recordOutput("Arm/clampedShoulderAngle", shoulderAngleClamped);
+        Logger.getInstance().recordOutput("Arm/clampedElbowAngle", elbowAngleClamped);
+        Logger.getInstance().recordOutput("Arm/clampedWristAngle", wristAngleClamped);
+
+        return new ArmState(shoulderAngleClamped, elbowAngleClamped, wristAngleClamped);
       }
 }
