@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
-public class GoToPoseCommand extends CommandBase {
+public class DriveToPoseCommand extends CommandBase {
 
   private PIDController translationXController = new PIDController(4.0, 0.0, 0.0);
   private PIDController translationYController = new PIDController(4.0, 0.0, 0.0);
@@ -33,7 +33,7 @@ public class GoToPoseCommand extends CommandBase {
 
   private final DrivetrainSubsystem drivetrain;
   /** Creates a new GoToPoseCommand. */
-  public GoToPoseCommand(DrivetrainSubsystem drivetrain, Translation2d targetTranslation, Rotation2d targetRotation) {
+  public DriveToPoseCommand(DrivetrainSubsystem drivetrain, Translation2d targetTranslation, Rotation2d targetRotation) {
     this.drivetrain = drivetrain;
     addRequirements(this.drivetrain);
 

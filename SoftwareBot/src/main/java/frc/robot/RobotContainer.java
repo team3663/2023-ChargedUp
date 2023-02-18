@@ -15,7 +15,7 @@ import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DriveCircleCommand;
 import frc.robot.commands.SetArmPoseCommand;
-import frc.robot.commands.GoToPoseCommand;
+import frc.robot.commands.DriveToPoseCommand;
 import frc.robot.photonvision.IPhotonVision;
 import frc.robot.subsystems.SubsystemFactory;
 import frc.robot.subsystems.arm.ArmSubsystem;
@@ -44,8 +44,8 @@ public class RobotContainer {
 
     // Commands
     private DriveCircleCommand driveCircleCommand;
-    private GoToPoseCommand goToPoseCommand;
-    private GoToPoseCommand goToOtherPoseCommand;
+    private DriveToPoseCommand goToPoseCommand;
+    private DriveToPoseCommand goToOtherPoseCommand;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -77,8 +77,8 @@ public class RobotContainer {
 
         driveCircleCommand = new DriveCircleCommand(drivetrainSubsystem);
 
-        goToPoseCommand = new GoToPoseCommand(drivetrainSubsystem, new Translation2d(1, 1), new Rotation2d(0.5));
-        goToOtherPoseCommand = new GoToPoseCommand(drivetrainSubsystem, new Translation2d(0, 0), new Rotation2d(-0.5));
+        goToPoseCommand = new DriveToPoseCommand(drivetrainSubsystem, new Translation2d(1, 1), new Rotation2d(0.5));
+        goToOtherPoseCommand = new DriveToPoseCommand(drivetrainSubsystem, new Translation2d(0, 0), new Rotation2d(-0.5));
     }
 
     private void configureBindings() {
