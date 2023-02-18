@@ -19,10 +19,10 @@ public class ArmSubsystem extends SubsystemBase {
     private static final double HAND_LENGTH_METERS = Units.inchesToMeters(15);
 
     // angle constraints for each joint
-    private static final double SHOULDER_MIN_ANGLE_RAD = Units.degreesToRadians(90);
-    private static final double SHOULDER_MAX_ANGLE_RAD = Units.degreesToRadians(160);
-    private static final double ELBOW_MIN_ANGLE_RAD = Units.degreesToRadians(30);
-    private static final double ELBOW_MAX_ANGLE_RAD = Units.degreesToRadians(-150);
+    private static final double SHOULDER_MIN_ANGLE_RAD = Units.degreesToRadians(15);
+    private static final double SHOULDER_MAX_ANGLE_RAD = Units.degreesToRadians(90);
+    private static final double ELBOW_MIN_ANGLE_RAD = Units.degreesToRadians(10);
+    private static final double ELBOW_MAX_ANGLE_RAD = Units.degreesToRadians(100);
     private static final double WRIST_MIN_ANGLE_RAD = Units.degreesToRadians(-90);
     private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(90);
 
@@ -31,6 +31,7 @@ public class ArmSubsystem extends SubsystemBase {
     private Pose2d targetPose = new Pose2d(0.1, 0.4, Rotation2d.fromDegrees(90.0));
     private IArmKinematics kinematics;
     private Mechanism2d mechanism;
+
     private double[] targetAnglesLogged = new double[3];
 
     private final ArmLinkage arm = new ArmLinkage(ARM_LENGTH_METERS, SHOULDER_MIN_ANGLE_RAD, SHOULDER_MAX_ANGLE_RAD);
@@ -48,9 +49,9 @@ public class ArmSubsystem extends SubsystemBase {
     private final MechanismRoot2d targetPositionRoot;
     private final MechanismLigament2d targetPositionLigament;
 
-    private final PIDController shoulderController = new PIDController(10.0, 0.0, 3.0);
-    private final PIDController elbowController = new PIDController(30.0, 4.0, 9.0);
-    private final PIDController wristController = new PIDController(5.0, 0.0, 0.5);
+    private final PIDController shoulderController = new PIDController(1.0, 0.0, 0.0);
+    private final PIDController elbowController = new PIDController(10.0, 1.0, 2.0);
+    private final PIDController wristController = new PIDController(1.0, 0.0, 0.0);
 
     public ArmSubsystem(ArmIO io) {
         this.io = io;
