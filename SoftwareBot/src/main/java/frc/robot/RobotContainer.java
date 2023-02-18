@@ -89,7 +89,6 @@ public class RobotContainer {
             driverController.start().onTrue(new InstantCommand(() -> drivetrainSubsystem.resetPose(new Pose2d())));
         }
 
-        // TODO: Make sure this doesn't cause an exception
         driverController.back().onTrue(new InstantCommand(
             () -> drivetrainSubsystem.resetPose(new Pose2d(drivetrainSubsystem.getPose().getX(), drivetrainSubsystem.getPose().getY(), new Rotation2d()))
         ));

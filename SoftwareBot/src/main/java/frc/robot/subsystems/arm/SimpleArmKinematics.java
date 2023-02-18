@@ -20,7 +20,6 @@ public class SimpleArmKinematics implements IArmKinematics {
 
     private final ArmLinkage arm;
     private final ArmLinkage forearm;
-    @SuppressWarnings("unused")
     private final ArmLinkage hand;
 
 

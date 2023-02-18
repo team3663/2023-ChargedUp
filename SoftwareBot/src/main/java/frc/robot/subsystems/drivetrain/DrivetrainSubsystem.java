@@ -69,7 +69,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
         Rotation2d initialGyroAngle = new Rotation2d();
         this.odometry = new SwerveDriveOdometry(kinematics, initialGyroAngle, modulePositions);
 
-        // TODO: Add function for multiple SD's based on # of targets sighted
         poseEstimator = new SwerveDrivePoseEstimator(kinematics, initialGyroAngle, modulePositions, new Pose2d(),
             VecBuilder.fill(0.005, 0.005, 0.0005), VecBuilder.fill(0.5, 0.5, 0.5));
 

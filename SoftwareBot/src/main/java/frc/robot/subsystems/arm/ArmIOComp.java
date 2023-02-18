@@ -85,19 +85,18 @@ public class ArmIOComp implements ArmIO {
         wristMotor.setNeutralMode(NeutralMode.Brake);
         wristMotor.setInverted(TalonFXInvertType.CounterClockwise);
 
+        // Remember that if the motor is inverted the encoder must be as well. If issues arise, this is the first place to look.
         CANCoderConfiguration shoulderEncoderConfig = new CANCoderConfiguration();
         shoulderEncoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
         shoulderEncoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
         shoulderEncoderConfig.magnetOffsetDegrees = SHOULDER_OFFSET_DEG;
-        // TODO: Remember that this has to be changed whenever direction is inverted
-        shoulderEncoderConfig.sensorDirection = true;
+        shoulderEncoderConfig.sensorDirection = false;
         shoulderEncoder.configAllSettings(shoulderEncoderConfig);
 
         CANCoderConfiguration elbowEncoderConfig = new CANCoderConfiguration();
         elbowEncoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
         elbowEncoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
         elbowEncoderConfig.magnetOffsetDegrees = ELBOW_OFFSET_DEG;
-        // TODO: Remember that this has to be changed whenever direction is inverted
         elbowEncoderConfig.sensorDirection = false;
         elbowEncoder.configAllSettings(elbowEncoderConfig);
 
@@ -105,7 +104,6 @@ public class ArmIOComp implements ArmIO {
         wristEncoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
         wristEncoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
         wristEncoderConfig.magnetOffsetDegrees = WRIST_OFFSET_RAD;
-        // TODO: Remember that this has to be changed whenever direction is inverted
         wristEncoderConfig.sensorDirection = false;
         wristEncoder.configAllSettings(wristEncoderConfig);
     }
