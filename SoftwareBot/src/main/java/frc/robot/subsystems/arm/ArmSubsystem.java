@@ -14,17 +14,17 @@ import org.littletonrobotics.junction.Logger;
 public class ArmSubsystem extends SubsystemBase {
 
     // Lengths of arms three linkages (arm, forearm & hand)
-    private static final double ARM_LENGTH_METERS = Units.inchesToMeters(40);
-    private static final double FOREARM_LENGTH_METERS = Units.inchesToMeters(35);
-    private static final double HAND_LENGTH_METERS = Units.inchesToMeters(15);
+    private static final double ARM_LENGTH_METERS = Units.inchesToMeters(20);
+    private static final double FOREARM_LENGTH_METERS = Units.inchesToMeters(30);
+    private static final double HAND_LENGTH_METERS = Units.inchesToMeters(17);
 
     // angle constraints for each joint
-    private static final double SHOULDER_MIN_ANGLE_RAD = Units.degreesToRadians(90);
-    private static final double SHOULDER_MAX_ANGLE_RAD = Units.degreesToRadians(160);
-    private static final double ELBOW_MIN_ANGLE_RAD = Units.degreesToRadians(30);
-    private static final double ELBOW_MAX_ANGLE_RAD = Units.degreesToRadians(-150);
+    private static final double SHOULDER_MIN_ANGLE_RAD = Units.degreesToRadians(20);
+    private static final double SHOULDER_MAX_ANGLE_RAD = Units.degreesToRadians(90);
+    private static final double ELBOW_MIN_ANGLE_RAD = Units.degreesToRadians(10);
+    private static final double ELBOW_MAX_ANGLE_RAD = Units.degreesToRadians(100);
     private static final double WRIST_MIN_ANGLE_RAD = Units.degreesToRadians(-90);
-    private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(90);
+    private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(135);
 
     private final ArmIO io;
     private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();

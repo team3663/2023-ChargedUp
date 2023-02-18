@@ -15,25 +15,13 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.util.Units;
 
 public class ArmIOComp implements ArmIO {
-    private static final double SHOULDER_GEAR_RATIO = 1;
-    private static final double SHOULDER_MIN_ANGLE_RAD = Units.degreesToRadians(10);
-    private static final double SHOULDER_MAX_ANGLE_RAD = Units.degreesToRadians(90);
     private static final double SHOULDER_OFFSET_DEG = 0;
-
-    private static final double ELBOW_GEAR_RATIO = 1;
-    private static final double ELBOW_MIN_ANGLE_RAD = Units.degreesToRadians(15);
-    private static final double ELBOW_MAX_ANGLE_RAD = Units.degreesToRadians(90);
     private static final double ELBOW_OFFSET_DEG = 0;
-
-    private static final double WRIST_GEAR_RATIO = 1;
-    private static final double WRIST_MIN_ANGLE_RAD = Units.degreesToRadians(-90);
-    private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(90);
     private static final double WRIST_OFFSET_RAD = 0;
 
     private static final double SHOULDER_CURRENT_LIMIT = 40;
     private static final double ELBOW_CURRENT_LIMIT = 40;
     private static final double WRIST_CURRENT_LIMIT = 40;
-    private static final double INTAKE_CURRENT_LIMIT = 40;
 
     private final CANSparkMax shoulderMotor;
     private final TalonFX elbowMotor1;
