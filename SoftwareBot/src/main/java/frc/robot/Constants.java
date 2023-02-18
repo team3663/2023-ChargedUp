@@ -17,6 +17,11 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+    // This flag tells us whether to configure for a competition match (as opposed to practice)
+    // We mostly use it to disable diagnostics that should not run at competition.
+    public static final boolean COMPETITION_MODE = false;
+
     public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(131.5);// 311.75
     public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(130.6);// 311.92
     public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(95.3);// 275.27

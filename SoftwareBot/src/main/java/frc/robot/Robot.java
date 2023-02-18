@@ -6,14 +6,15 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-
+import frc.robot.utility.AdvantageKitHelper;
 import frc.robot.utility.MacAddressUtil;
 import frc.robot.utility.RobotIdentity;
-import org.littletonrobotics.junction.LoggedRobot;
-import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.networktables.NT4Publisher;
 
 import java.util.stream.Collectors;
+
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -32,15 +33,16 @@ public class Robot extends LoggedRobot {
      */
     @Override
     public void robotInit() {
-        Logger logger = Logger.getInstance();
 
-        logger.addDataReceiver(new NT4Publisher());
+        Logger logger = AdvantageKitHelper.setupLogger(Constants.COMPETITION_MODE);
 
-        logger.recordMetadata("RobotMacAddresses", MacAddressUtil.getMacAddresses().stream().collect(Collectors.joining(", ", "[", "]")));
+        logger.recordMetadata("CompetitionMode", Boolean.toString(Constants.COMPETITION_MODE));
         logger.recordMetadata("RobotIdentity", RobotIdentity.getIdentity().toString());
 
-        logger.start();
+        logger.recordMetadata("RobotMacAddresses",
+            MacAddressUtil.getMacAddresses().stream().collect(Collectors.joining(", ", "[", "]")));
 
+        logger.start();
 
         // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
         // autonomous chooser on the dashboard.
