@@ -55,8 +55,8 @@ public class PhotonVisionUtil implements IPhotonVision {
     for (int i = 0; i < cameras.length; i++) {
       PhotonPoseEstimator pe = new PhotonPoseEstimator(layout, PoseStrategy.MULTI_TAG_PNP, cameras[i], cameraPoses[i]);
       pe.setLastPose(new Pose2d());
-      poseEstimators.add(pe);
       pe.setReferencePose(new Pose2d());
+      poseEstimators.add(pe);
     }
   }
 

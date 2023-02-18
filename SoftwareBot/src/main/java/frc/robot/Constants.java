@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.PIDConstants;
-
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
@@ -65,7 +63,4 @@ public final class Constants {
             // new Rotation3d(0, 0, -0.5)
         );
     }
-
-    public static final PIDConstants AUTO_TRANSLATION_PID_CONSTANTS = new PIDConstants(2.5, 0.0, 0.0);
-    public static final PIDConstants AUTO_ROTATION_PID_CONSTANTS = new PIDConstants(2.0, 0.0, 0.0);
 }

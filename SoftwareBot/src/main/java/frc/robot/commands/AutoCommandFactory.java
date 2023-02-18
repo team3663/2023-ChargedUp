@@ -17,6 +17,8 @@ import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import frc.robot.Constants;
 
 public final class AutoCommandFactory {
+    private static final PIDConstants AUTO_TRANSLATION_PID_CONSTANTS = new PIDConstants(2.5, 0.0, 0.0);
+    private static final PIDConstants AUTO_ROTATION_PID_CONSTANTS = new PIDConstants(2.0, 0.0, 0.0);
 
     private static PathConstraints pathConstraints = new PathConstraints(1.0, 1.0);
     
@@ -33,8 +35,8 @@ public final class AutoCommandFactory {
         SwerveAutoBuilder builder = new SwerveAutoBuilder(
                 () -> drivetrain.getPose(),
                 (pose) -> drivetrain.resetPose(pose),
-                Constants.AUTO_TRANSLATION_PID_CONSTANTS,
-                Constants.AUTO_ROTATION_PID_CONSTANTS,
+                AUTO_TRANSLATION_PID_CONSTANTS,
+                AUTO_ROTATION_PID_CONSTANTS,
                 (chassisSpeeds) -> drivetrain.setTargetChassisVelocity(chassisSpeeds),
                 eventMap,
                 false,
@@ -51,8 +53,8 @@ public final class AutoCommandFactory {
         SwerveAutoBuilder builder = new SwerveAutoBuilder(
                 () -> drivetrain.getPose(),
                 (pose) -> drivetrain.resetPose(pose),
-                Constants.AUTO_TRANSLATION_PID_CONSTANTS,
-                Constants.AUTO_ROTATION_PID_CONSTANTS,
+                AUTO_TRANSLATION_PID_CONSTANTS,
+                AUTO_ROTATION_PID_CONSTANTS,
                 (chassisSpeeds) -> drivetrain.setTargetChassisVelocity(chassisSpeeds),
                 eventMap,
                 false,
@@ -69,8 +71,8 @@ public final class AutoCommandFactory {
         SwerveAutoBuilder builder = new SwerveAutoBuilder(
                 () -> drivetrain.getPose(),
                 (pose) -> drivetrain.resetPose(pose),
-                Constants.AUTO_TRANSLATION_PID_CONSTANTS,
-                Constants.AUTO_ROTATION_PID_CONSTANTS,
+                AUTO_TRANSLATION_PID_CONSTANTS,
+                AUTO_ROTATION_PID_CONSTANTS,
                 (chassisSpeeds) -> drivetrain.setTargetChassisVelocity(chassisSpeeds),
                 eventMap,
                 false,
@@ -87,8 +89,8 @@ public final class AutoCommandFactory {
         SwerveAutoBuilder builder = new SwerveAutoBuilder(
                 () -> drivetrain.getPose(),
                 (pose) -> drivetrain.resetPose(pose),
-                Constants.AUTO_TRANSLATION_PID_CONSTANTS,
-                Constants.AUTO_ROTATION_PID_CONSTANTS,
+                AUTO_TRANSLATION_PID_CONSTANTS,
+                AUTO_ROTATION_PID_CONSTANTS,
                 (chassisSpeeds) -> drivetrain.setTargetChassisVelocity(chassisSpeeds),
                 eventMap,
                 false,
@@ -105,8 +107,8 @@ public final class AutoCommandFactory {
         SwerveAutoBuilder builder = new SwerveAutoBuilder(
                 () -> drivetrain.getPose(),
                 (pose) -> drivetrain.resetPose(pose),
-                Constants.AUTO_TRANSLATION_PID_CONSTANTS,
-                Constants.AUTO_ROTATION_PID_CONSTANTS,
+                AUTO_TRANSLATION_PID_CONSTANTS,
+                AUTO_ROTATION_PID_CONSTANTS,
                 (chassisSpeeds) -> drivetrain.setTargetChassisVelocity(chassisSpeeds),
                 eventMap,
                 false,
