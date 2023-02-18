@@ -8,7 +8,13 @@ import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.sensors.CANCoder;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import frc.robot.utility.config.SdsMk4SwerveModuleConfig;
+import frc.robot.utility.config.CanCoderConfig;
+import frc.robot.utility.config.Falcon500Config;
+import frc.robot.utility.config.SwerveModuleConfig;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 public class SwerveModuleIOSdsMk4 implements SwerveModuleIO {
     private static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(4.0);
@@ -26,7 +32,7 @@ public class SwerveModuleIOSdsMk4 implements SwerveModuleIO {
     private final CANCoder steerEncoder;
 
     public SwerveModuleIOSdsMk4(
-            SdsMk4SwerveModuleConfig.GearRatio gearRatio,
+            Config.GearRatio gearRatio,
             TalonFX driveMotor,
             TalonFX steerMotor,
             CANCoder steerEncoder
@@ -93,5 +99,41 @@ public class SwerveModuleIOSdsMk4 implements SwerveModuleIO {
     @Override
     public void setTargetSteerAngle(double angleRad) {
         steerMotor.set(TalonFXControlMode.Position, angleRad / steerVelocityCoefficient);
+    }
+
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    public static class Config extends SwerveModuleConfig {
+        private GearRatio gearRatio = GearRatio.L3;
+
+        @Override
+        public SwerveModuleIO createIO(SwerveModuleConfig.HardwareConfig hardwareConfig) {
+            if (!(hardwareConfig instanceof SwerveModuleIOSdsMk4.HardwareConfig)) {
+                throw new IllegalArgumentException("Hardware config for a Mk4 module must be a Mk4 hardware configuration");
+            }
+
+            SwerveModuleIOSdsMk4.HardwareConfig sdsHardwareConfig = (SwerveModuleIOSdsMk4.HardwareConfig) hardwareConfig;
+
+            return new SwerveModuleIOSdsMk4(gearRatio, sdsHardwareConfig.getDriveMotor().create(), sdsHardwareConfig.getSteerMotor().create(), sdsHardwareConfig.getSteerEncoder().create());
+        }
+
+        @AllArgsConstructor
+        public enum GearRatio {
+            L1((50.0 / 14.0) * (19.0 / 25.0) * (45.0 / 15.0)),
+            L2((50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0)),
+            L3((50.0 / 14.0) * (16.0 / 28.0) * (45.0 / 15.0)),
+            L4((48.0 / 16.0) * (16.0 / 28.0) * (45.0 / 15.0));
+
+            @Getter
+            private final double reduction;
+        }
+    }
+
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    public static class HardwareConfig extends SwerveModuleConfig.HardwareConfig {
+        private Falcon500Config driveMotor;
+        private Falcon500Config steerMotor;
+        private CanCoderConfig steerEncoder;
     }
 }
