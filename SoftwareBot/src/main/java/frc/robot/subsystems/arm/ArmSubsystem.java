@@ -25,6 +25,11 @@ public class ArmSubsystem extends SubsystemBase {
     private static final double ELBOW_MAX_ANGLE_RAD = Units.degreesToRadians(100);
     private static final double WRIST_MIN_ANGLE_RAD = Units.degreesToRadians(-90);
     private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(135);
+    private static final double[] jointAngleConstraints = {
+        SHOULDER_MIN_ANGLE_RAD, SHOULDER_MAX_ANGLE_RAD,
+        ELBOW_MIN_ANGLE_RAD, ELBOW_MAX_ANGLE_RAD,
+        WRIST_MIN_ANGLE_RAD, WRIST_MAX_ANGLE_RAD
+    };
 
     private final ArmIO io;
     private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
@@ -54,7 +59,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     public ArmSubsystem(ArmIO io) {
         this.io = io;
-        this.kinematics = new SimpleArmKinematics(arm, forearm, hand);
+        this.kinematics = new SimpleArmKinematics(arm, forearm, hand, jointAngleConstraints);
 
         // Create the mechanism object with a 4M x 3M canvas
         this.mechanism = new Mechanism2d(4, 3);
