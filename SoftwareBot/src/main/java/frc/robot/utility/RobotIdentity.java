@@ -10,7 +10,7 @@ public enum RobotIdentity {
     SIMULATION;
 
     private static final String ROBOT_2022_MAC_ADDRESS = "00-80-2f-21-c5-21";
-    private static final String ROBOT_2023_MAC_ADDRESS = "01-00-00-00-00-00";
+    private static final String ROBOT_2023_MAC_ADDRESS = "00-80-2f-33-d0-3f";
 
     /**
      * Gets the identity of the robot.
