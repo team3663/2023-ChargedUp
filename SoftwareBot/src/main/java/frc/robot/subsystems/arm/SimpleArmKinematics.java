@@ -10,6 +10,8 @@
  */
 package frc.robot.subsystems.arm;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -20,14 +22,12 @@ public class SimpleArmKinematics implements IArmKinematics {
     private final ArmLinkage forearm;
     @SuppressWarnings("unused")
     private final ArmLinkage hand;
-    private final double[] constraints;
 
 
-    public SimpleArmKinematics(ArmLinkage arm, ArmLinkage forearm, ArmLinkage hand, double[] constraints) {
+    public SimpleArmKinematics(ArmLinkage arm, ArmLinkage forearm, ArmLinkage hand) {
         this.arm = arm;
         this.forearm = forearm;
         this.hand = hand;
-        this.constraints = constraints;
     }
 
     /**
@@ -39,23 +39,8 @@ public class SimpleArmKinematics implements IArmKinematics {
      */
     @Override
     public Pose2d forward(ArmState state) {
-
-        double shoulderAngleRadActual = MathUtil.clamp(state.elbowAngleRad, constraints[0], constraints[1]);
-        double elbowAngleRadActual = MathUtil.clamp(state.shoulderAngleRad, constraints[2], constraints[3]);
-        double wristAngleRadActual = MathUtil.clamp(state.wristAngleRad, constraints[4], constraints[5]);
-
-        if (shoulderAngleRadActual != state.shoulderAngleRad) {
-            System.out.println("Invalid shoulder angle");
-        }
-        if (elbowAngleRadActual != state.elbowAngleRad) {
-            System.out.println("Invalid elbow angle");
-        }
-        if (wristAngleRadActual != state.wristAngleRad) {
-            System.out.println("Invalid wrist angle");
-        }
-        
-        double x = arm.lengthMeters * Math.cos(shoulderAngleRadActual) + forearm.lengthMeters * Math.cos(shoulderAngleRadActual + elbowAngleRadActual);
-        double y = arm.lengthMeters * Math.sin(shoulderAngleRadActual) + forearm.lengthMeters * Math.sin(shoulderAngleRadActual + elbowAngleRadActual);
+        double x = arm.lengthMeters * Math.cos(state.shoulderAngleRad) + forearm.lengthMeters * Math.cos(state.shoulderAngleRad + state.elbowAngleRad);
+        double y = arm.lengthMeters * Math.sin(state.shoulderAngleRad) + forearm.lengthMeters * Math.sin(state.shoulderAngleRad + state.elbowAngleRad);
 
         // Determine the hand angle (relative to x axis)
         double handAngle = state.shoulderAngleRad + state.elbowAngleRad + state.wristAngleRad;
@@ -89,20 +74,24 @@ public class SimpleArmKinematics implements IArmKinematics {
         // Now calculate the wrist angle that gives the desired hand angle based on the forearm angle we just calculated
         double wristAngle = handAngle - forearmAngle;
 
-        double shoulderAngleRadActual = MathUtil.clamp(elbowAngle, constraints[0], constraints[1]);
-        double elbowAngleRadActual = MathUtil.clamp(shoulderAngle, constraints[2], constraints[3]);
-        double wristAngleRadActual = MathUtil.clamp(wristAngle, constraints[4], constraints[5]);
+        double shoulderAngleActual = MathUtil.clamp(shoulderAngle, arm.minAngleRad, arm.maxAngleRad);
+        double elbowAngleActual = MathUtil.clamp(elbowAngle, forearm.minAngleRad, forearm.maxAngleRad);
+        double wristAngleActual = MathUtil.clamp(wristAngle, hand.minAngleRad, hand.maxAngleRad);
 
-        if (shoulderAngleRadActual != shoulderAngle) {
-            System.out.println("Invalid shoulder angle");
-        }
-        if (elbowAngleRadActual != elbowAngle) {
-            System.out.println("Invalid elbow angle");
-        }
-        if (wristAngleRadActual != wristAngle) {
-            System.out.println("Invalid wrist angle");
-        }
+        // if (shoulderAngleActual != shoulderAngle) {
+        //     System.out.println("Invalid shoulder angle");
+        // }
+        // if (elbowAngleActual != elbowAngle) {
+        //     System.out.println("Invalid elbow angle");
+        // }
+        // if (wristAngleActual != wristAngle) {
+        //     System.out.println("Invalid wrist angle");
+        // }
     
-        return new ArmState(shoulderAngle, elbowAngle, wristAngle);
+        Logger.getInstance().recordOutput("Arm/clampedShoulderAngle", shoulderAngleActual);
+        Logger.getInstance().recordOutput("Arm/clampedElbowAngle", elbowAngleActual);
+        Logger.getInstance().recordOutput("Arm/clampedWristAngle", wristAngleActual);
+
+        return new ArmState(shoulderAngleActual, elbowAngleActual, wristAngleActual);
       }
 }
