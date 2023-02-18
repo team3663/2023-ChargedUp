@@ -7,7 +7,13 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.utility.AdvantageKitHelper;
+import frc.robot.utility.MacAddressUtil;
+import frc.robot.utility.RobotIdentity;
+
+import java.util.stream.Collectors;
+
 import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
 
 
 /**
@@ -28,7 +34,14 @@ public class Robot extends LoggedRobot {
     @Override
     public void robotInit() {
 
-        AdvantageKitHelper.setupLogger(Constants.COMPETITION_MODE);
+        Logger logger = AdvantageKitHelper.setupLogger(Constants.COMPETITION_MODE);
+
+        logger.recordMetadata("CompetitionMode", Boolean.toString(Constants.COMPETITION_MODE));
+        logger.recordMetadata("RobotIdentity", RobotIdentity.getIdentity().toString());
+
+        logger.recordMetadata("RobotMacAddresses",
+            MacAddressUtil.getMacAddresses().stream().collect(Collectors.joining(", ", "[", "]")));
+
         AdvantageKitHelper.startLogger();
 
         // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
