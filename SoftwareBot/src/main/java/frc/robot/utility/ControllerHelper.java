@@ -4,7 +4,7 @@ import edu.wpi.first.math.MathUtil;
 
 public class ControllerHelper {
 
-    private static double deadbandWidth = 0.02;
+    private static double deadbandWidth = 0.05;
     
     /**
      * @param value - Raw value read from controller axis to be modified

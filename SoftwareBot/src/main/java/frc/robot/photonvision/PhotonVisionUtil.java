@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Optional;
 
-import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -20,7 +20,6 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.Filesystem;
 
@@ -35,7 +34,7 @@ public class PhotonVisionUtil implements IPhotonVision {
 
   private final ArrayList<PhotonPoseEstimator> poseEstimators = new ArrayList<PhotonPoseEstimator>();
 
-  private Optional<EstimatedRobotPose> estPose = Optional.empty();
+  private Optional<EstimatedRobotPose> estPose;
 
   /** Creates a new VisionSubsystem. */
   public PhotonVisionUtil(PhotonCamera[] cameras, Transform3d[] cameraPoses) {
@@ -54,18 +53,17 @@ public class PhotonVisionUtil implements IPhotonVision {
     }
 
     for (int i = 0; i < cameras.length; i++) {
-      PhotonPoseEstimator pe = new PhotonPoseEstimator(layout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, cameras[i], cameraPoses[i]);
-      poseEstimators.add(pe);
+      PhotonPoseEstimator pe = new PhotonPoseEstimator(layout, PoseStrategy.MULTI_TAG_PNP, cameras[i], cameraPoses[i]);
+      pe.setLastPose(new Pose2d());
       pe.setReferencePose(new Pose2d());
+      poseEstimators.add(pe);
     }
   }
 
   @Override
   public void update() {
-    ArrayList<Optional<EstimatedRobotPose>> poseGuesses = new ArrayList<Optional<EstimatedRobotPose>>();
+    ArrayList<EstimatedRobotPose> poseGuesses = new ArrayList<EstimatedRobotPose>();
     ArrayList<PhotonPipelineResult> pipelineResults = new ArrayList<PhotonPipelineResult>();
-
-    int targetSightings = 0;
 
     for (PhotonCamera c : cameras) {
       PhotonPipelineResult pr = c.getLatestResult();
@@ -73,19 +71,12 @@ public class PhotonVisionUtil implements IPhotonVision {
     }
 
     for (int i = 0; i < pipelineResults.size(); i++) {
-      if (pipelineResults.get(i).hasTargets()) {
-        targetSightings++;
-        poseGuesses.add(poseEstimators.get(i).update());
-      }
+      poseEstimators.get(i).update().ifPresent(poseGuesses::add);
     }
 
-    Logger.getInstance().recordOutput("PhotonVision/TargetSightings", targetSightings);
-
-    if (!poseGuesses.isEmpty()) {
-      if (poseGuesses.get(0).isPresent()) {
-        estPose = poseGuesses.get(0);
-      }
-    }
+    estPose = poseGuesses.stream().filter(est -> est.targetsUsed.size() > 1).max(Comparator.comparingInt(est -> est.targetsUsed.size()));
+    
+    // TODO: Add function for target/pose tallying
   }
 
   @Override
@@ -100,8 +91,7 @@ public class PhotonVisionUtil implements IPhotonVision {
     if (estPose != null) {
       return estPose;
     } else {
-      EstimatedRobotPose e  = new EstimatedRobotPose(new Pose3d(), 0);
-      return Optional.of(e);
+      return Optional.empty();
     }
   }
 }

@@ -8,8 +8,8 @@ import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import java.util.function.DoubleSupplier;
 
 public class DefaultDrivetrainCommand extends CommandBase {
-    private static final double MAX_LINEAR_ACCELERATION_METERS_PER_SEC = 6.0;
-    private static final double MAX_ANGULAR_ACCELERATION_RAD_PER_SEC = 50;
+    private static final double MAX_LINEAR_ACCELERATION_METERS_PER_SEC = 4.5;
+    private static final double MAX_ANGULAR_ACCELERATION_RAD_PER_SEC = 15;
 
     private final DrivetrainSubsystem drivetrain;
     private final DoubleSupplier xVelocitySupplier;
