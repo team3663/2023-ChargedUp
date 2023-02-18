@@ -17,6 +17,11 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+    // This flag tells us whether to configure for a competition match (as opposed to practice)
+    // We mostly use it to disable diagnostics that should not run at competition.
+    public static final boolean COMPETITION_MODE = false;
+
     public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(131.5);// 311.75
     public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(130.6);// 311.92
     public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(95.3);// 275.27
@@ -48,7 +53,19 @@ public final class Constants {
     }
 
     public static class CameraPoses {
-        public static final Pose3d LEFT_CAMERA_POSE = new Pose3d(-Units.inchesToMeters(10.5), Units.inchesToMeters(11.75), Units.inchesToMeters(30), new Rotation3d(0, 0, 0.5));
-        public static final Pose3d RIGHT_CAMERA_POSE = new Pose3d(-Units.inchesToMeters(10.5), -Units.inchesToMeters(11.75), Units.inchesToMeters(30), new Rotation3d(0, 0, -0.5));
+        public static final Pose3d ARDUCAM_POSE = new Pose3d(
+            -Units.inchesToMeters(10.5),
+            Units.inchesToMeters(11.75),
+            Units.inchesToMeters(30),
+            new Rotation3d(0, 0, Math.PI / 2)
+            // new Rotation3d(0, 0, 0.5)
+        );
+        public static final Pose3d RIGHT_CAMERA_POSE = new Pose3d(
+            -Units.inchesToMeters(10.5),
+            -Units.inchesToMeters(11.75),
+            Units.inchesToMeters(30),
+            new Rotation3d(0, 0, -Math.PI / 2)
+            // new Rotation3d(0, 0, -0.5)
+        );
     }
 }

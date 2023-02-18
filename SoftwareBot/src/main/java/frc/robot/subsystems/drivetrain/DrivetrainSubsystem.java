@@ -69,8 +69,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
         Rotation2d initialGyroAngle = new Rotation2d();
         this.odometry = new SwerveDriveOdometry(kinematics, initialGyroAngle, modulePositions);
 
+        // TODO: Add function for multiple SD's based on # of targets sighted
         poseEstimator = new SwerveDrivePoseEstimator(kinematics, initialGyroAngle, modulePositions, new Pose2d(),
-            VecBuilder.fill(0.01, 0.01, 0.001), VecBuilder.fill(0.1, 0.1, 0.1));
+            VecBuilder.fill(0.005, 0.005, 0.0005), VecBuilder.fill(0.5, 0.5, 0.5));
 
         this.photonvision = photonvision;
     }
@@ -120,7 +121,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
         if (photonvision.getRobotPose3d().isPresent()) {
             poseEstimator.addVisionMeasurement(photonvision.getRobotPose3d().get().estimatedPose.toPose2d(), photonvision.getRobotPose3d().get().timestampSeconds);
-            Logger.getInstance().recordOutput("Drivetrain/PhotonPose", photonvision.getRobotPose3d().get().estimatedPose.toPose2d());
+            Logger.getInstance().recordOutput("Drivetrain/VisionPose", photonvision.getRobotPose3d().get().estimatedPose.toPose2d());
         }
         
         newPose = poseEstimator.getEstimatedPosition();

@@ -68,7 +68,7 @@ public class RobotContainer {
 
     private void createCommands() {
 
-        // Create the default drivce command and attach it to the drivetrain subsystem.
+        // Create the default drive command and attach it to the drivetrain subsystem.
         drivetrainSubsystem.setDefaultCommand(new DefaultDrivetrainCommand(drivetrainSubsystem,
                 () -> ControllerHelper.modifyAxis(-driverController.getLeftY()) * drivetrainSubsystem.getMaxTranslationalVelocityMetersPerSecond(),
                 () -> ControllerHelper.modifyAxis(-driverController.getLeftX()) * drivetrainSubsystem.getMaxTranslationalVelocityMetersPerSecond(),
@@ -85,7 +85,14 @@ public class RobotContainer {
 
         // Button to reset the robot's pose to a default starting point.  Handy when running in the simulator and 
         // you accidently lose the robot outside the game field, should NOT be configured in the competition bot.
-        driverController.start().onTrue(new InstantCommand(() -> drivetrainSubsystem.resetPose(new Pose2d())));
+        if (Robot.isSimulation()) {
+            driverController.start().onTrue(new InstantCommand(() -> drivetrainSubsystem.resetPose(new Pose2d())));
+        }
+
+        // TODO: Make sure this doesn't cause an exception
+        driverController.back().onTrue(new InstantCommand(
+            () -> drivetrainSubsystem.resetPose(new Pose2d(drivetrainSubsystem.getPose().getX(), drivetrainSubsystem.getPose().getY(), new Rotation2d()))
+        ));
 
         driverController.a().whileTrue(driveCircleCommand);
 
@@ -105,6 +112,9 @@ public class RobotContainer {
         autoChooser.registerDefaultCreator("Do Nothing", () -> AutoCommandFactory.createNullAuto());
         autoChooser.registerCreator("Test Path", () -> AutoCommandFactory.createTestAuto(drivetrainSubsystem));
         autoChooser.registerCreator("Rotation Test Path", () -> AutoCommandFactory.createRotationTestAuto(drivetrainSubsystem));
+        autoChooser.registerCreator("Diagonal Test Path", () -> AutoCommandFactory.createDiagonalTestAuto(drivetrainSubsystem));
+        autoChooser.registerCreator("Straight Test Path", () -> AutoCommandFactory.createStraightTestAuto(drivetrainSubsystem));
+        autoChooser.registerCreator("Rotation Tester", () -> AutoCommandFactory.createRotationTester(drivetrainSubsystem));
 
         // Setup the chooser in shuffleboard
         autoChooser.setup("Driver", 0, 0, 2, 1);
