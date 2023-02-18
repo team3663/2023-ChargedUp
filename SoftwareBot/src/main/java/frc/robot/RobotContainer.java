@@ -17,12 +17,12 @@ import frc.robot.commands.DriveCircleCommand;
 import frc.robot.commands.SetArmPoseCommand;
 import frc.robot.commands.GoToPoseCommand;
 import frc.robot.photonvision.IPhotonVision;
-import frc.robot.subsystems.SubsystemFactory;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import frc.robot.utility.AutoCommandChooser;
 import frc.robot.utility.ControllerHelper;
 import frc.robot.utility.RobotIdentity;
+import frc.robot.utility.config.RobotConfig;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -50,20 +50,18 @@ public class RobotContainer {
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
-    public RobotContainer() {
-        createSubsystems();
+    public RobotContainer(RobotIdentity identity, RobotConfig config) {
+        createSubsystems(config);
         createCommands();
         configureBindings();
         setupAutoChooser();
     }
 
-    private void createSubsystems() {
-        RobotIdentity identity = RobotIdentity.getIdentity();
+    private void createSubsystems(RobotConfig config) {
+        photonvision = config.getVision().create();
 
-        photonvision = SubsystemFactory.createPhotonvision(identity);
-
-        armSubsystem = SubsystemFactory.createArm(identity);
-        drivetrainSubsystem = SubsystemFactory.createDrivetrain(identity, photonvision);
+        armSubsystem = config.getArm().createSubsystem();
+        drivetrainSubsystem = config.getDrivetrain().createSubsystem(photonvision);
     }
 
     private void createCommands() {

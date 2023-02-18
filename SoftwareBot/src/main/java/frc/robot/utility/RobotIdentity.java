@@ -1,16 +1,22 @@
 package frc.robot.utility;
 
 import edu.wpi.first.wpilibj.RobotBase;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Set;
 
+@RequiredArgsConstructor
 public enum RobotIdentity {
-    ROBOT_2022,
-    ROBOT_2023,
-    SIMULATION;
+    ROBOT_2022("c2022.yaml"),
+    ROBOT_2023("c2023.yaml"),
+    SIMULATION("simulation.yaml");
 
     private static final String ROBOT_2022_MAC_ADDRESS = "00-80-2f-21-c5-21";
     private static final String ROBOT_2023_MAC_ADDRESS = "00-80-2f-33-d0-3f";
+
+    @Getter
+    private final String configName;
 
     /**
      * Gets the identity of the robot.
