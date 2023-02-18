@@ -13,7 +13,7 @@ public class AdvantageKitHelper {
      * 
     * @param isCompetition - Boolean flag telling whether we are running in competition or practice mode
     */
-    static public Logger setupLogger(boolean isCompetition) {
+    public static Logger setupLogger(boolean isCompetition) {
         Logger logger = Logger.getInstance();
 
         // If this is a physical robot (with a Rio) then we can log to a USB drive.
@@ -27,9 +27,5 @@ public class AdvantageKitHelper {
         }
 
         return logger;
-    }
-
-    static public void startLogger() {
-        Logger.getInstance().start();
     }
 }
