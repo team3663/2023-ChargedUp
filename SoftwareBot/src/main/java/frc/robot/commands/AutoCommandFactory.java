@@ -11,6 +11,8 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
@@ -21,6 +23,7 @@ public final class AutoCommandFactory {
 
     private static PathConstraints pathConstraints = new PathConstraints(1.0, 1.0);
     
+    private static boolean isRedAlliance = DriverStation.getAlliance() == Alliance.Red;
 
     public static Command createNullAuto() {
         return null;
@@ -38,7 +41,7 @@ public final class AutoCommandFactory {
                 AUTO_ROTATION_PID_CONSTANTS,
                 (chassisSpeeds) -> drivetrain.setTargetChassisVelocity(chassisSpeeds),
                 eventMap,
-                false,
+                isRedAlliance,
                 drivetrain);
 
         return new InstantCommand(() -> Logger.getInstance().recordOutput("Drivetrain/Trajectory", path)).andThen(builder.fullAuto(path));
@@ -56,7 +59,7 @@ public final class AutoCommandFactory {
                 AUTO_ROTATION_PID_CONSTANTS,
                 (chassisSpeeds) -> drivetrain.setTargetChassisVelocity(chassisSpeeds),
                 eventMap,
-                false,
+                isRedAlliance,
                 drivetrain);
 
                 return new InstantCommand(() -> Logger.getInstance().recordOutput("Drivetrain/Trajectory", path)).andThen(builder.fullAuto(path));
@@ -74,7 +77,7 @@ public final class AutoCommandFactory {
                 AUTO_ROTATION_PID_CONSTANTS,
                 (chassisSpeeds) -> drivetrain.setTargetChassisVelocity(chassisSpeeds),
                 eventMap,
-                false,
+                isRedAlliance,
                 drivetrain);
 
                 return new InstantCommand(() -> Logger.getInstance().recordOutput("Drivetrain/Trajectory", path)).andThen(builder.fullAuto(path));
@@ -92,7 +95,7 @@ public final class AutoCommandFactory {
                 AUTO_ROTATION_PID_CONSTANTS,
                 (chassisSpeeds) -> drivetrain.setTargetChassisVelocity(chassisSpeeds),
                 eventMap,
-                false,
+                isRedAlliance,
                 drivetrain);
 
                 return new InstantCommand(() -> Logger.getInstance().recordOutput("Drivetrain/Trajectory", path)).andThen(builder.fullAuto(path));
@@ -110,7 +113,7 @@ public final class AutoCommandFactory {
                 AUTO_ROTATION_PID_CONSTANTS,
                 (chassisSpeeds) -> drivetrain.setTargetChassisVelocity(chassisSpeeds),
                 eventMap,
-                false,
+                isRedAlliance,
                 drivetrain);
 
                 return new InstantCommand(() -> Logger.getInstance().recordOutput("Drivetrain/Trajectory", path)).andThen(builder.fullAuto(path));
