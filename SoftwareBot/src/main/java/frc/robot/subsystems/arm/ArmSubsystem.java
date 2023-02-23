@@ -28,7 +28,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     private final ArmIO io;
     private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
-    private Pose2d targetPose = new Pose2d(0.1, 0.4, Rotation2d.fromDegrees(90.0));
+    private Pose2d targetPose = new Pose2d(0.51, 0.81, Rotation2d.fromDegrees(0.0));
     private IArmKinematics kinematics;
     private Mechanism2d mechanism;
 
