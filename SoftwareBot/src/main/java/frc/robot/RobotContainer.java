@@ -98,8 +98,8 @@ public class RobotContainer {
 
         driverController.a().whileTrue(driveCircleCommand);
 
-        driverController.povLeft().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(0.14, 0.18, Rotation2d.fromDegrees(110.0))));
-        driverController.povRight().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(.51, 0.81, Rotation2d.fromDegrees(0.0))));
+        driverController.povLeft().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(0.11, 0.16, Rotation2d.fromDegrees(110.0))));
+        driverController.povRight().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(0.51, 0.81, Rotation2d.fromDegrees(0.0))));
         // driverController.povUp().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(1.5, 1.0, Rotation2d.fromDegrees(45.0))));
         // driverController.povDown().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(1.5, 0.2, Rotation2d.fromDegrees(0.0))));
         
