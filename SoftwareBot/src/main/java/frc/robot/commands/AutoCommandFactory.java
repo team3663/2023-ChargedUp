@@ -3,16 +3,11 @@ package frc.robot.commands;
 
 import java.util.HashMap;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
-
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 
 public final class AutoCommandFactory {
@@ -20,100 +15,50 @@ public final class AutoCommandFactory {
     private static final PIDConstants AUTO_ROTATION_PID_CONSTANTS = new PIDConstants(2.0, 0.0, 0.0);
 
     private static PathConstraints pathConstraints = new PathConstraints(1.0, 1.0);
-    
+
+    private static HashMap<String, Command> eventMap = new HashMap<>();
+    private static SwerveAutoBuilder builder;
+
+    public static void init(DrivetrainSubsystem drivetrain) {
+
+        builder = new SwerveAutoBuilder(
+                () -> drivetrain.getPose(),
+                (pose) -> drivetrain.resetPose(pose),
+                AUTO_TRANSLATION_PID_CONSTANTS,
+                AUTO_ROTATION_PID_CONSTANTS,
+                (chassisSpeeds) -> drivetrain.setTargetChassisVelocity(chassisSpeeds),
+                eventMap,
+                true,
+                drivetrain);
+    }
 
     public static Command createNullAuto() {
         return null;
     }
     
-    public static Command createTestAuto(DrivetrainSubsystem drivetrain) {
+    public static Command createTestAuto() {
 
-        PathPlannerTrajectory path = PathPlanner.loadPath("TestPath", pathConstraints);
-        HashMap<String, Command> eventMap = new HashMap<>();
-
-        SwerveAutoBuilder builder = new SwerveAutoBuilder(
-                () -> drivetrain.getPose(),
-                (pose) -> drivetrain.resetPose(pose),
-                AUTO_TRANSLATION_PID_CONSTANTS,
-                AUTO_ROTATION_PID_CONSTANTS,
-                (chassisSpeeds) -> drivetrain.setTargetChassisVelocity(chassisSpeeds),
-                eventMap,
-                false,
-                drivetrain);
-
-        return new InstantCommand(() -> Logger.getInstance().recordOutput("Drivetrain/Trajectory", path)).andThen(builder.fullAuto(path));
+        return builder.fullAuto(PathPlanner.loadPath("TestPath", pathConstraints));
     }
 
-    public static Command createRotationTestAuto(DrivetrainSubsystem drivetrain) {
+    public static Command createRotationTestAuto() {
 
-        PathPlannerTrajectory path = PathPlanner.loadPath("RotationTestPath", pathConstraints);
-        HashMap<String, Command> eventMap = new HashMap<>();
-
-        SwerveAutoBuilder builder = new SwerveAutoBuilder(
-                () -> drivetrain.getPose(),
-                (pose) -> drivetrain.resetPose(pose),
-                AUTO_TRANSLATION_PID_CONSTANTS,
-                AUTO_ROTATION_PID_CONSTANTS,
-                (chassisSpeeds) -> drivetrain.setTargetChassisVelocity(chassisSpeeds),
-                eventMap,
-                false,
-                drivetrain);
-
-                return new InstantCommand(() -> Logger.getInstance().recordOutput("Drivetrain/Trajectory", path)).andThen(builder.fullAuto(path));
+        return builder.fullAuto(PathPlanner.loadPath("RotationTestPath", pathConstraints));
     }
 
-    public static Command createDiagonalTestAuto(DrivetrainSubsystem drivetrain) {
+    public static Command createDiagonalTestAuto() {
 
-        PathPlannerTrajectory path = PathPlanner.loadPath("DiagonalTestPath", pathConstraints);
-        HashMap<String, Command> eventMap = new HashMap<>();
-
-        SwerveAutoBuilder builder = new SwerveAutoBuilder(
-                () -> drivetrain.getPose(),
-                (pose) -> drivetrain.resetPose(pose),
-                AUTO_TRANSLATION_PID_CONSTANTS,
-                AUTO_ROTATION_PID_CONSTANTS,
-                (chassisSpeeds) -> drivetrain.setTargetChassisVelocity(chassisSpeeds),
-                eventMap,
-                false,
-                drivetrain);
-
-                return new InstantCommand(() -> Logger.getInstance().recordOutput("Drivetrain/Trajectory", path)).andThen(builder.fullAuto(path));
+        return builder.fullAuto(PathPlanner.loadPath("DiagonalTestPath", pathConstraints));
     }
 
-    public static Command createStraightTestAuto(DrivetrainSubsystem drivetrain) {
+    public static Command createStraightTestAuto() {
 
-        PathPlannerTrajectory path = PathPlanner.loadPath("StraightTestPath", pathConstraints);
-        HashMap<String, Command> eventMap = new HashMap<>();
-
-        SwerveAutoBuilder builder = new SwerveAutoBuilder(
-                () -> drivetrain.getPose(),
-                (pose) -> drivetrain.resetPose(pose),
-                AUTO_TRANSLATION_PID_CONSTANTS,
-                AUTO_ROTATION_PID_CONSTANTS,
-                (chassisSpeeds) -> drivetrain.setTargetChassisVelocity(chassisSpeeds),
-                eventMap,
-                false,
-                drivetrain);
-
-                return new InstantCommand(() -> Logger.getInstance().recordOutput("Drivetrain/Trajectory", path)).andThen(builder.fullAuto(path));
+        return builder.fullAuto(PathPlanner.loadPath("StraightTestPath", pathConstraints));
     }
 
-    public static Command createRotationTester(DrivetrainSubsystem drivetrain) {
+    public static Command createRotationTester() {
 
-        PathPlannerTrajectory path = PathPlanner.loadPath("RotationTester", pathConstraints);
-        HashMap<String, Command> eventMap = new HashMap<>();
-
-        SwerveAutoBuilder builder = new SwerveAutoBuilder(
-                () -> drivetrain.getPose(),
-                (pose) -> drivetrain.resetPose(pose),
-                AUTO_TRANSLATION_PID_CONSTANTS,
-                AUTO_ROTATION_PID_CONSTANTS,
-                (chassisSpeeds) -> drivetrain.setTargetChassisVelocity(chassisSpeeds),
-                eventMap,
-                false,
-                drivetrain);
-
-                return new InstantCommand(() -> Logger.getInstance().recordOutput("Drivetrain/Trajectory", path)).andThen(builder.fullAuto(path));
+        return builder.fullAuto(PathPlanner.loadPath("RotationTester", pathConstraints));
     }
 
     // Default constructor that just throws an exception if you attempt to create an
