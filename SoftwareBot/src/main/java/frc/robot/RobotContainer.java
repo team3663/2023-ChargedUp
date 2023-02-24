@@ -68,6 +68,9 @@ public class RobotContainer {
 
     private void createCommands() {
 
+        // Setup the factory we use to generate our autonomous commands
+        AutoCommandFactory.init(drivetrainSubsystem);
+
         // Create the default drive command and attach it to the drivetrain subsystem.
         drivetrainSubsystem.setDefaultCommand(new DefaultDrivetrainCommand(drivetrainSubsystem,
                 () -> ControllerHelper.modifyAxis(-driverController.getLeftY()) * drivetrainSubsystem.getMaxTranslationalVelocityMetersPerSecond(),
@@ -109,11 +112,11 @@ public class RobotContainer {
 
         // Register all the supported auto commands
         autoChooser.registerDefaultCreator("Do Nothing", () -> AutoCommandFactory.createNullAuto());
-        autoChooser.registerCreator("Test Path", () -> AutoCommandFactory.createTestAuto(drivetrainSubsystem));
-        autoChooser.registerCreator("Rotation Test Path", () -> AutoCommandFactory.createRotationTestAuto(drivetrainSubsystem));
-        autoChooser.registerCreator("Diagonal Test Path", () -> AutoCommandFactory.createDiagonalTestAuto(drivetrainSubsystem));
-        autoChooser.registerCreator("Straight Test Path", () -> AutoCommandFactory.createStraightTestAuto(drivetrainSubsystem));
-        autoChooser.registerCreator("Rotation Tester", () -> AutoCommandFactory.createRotationTester(drivetrainSubsystem));
+        autoChooser.registerCreator("Test Path", () -> AutoCommandFactory.createTestAuto());
+        autoChooser.registerCreator("Rotation Test Path", () -> AutoCommandFactory.createRotationTestAuto());
+        autoChooser.registerCreator("Diagonal Test Path", () -> AutoCommandFactory.createDiagonalTestAuto());
+        autoChooser.registerCreator("Straight Test Path", () -> AutoCommandFactory.createStraightTestAuto());
+        autoChooser.registerCreator("Rotation Tester", () -> AutoCommandFactory.createRotationTester());
 
         // Setup the chooser in shuffleboard
         autoChooser.setup("Driver", 0, 0, 2, 1);
