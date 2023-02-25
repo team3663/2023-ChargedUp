@@ -3,6 +3,7 @@ package frc.robot.subsystems.drivetrain;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.sensors.CANCoder;
@@ -60,6 +61,7 @@ public class SwerveModuleIOSdsMk4 implements SwerveModuleIO {
         driveMotor.configAllSettings(driveConfig);
         driveMotor.enableVoltageCompensation(true);
         driveMotor.setNeutralMode(NeutralMode.Brake);
+        driveMotor.setInverted(TalonFXInvertType.Clockwise);
 
         // Configure the steer motor
         TalonFXConfiguration steerConfig = new TalonFXConfiguration();
@@ -72,6 +74,16 @@ public class SwerveModuleIOSdsMk4 implements SwerveModuleIO {
 
         steerMotor.configAllSettings(steerConfig);
         steerMotor.enableVoltageCompensation(true);
+        steerMotor.setNeutralMode(NeutralMode.Coast);
+        steerMotor.setInverted(TalonFXInvertType.CounterClockwise);
+
+        // Workaround so that we always read a valid angle from the steer encoder when setting up the steer motor.
+        // Avoid using Thread.sleep and replace with an actual way to check if the steer encoder has received valid data
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            System.err.println("OOPS");
+        }
 
         // Synchronize steer motor encoder & steer absolute encoder for PID control
         steerMotor.setSelectedSensorPosition(Units.degreesToRadians(steerEncoder.getAbsolutePosition()) / steerPositionCoefficient);
@@ -98,7 +110,7 @@ public class SwerveModuleIOSdsMk4 implements SwerveModuleIO {
 
     @Override
     public void setTargetSteerAngle(double angleRad) {
-        steerMotor.set(TalonFXControlMode.Position, angleRad / steerVelocityCoefficient);
+        steerMotor.set(TalonFXControlMode.Position, angleRad / steerPositionCoefficient);
     }
 
     @Data

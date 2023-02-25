@@ -21,7 +21,6 @@ import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import frc.robot.utility.AutoCommandChooser;
 import frc.robot.utility.ControllerHelper;
-import frc.robot.utility.RobotIdentity;
 import frc.robot.utility.config.RobotConfig;
 
 /**
