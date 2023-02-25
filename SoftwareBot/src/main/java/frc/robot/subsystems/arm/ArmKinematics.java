@@ -73,6 +73,10 @@ public class ArmKinematics implements IArmKinematics {
         // Now calculate the wrist angle that gives the desired hand angle based on the forearm angle we just calculated
         double wristAngle = handAngle - forearmAngle;
 
+        Logger.getInstance().recordOutput("Arm/rawShoulderAngle", shoulderAngle);
+        Logger.getInstance().recordOutput("Arm/rawElbowAngle", elbowAngle);
+        Logger.getInstance().recordOutput("Arm/rawWristAngle", wristAngle);
+
         double shoulderAngleClamped = MathUtil.clamp(shoulderAngle, arm.minAngleRad, arm.maxAngleRad);
         double elbowAngleClamped = MathUtil.clamp(elbowAngle, forearm.minAngleRad, forearm.maxAngleRad);
         double wristAngleClamped = MathUtil.clamp(wristAngle, hand.minAngleRad, hand.maxAngleRad);

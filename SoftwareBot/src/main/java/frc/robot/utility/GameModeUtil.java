@@ -10,6 +10,7 @@ public class GameModeUtil {
 
     public static void set(GamePiece mode) {
         GameModeUtil.mode = mode;
+        System.out.println("Game mode: " + mode);
     }
 
     public static GamePiece get() {
