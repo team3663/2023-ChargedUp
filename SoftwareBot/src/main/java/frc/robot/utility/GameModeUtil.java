@@ -4,12 +4,15 @@
 
 package frc.robot.utility;
 
+import org.littletonrobotics.junction.Logger;
+
 /** Add your docs here. */
 public class GameModeUtil {
     private static GamePiece mode = GamePiece.CUBE;
 
     public static void set(GamePiece mode) {
         GameModeUtil.mode = mode;
+        Logger.getInstance().recordOutput("Robot/selectedGamePiece", mode.toString());
     }
 
     public static GamePiece get() {
