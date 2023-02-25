@@ -5,19 +5,14 @@
 package frc.robot.utility;
 
 /** Add your docs here. */
-enum GameMode {
-    CUBE,
-    CONE;
-}
-
 public class GameModeUtil {
-    private static GameMode mode = GameMode.CUBE;
+    private static GamePiece mode = GamePiece.CUBE;
 
-    public static void set(GameMode mode) {
+    public static void set(GamePiece mode) {
         GameModeUtil.mode = mode;
     }
 
-    public static GameMode get() {
-        return GameModeUtil.mode;
+    public static GamePiece get() {
+        return mode;
     }
 }
