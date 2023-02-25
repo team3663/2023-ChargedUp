@@ -7,6 +7,7 @@ import edu.wpi.first.math.MathUtil;
 public class ControllerHelper {
 
     private static double deadbandWidth = 0.1;
+    private static double slowmodeValue = 2;
     
     /**
      * @param value - Raw value read from controller axis to be modified
@@ -15,7 +16,7 @@ public class ControllerHelper {
     public static double modifyAxis(double value, Supplier<Boolean> slowmode) {
         value = MathUtil.applyDeadband(value, deadbandWidth);
         if (slowmode.get()) {
-            return value /= 2;
+            return value /= slowmodeValue;
         }
         return Math.copySign(value * value * value, value);
     }
