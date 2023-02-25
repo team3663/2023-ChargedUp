@@ -1,11 +1,13 @@
 arm: { }
 drivetrain:
-  trackwidth: 28 inches
-  wheelbase: 28 inches
+  trackwidth: 20 inches
+  wheelbase: 24 inches
+
   maxTranslationalVelocity: 13.8 feet per second
 
   gyroscope: !<Pigeon2>
     id: 13
+    canBus: 3663
 
   # Swerve module config
   swerveModule: !<SdsMk4>
@@ -15,39 +17,52 @@ drivetrain:
   frontLeftModule: !<SdsMk4>
     driveMotor:
       id: 1
+      canBus: 3663
     steerMotor:
       id: 5
+      canBus: 3663
     steerEncoder:
       id: 9
+      canBus: 3663
       offset: -131.5 degrees
 
   # Front right
   frontRightModule: !<SdsMk4>
     driveMotor:
       id: 2
+      canBus: 3663
     steerMotor:
       id: 6
+      canBus: 3663
     steerEncoder:
-      id: 10
+      id: 11
+      canBus: 3663
       offset: -130.6 degrees
 
   # Back left
   backLeftModule: !<SdsMk4>
     driveMotor:
       id: 3
+      canBus: 3663
     steerMotor:
       id: 7
+      canBus: 3663
     steerEncoder:
       id: 11
+      canBus: 3663
       offset: -95.3 degrees
 
-  # Back right
+  # Front right
   backRightModule: !<SdsMk4>
     driveMotor:
       id: 4
+      canBus: 3663
     steerMotor:
       id: 8
+      canBus: 3663
     steerEncoder:
       id: 12
+      canBus: 3663
       offset: -112.5 degrees
+
 vision: { }
