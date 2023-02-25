@@ -35,12 +35,9 @@ public class ArmPoseLibrary {
 
     public static Pose2d get(ArmPoseID poseID) {
         Pose2d pose;
-        System.out.println("Getting pose " + poseID + " for mode " + GameModeUtil.get());
         if (GameModeUtil.get() == GamePiece.CUBE) {
-            System.out.println("Getting cube pose");
             pose = cubePoses.get(poseID);
         } else if (GameModeUtil.get() == GamePiece.CONE) {
-            System.out.println("Getting cone pose");
             pose = conePoses.get(poseID);
         } else {
             throw new IllegalArgumentException("Invalid Game Piece");
