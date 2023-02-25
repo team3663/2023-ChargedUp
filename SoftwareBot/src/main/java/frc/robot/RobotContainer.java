@@ -109,11 +109,8 @@ public class RobotContainer {
 
         // Register all the supported auto commands
         autoChooser.registerDefaultCreator("Do Nothing", () -> AutoCommandFactory.createNullAuto());
-        autoChooser.registerCreator("Test Path", () -> AutoCommandFactory.createTestAuto());
-        autoChooser.registerCreator("Rotation Test Path", () -> AutoCommandFactory.createRotationTestAuto());
-        autoChooser.registerCreator("Diagonal Test Path", () -> AutoCommandFactory.createDiagonalTestAuto());
-        autoChooser.registerCreator("Straight Test Path", () -> AutoCommandFactory.createStraightTestAuto());
-        autoChooser.registerCreator("Rotation Tester", () -> AutoCommandFactory.createRotationTester());
+        autoChooser.registerCreator("Commons Test Path", () -> AutoCommandFactory.createCommonsTestAuto());
+        autoChooser.registerCreator("Commons Rotation Test Path", () -> AutoCommandFactory.createCommonsRotationTestAuto());
 
         // Setup the chooser in shuffleboard
         autoChooser.setup("Driver", 0, 0, 2, 1);

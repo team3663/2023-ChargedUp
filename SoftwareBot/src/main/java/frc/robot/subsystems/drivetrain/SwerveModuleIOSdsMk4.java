@@ -18,7 +18,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 public class SwerveModuleIOSdsMk4 implements SwerveModuleIO {
-    private static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(4.0);
+    private static final double WHEEL_NOMINAL_DIAMETER_METERS = Units.inchesToMeters(4.0);
+    // This value accounts for the wearing down of the tread over the course of a competition, as well as the "squish factor" between
+    // the wheels and the carpet. Function may be added down the line to dynamically adjust this value in the field.
+    private static final double TREADWEAR = Units.inchesToMeters(0.125);
+    private static final double WHEEL_DIAMETER_METERS = WHEEL_NOMINAL_DIAMETER_METERS - TREADWEAR;
     private static final double STEER_REDUCTION = (32.0 / 15.0) * (60.0 / 10.0);
 
     private final double drivePositionCoefficient;

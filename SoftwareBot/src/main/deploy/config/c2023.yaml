@@ -11,7 +11,7 @@ drivetrain:
 
   # Swerve module config
   swerveModule: !<SdsMk4>
-    gearRatio: L3
+    gearRatio: L2
 
   # Front left
   frontLeftModule: !<SdsMk4>
