@@ -2,6 +2,9 @@ package frc.robot.subsystems.drivetrain;
 
 import com.ctre.phoenix.sensors.Pigeon2;
 import edu.wpi.first.math.util.Units;
+import frc.robot.utility.config.GyroConfig;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 public class GyroIOPigeon2 implements GyroIO {
     private final Pigeon2 pigeon;
@@ -23,5 +26,17 @@ public class GyroIOPigeon2 implements GyroIO {
         inputs.yawRadians = Units.degreesToRadians(yawPitchRollDegrees[0]);
         inputs.pitchRadians = Units.degreesToRadians(yawPitchRollDegrees[1]);
         inputs.rollRadians = Units.degreesToRadians(yawPitchRollDegrees[2]);
+    }
+
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    public static class Config extends GyroConfig {
+        private int id;
+        private String canBus = "rio";
+
+        @Override
+        public GyroIO createIO() {
+            return new GyroIOPigeon2(id, canBus);
+        }
     }
 }

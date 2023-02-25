@@ -24,32 +24,30 @@ public class ArmIOComp implements ArmIO {
     private static final double WRIST_CURRENT_LIMIT = 40;
 
     private final CANSparkMax shoulderMotor;
-    private final TalonFX elbowMotor1;
-    private final TalonFX elbowMotor2;
+    private final TalonFX elbowMotor;
     private final TalonFX wristMotor;
 
     private final CANCoder shoulderEncoder;
     private final CANCoder elbowEncoder;
     private final CANCoder wristEncoder;
 
-    public ArmIOComp(int shoulderMotorId, int shoulderEncoderId, int elbowMotor1Id, int elbowMotor2Id,
+    public ArmIOComp(int shoulderMotorId, int shoulderEncoderId, int elbowMotorId,
             int elbowEncoderId, int wristMotorId, int wristEncoderId) {
-        this(shoulderMotorId, shoulderEncoderId, elbowMotor1Id, elbowMotor2Id, elbowEncoderId, wristMotorId,
+        this(shoulderMotorId, shoulderEncoderId, elbowMotorId, elbowEncoderId, wristMotorId,
                 wristEncoderId, "rio");
     }
 
-    public ArmIOComp(int shoulderMotorId, int shoulderEncoderId, int elbowMotor1Id, int elbowMotor2Id,
+    public ArmIOComp(int shoulderMotorId, int shoulderEncoderId, int elbowMotorId,
             int elbowEncoderId, int wristMotorId, int wristEncoderId, String canBusName) {
         this(new CANSparkMax(shoulderMotorId, MotorType.kBrushless), new CANCoder(elbowEncoderId),
-                new TalonFX(elbowMotor1Id, canBusName), new TalonFX(elbowMotor2Id, canBusName),
-                new CANCoder(elbowEncoderId), new TalonFX(wristMotorId, canBusName), new CANCoder(wristEncoderId));
+                new TalonFX(elbowMotorId, canBusName), new CANCoder(elbowEncoderId),
+                new TalonFX(wristMotorId, canBusName), new CANCoder(wristEncoderId));
     }
 
-    public ArmIOComp(CANSparkMax shoulderMotor, CANCoder shoulderEncoder, TalonFX elbowMotor1, TalonFX elbowMotor2,
+    public ArmIOComp(CANSparkMax shoulderMotor, CANCoder shoulderEncoder, TalonFX elbowMotor,
             CANCoder elbowEncoder, TalonFX wristMotor, CANCoder wristEncoder) {
         this.shoulderMotor = shoulderMotor;
-        this.elbowMotor1 = elbowMotor1;
-        this.elbowMotor2 = elbowMotor2;
+        this.elbowMotor = elbowMotor;
         this.wristMotor = wristMotor;
 
         this.shoulderEncoder = shoulderEncoder;
@@ -65,15 +63,10 @@ public class ArmIOComp implements ArmIO {
         elbowConfig.supplyCurrLimit.enable = true;
         elbowConfig.voltageCompSaturation = 12;
 
-        elbowMotor1.configAllSettings(elbowConfig);
-        elbowMotor1.enableVoltageCompensation(true);
-        elbowMotor1.setNeutralMode(NeutralMode.Brake);
-        elbowMotor1.setInverted(TalonFXInvertType.CounterClockwise);
-
-        elbowMotor2.configAllSettings(elbowConfig);
-        elbowMotor2.enableVoltageCompensation(true);
-        elbowMotor2.setNeutralMode(NeutralMode.Brake);
-        elbowMotor2.setInverted(TalonFXInvertType.CounterClockwise);
+        elbowMotor.configAllSettings(elbowConfig);
+        elbowMotor.enableVoltageCompensation(true);
+        elbowMotor.setNeutralMode(NeutralMode.Brake);
+        elbowMotor.setInverted(TalonFXInvertType.CounterClockwise);
 
         TalonFXConfiguration wristConfig = new TalonFXConfiguration();
         wristConfig.supplyCurrLimit.currentLimit = WRIST_CURRENT_LIMIT;
@@ -117,8 +110,8 @@ public class ArmIOComp implements ArmIO {
 
         inputs.elbowAngleRad = elbowEncoder.getAbsolutePosition();
         inputs.elbowAngularVelRadPerSec = Units.degreesToRadians(elbowEncoder.getVelocity());
-        inputs.elbowCurrentDrawAmps = (elbowMotor1.getMotorOutputVoltage() + elbowMotor2.getMotorOutputVoltage()) / 2;
-        inputs.elbowAppliedVoltage = (elbowMotor1.getSupplyCurrent() + elbowMotor2.getSupplyCurrent()) / 2;
+        inputs.elbowCurrentDrawAmps = elbowMotor.getMotorOutputVoltage();
+        inputs.elbowAppliedVoltage = elbowMotor.getSupplyCurrent();
 
         inputs.wristAngleRad = wristEncoder.getAbsolutePosition();
         inputs.wristAngularVelRadPerSec = Units.degreesToRadians(wristEncoder.getVelocity());
@@ -133,8 +126,7 @@ public class ArmIOComp implements ArmIO {
 
     @Override
     public void setElbowVoltage(double volts) {
-        elbowMotor1.set(TalonFXControlMode.PercentOutput, volts / 12);
-        elbowMotor2.set(TalonFXControlMode.PercentOutput, volts / 12);
+        elbowMotor.set(TalonFXControlMode.PercentOutput, volts / 12);
     }
 
     @Override
