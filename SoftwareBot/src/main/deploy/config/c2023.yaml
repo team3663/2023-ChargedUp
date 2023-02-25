@@ -24,7 +24,7 @@ drivetrain:
     steerEncoder:
       id: 9
       canBus: 3663
-      offset: -131.5 degrees
+      offset: -244.8 degrees
 
   # Front right
   frontRightModule: !<SdsMk4>
@@ -35,9 +35,9 @@ drivetrain:
       id: 6
       canBus: 3663
     steerEncoder:
-      id: 11
+      id: 10
       canBus: 3663
-      offset: -130.6 degrees
+      offset: -191.5 degrees
 
   # Back left
   backLeftModule: !<SdsMk4>
@@ -50,19 +50,19 @@ drivetrain:
     steerEncoder:
       id: 11
       canBus: 3663
-      offset: -95.3 degrees
+      offset: -191.5 degrees
 
-  # Front right
+  # Back right
   backRightModule: !<SdsMk4>
     driveMotor:
-      id: 4
+      id: 8
       canBus: 3663
     steerMotor:
-      id: 8
+      id: 4
       canBus: 3663
     steerEncoder:
       id: 12
       canBus: 3663
-      offset: -112.5 degrees
+      offset: -276.7 degrees
 
 vision: { }
