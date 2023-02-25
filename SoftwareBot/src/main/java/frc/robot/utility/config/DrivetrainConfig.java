@@ -14,6 +14,8 @@ public final class DrivetrainConfig {
     private double trackwidth;
     @JsonUnits(JsonUnits.Unit.INCHES)
     private double wheelbase;
+    @JsonUnits(JsonUnits.Unit.FEET_PER_SECOND)
+    private double maxTranslationalVelocity;
 
     private PidConstants followerTranslationPid = new PidConstants(0.0, 0.0, 0.0);
     private PidConstants followerRotationPid = new PidConstants(0.0, 0.0, 0.0);
@@ -40,6 +42,6 @@ public final class DrivetrainConfig {
         var backRightModuleIO = backRightModule == null ? new SwerveModuleIO() {
         } : swerveModule.createIO(backRightModule);
 
-        return new DrivetrainSubsystem(gyroIO, frontLeftModuleIO, frontRightModuleIO, backLeftModuleIO, backRightModuleIO, photonVision);
+        return new DrivetrainSubsystem(this, gyroIO, frontLeftModuleIO, frontRightModuleIO, backLeftModuleIO, backRightModuleIO, photonVision);
     }
 }

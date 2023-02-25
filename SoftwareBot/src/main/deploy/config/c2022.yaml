@@ -1,5 +1,9 @@
 arm: { }
 drivetrain:
+  trackwidth: 28 inches
+  wheelbase: 28 inches
+  maxTranslationalVelocity: 13.8 feet per second
+
   gyroscope: !<Pigeon2>
     id: 13
 

@@ -50,7 +50,7 @@ public class RobotContainer {
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
-    public RobotContainer(RobotIdentity identity, RobotConfig config) {
+    public RobotContainer(RobotConfig config) {
         createSubsystems(config);
         createCommands();
         configureBindings();

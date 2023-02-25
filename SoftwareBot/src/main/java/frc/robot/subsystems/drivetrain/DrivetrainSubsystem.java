@@ -6,20 +6,17 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.*;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.photonvision.IPhotonVision;
 import frc.robot.sim.SimModelData;
-
+import frc.robot.utility.config.DrivetrainConfig;
 import org.littletonrobotics.junction.Logger;
 
 public class DrivetrainSubsystem extends SubsystemBase {
-    private static final double WHEELBASE_X_METERS = Units.inchesToMeters(28.0);
-    private static final double WHEELBASE_Y_METERS = Units.inchesToMeters(28.0);
-    private static final double MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND = Units.feetToMeters(13.8);
-
-    private static final double MAX_ANGULAR_VELOCITY_RAD_PER_SEC = MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND /
-            Math.hypot(WHEELBASE_X_METERS / 2.0, WHEELBASE_Y_METERS / 2.0);
+    private final double trackwidth;
+    private final double wheelbase;
+    private final double maxTranslationalVelocityMetersPerSec;
+    private final double maxAngularVelocityRadPerSec;
 
     private final GyroIO gyroIO;
     private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
@@ -36,10 +33,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     private final IPhotonVision photonvision;
 
-    public DrivetrainSubsystem(GyroIO gyroIO,
+    public DrivetrainSubsystem(DrivetrainConfig config, GyroIO gyroIO,
                                SwerveModuleIO frontLeftModuleIO, SwerveModuleIO frontRightModuleIO,
                                SwerveModuleIO backLeftModuleIO, SwerveModuleIO backRightModuleIO,
                                IPhotonVision photonvision) {
+        this.trackwidth = config.getTrackwidth();
+        this.wheelbase = config.getWheelbase();
+        this.maxTranslationalVelocityMetersPerSec = config.getMaxTranslationalVelocity();
+        this.maxAngularVelocityRadPerSec = maxTranslationalVelocityMetersPerSec / Math.hypot(trackwidth / 2.0, wheelbase / 2.0);
+
         this.gyroIO = gyroIO;
 
         this.swerveModules = new SwerveModule[]{
@@ -57,13 +59,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
         this.kinematics = new SwerveDriveKinematics(
                 // Front Left (+x, +y)
-                new Translation2d(WHEELBASE_X_METERS / 2.0, WHEELBASE_Y_METERS / 2.0),
+                new Translation2d(wheelbase / 2.0, trackwidth / 2.0),
                 // Front Right (+x, -y)
-                new Translation2d(WHEELBASE_X_METERS / 2.0, -WHEELBASE_Y_METERS / 2.0),
+                new Translation2d(wheelbase / 2.0, -trackwidth / 2.0),
                 // Back Left (-x, +y)
-                new Translation2d(-WHEELBASE_X_METERS / 2.0, WHEELBASE_Y_METERS / 2.0),
+                new Translation2d(-wheelbase / 2.0, trackwidth / 2.0),
                 // Back Right (-x, -y)
-                new Translation2d(-WHEELBASE_X_METERS / 2.0, -WHEELBASE_Y_METERS / 2.0)
+                new Translation2d(-wheelbase / 2.0, -trackwidth / 2.0)
         );
 
         Rotation2d initialGyroAngle = new Rotation2d();
@@ -71,7 +73,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
         // TODO: Add function for multiple SD's based on # of targets sighted
         poseEstimator = new SwerveDrivePoseEstimator(kinematics, initialGyroAngle, modulePositions, new Pose2d(),
-            VecBuilder.fill(0.005, 0.005, 0.0005), VecBuilder.fill(0.5, 0.5, 0.5));
+                VecBuilder.fill(0.005, 0.005, 0.0005), VecBuilder.fill(0.5, 0.5, 0.5));
 
         this.photonvision = photonvision;
     }
@@ -93,7 +95,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
         // Calculate each module's target state based on the target chassis velocity
         SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(targetChassisVelocity);
-        SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND);
+        SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, maxTranslationalVelocityMetersPerSec);
 
         // Set the target state for each module
         SwerveModuleState[] optimizedModuleStates = new SwerveModuleState[swerveModules.length];
@@ -112,9 +114,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
         Logger.getInstance().recordOutput("Drivetrain/DesiredModuleStates", moduleStates);
         Logger.getInstance().recordOutput("Drivetrain/OptimizedModuleStates", optimizedModuleStates);
 
-       // Update odometry and log out pose based on odometry alone
-       Pose2d odometryPose = odometry.update(new Rotation2d(gyroInputs.yawRadians), modulePositions);
-       Logger.getInstance().recordOutput("Drivetrain/OdometryPose", odometryPose);
+        // Update odometry and log out pose based on odometry alone
+        Pose2d odometryPose = odometry.update(new Rotation2d(gyroInputs.yawRadians), modulePositions);
+        Logger.getInstance().recordOutput("Drivetrain/OdometryPose", odometryPose);
 
         // Calculate new pose using estimator
         Pose2d newPose = poseEstimator.update(new Rotation2d(gyroInputs.yawRadians), modulePositions);
@@ -123,7 +125,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
             poseEstimator.addVisionMeasurement(photonvision.getRobotPose3d().get().estimatedPose.toPose2d(), photonvision.getRobotPose3d().get().timestampSeconds);
             Logger.getInstance().recordOutput("Drivetrain/VisionPose", photonvision.getRobotPose3d().get().estimatedPose.toPose2d());
         }
-        
+
         newPose = poseEstimator.getEstimatedPosition();
         Logger.getInstance().recordOutput("Drivetrain/Pose", newPose);
 
@@ -141,7 +143,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         return poseEstimator.getEstimatedPosition();
     }
 
-    public void resetPose (Pose2d newPose) {
+    public void resetPose(Pose2d newPose) {
         Rotation2d newGyroYaw = new Rotation2d(gyroInputs.yawRadians);
 
         poseEstimator.resetPosition(newGyroYaw, modulePositions, newPose);
@@ -149,21 +151,22 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
     public double getMaxTranslationalVelocityMetersPerSecond() {
-        return MAX_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND;
+        return maxTranslationalVelocityMetersPerSec;
     }
 
     public double getMaxAngularVelocityRadPerSec() {
-        return MAX_ANGULAR_VELOCITY_RAD_PER_SEC;
+        return maxAngularVelocityRadPerSec;
     }
 
-    public ChassisSpeeds getTargetChassisSpeeds () {
+    public ChassisSpeeds getTargetChassisSpeeds() {
         return targetChassisVelocity;
     }
-        public void setTargetChassisVelocity(ChassisSpeeds targetChassisVelocity) {
+
+    public void setTargetChassisVelocity(ChassisSpeeds targetChassisVelocity) {
         this.targetChassisVelocity = targetChassisVelocity;
     }
 
-    public SwerveDriveKinematics getKinematics () {
+    public SwerveDriveKinematics getKinematics() {
         return kinematics;
     }
 }

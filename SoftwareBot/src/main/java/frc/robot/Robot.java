@@ -36,7 +36,7 @@ public class Robot extends LoggedRobot {
     public void robotInit() {
         // Determine the robot identity
         RobotIdentity identity = RobotIdentity.getIdentity();
-        identity = RobotIdentity.ROBOT_2022;
+        System.out.println("Detected identity: " + identity);
         RobotConfig config;
         try {
             config = RobotConfig.loadConfig(identity);
@@ -57,7 +57,7 @@ public class Robot extends LoggedRobot {
 
         // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
         // autonomous chooser on the dashboard.
-        m_robotContainer = new RobotContainer(identity, config);
+        m_robotContainer = new RobotContainer(config);
     }
 
     /**
