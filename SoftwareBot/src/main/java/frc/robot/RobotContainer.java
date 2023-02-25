@@ -23,7 +23,6 @@ import frc.robot.utility.ControllerHelper;
 import frc.robot.utility.config.RobotConfig;
 import frc.robot.utility.GameModeUtil;
 import frc.robot.utility.GamePiece;
-import frc.robot.utility.RobotIdentity;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
