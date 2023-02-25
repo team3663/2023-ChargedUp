@@ -15,7 +15,7 @@ import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DriveCircleCommand;
 import frc.robot.commands.SetArmPoseCommand;
-import frc.robot.commands.GoToPoseCommand;
+import frc.robot.commands.DriveToPoseCommand;
 import frc.robot.photonvision.IPhotonVision;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
@@ -44,8 +44,8 @@ public class RobotContainer {
 
     // Commands
     private DriveCircleCommand driveCircleCommand;
-    private GoToPoseCommand goToPoseCommand;
-    private GoToPoseCommand goToOtherPoseCommand;
+    private DriveToPoseCommand goToPoseCommand;
+    private DriveToPoseCommand goToOtherPoseCommand;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -66,6 +66,9 @@ public class RobotContainer {
 
     private void createCommands() {
 
+        // Setup the factory we use to generate our autonomous commands
+        AutoCommandFactory.init(drivetrainSubsystem);
+
         // Create the default drive command and attach it to the drivetrain subsystem.
         drivetrainSubsystem.setDefaultCommand(new DefaultDrivetrainCommand(drivetrainSubsystem,
                 () -> ControllerHelper.modifyAxis(-driverController.getLeftY()) * drivetrainSubsystem.getMaxTranslationalVelocityMetersPerSecond(),
@@ -75,8 +78,8 @@ public class RobotContainer {
 
         driveCircleCommand = new DriveCircleCommand(drivetrainSubsystem);
 
-        goToPoseCommand = new GoToPoseCommand(drivetrainSubsystem, new Translation2d(1, 1), new Rotation2d(0.5));
-        goToOtherPoseCommand = new GoToPoseCommand(drivetrainSubsystem, new Translation2d(0, 0), new Rotation2d(-0.5));
+        goToPoseCommand = new DriveToPoseCommand(drivetrainSubsystem, new Translation2d(1, 1), new Rotation2d(0.5));
+        goToOtherPoseCommand = new DriveToPoseCommand(drivetrainSubsystem, new Translation2d(0, 0), new Rotation2d(-0.5));
     }
 
     private void configureBindings() {
@@ -87,17 +90,16 @@ public class RobotContainer {
             driverController.start().onTrue(new InstantCommand(() -> drivetrainSubsystem.resetPose(new Pose2d())));
         }
 
-        // TODO: Make sure this doesn't cause an exception
         driverController.back().onTrue(new InstantCommand(
             () -> drivetrainSubsystem.resetPose(new Pose2d(drivetrainSubsystem.getPose().getX(), drivetrainSubsystem.getPose().getY(), new Rotation2d()))
         ));
 
         driverController.a().whileTrue(driveCircleCommand);
 
-        driverController.povLeft().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(0.1, 0.4, Rotation2d.fromDegrees(90.0))));
-        driverController.povRight().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(1.5, 0.5, Rotation2d.fromDegrees(0.0))));
-        driverController.povUp().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(1.5, 1.0, Rotation2d.fromDegrees(45.0))));
-        driverController.povDown().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(1.5, 0.2, Rotation2d.fromDegrees(0.0))));
+        driverController.povLeft().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(0.11, 0.16, Rotation2d.fromDegrees(110.0))));
+        driverController.povRight().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(0.51, 0.81, Rotation2d.fromDegrees(0.0))));
+        // driverController.povUp().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(1.5, 1.0, Rotation2d.fromDegrees(45.0))));
+        // driverController.povDown().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(1.5, 0.2, Rotation2d.fromDegrees(0.0))));
         
         driverController.b().onTrue(goToPoseCommand);
         driverController.y().onTrue(goToOtherPoseCommand);
@@ -108,11 +110,11 @@ public class RobotContainer {
 
         // Register all the supported auto commands
         autoChooser.registerDefaultCreator("Do Nothing", () -> AutoCommandFactory.createNullAuto());
-        autoChooser.registerCreator("Test Path", () -> AutoCommandFactory.createTestAuto(drivetrainSubsystem));
-        autoChooser.registerCreator("Rotation Test Path", () -> AutoCommandFactory.createRotationTestAuto(drivetrainSubsystem));
-        autoChooser.registerCreator("Diagonal Test Path", () -> AutoCommandFactory.createDiagonalTestAuto(drivetrainSubsystem));
-        autoChooser.registerCreator("Straight Test Path", () -> AutoCommandFactory.createStraightTestAuto(drivetrainSubsystem));
-        autoChooser.registerCreator("Rotation Tester", () -> AutoCommandFactory.createRotationTester(drivetrainSubsystem));
+        autoChooser.registerCreator("Test Path", () -> AutoCommandFactory.createTestAuto());
+        autoChooser.registerCreator("Rotation Test Path", () -> AutoCommandFactory.createRotationTestAuto());
+        autoChooser.registerCreator("Diagonal Test Path", () -> AutoCommandFactory.createDiagonalTestAuto());
+        autoChooser.registerCreator("Straight Test Path", () -> AutoCommandFactory.createStraightTestAuto());
+        autoChooser.registerCreator("Rotation Tester", () -> AutoCommandFactory.createRotationTester());
 
         // Setup the chooser in shuffleboard
         autoChooser.setup("Driver", 0, 0, 2, 1);

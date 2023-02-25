@@ -14,21 +14,21 @@ import org.littletonrobotics.junction.Logger;
 public class ArmSubsystem extends SubsystemBase {
 
     // Lengths of arms three linkages (arm, forearm & hand)
-    private static final double ARM_LENGTH_METERS = Units.inchesToMeters(40);
-    private static final double FOREARM_LENGTH_METERS = Units.inchesToMeters(35);
-    private static final double HAND_LENGTH_METERS = Units.inchesToMeters(15);
+    private static final double ARM_LENGTH_METERS = Units.inchesToMeters(28);
+    private static final double FOREARM_LENGTH_METERS = Units.inchesToMeters(30);
+    private static final double HAND_LENGTH_METERS = Units.inchesToMeters(17);
 
     // angle constraints for each joint
-    private static final double SHOULDER_MIN_ANGLE_RAD = Units.degreesToRadians(15);
-    private static final double SHOULDER_MAX_ANGLE_RAD = Units.degreesToRadians(90);
-    private static final double ELBOW_MIN_ANGLE_RAD = Units.degreesToRadians(10);
-    private static final double ELBOW_MAX_ANGLE_RAD = Units.degreesToRadians(100);
+    private static final double SHOULDER_MIN_ANGLE_RAD = Units.degreesToRadians(90);
+    private static final double SHOULDER_MAX_ANGLE_RAD = Units.degreesToRadians(150);
+    private static final double ELBOW_MIN_ANGLE_RAD = Units.degreesToRadians(-170);
+    private static final double ELBOW_MAX_ANGLE_RAD = Units.degreesToRadians(-80);
     private static final double WRIST_MIN_ANGLE_RAD = Units.degreesToRadians(-90);
-    private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(90);
+    private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(135);
 
     private final ArmIO io;
     private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
-    private Pose2d targetPose = new Pose2d(0.1, 0.4, Rotation2d.fromDegrees(90.0));
+    private Pose2d targetPose = new Pose2d(0.51, 0.81, Rotation2d.fromDegrees(0.0));
     private IArmKinematics kinematics;
     private Mechanism2d mechanism;
 
@@ -55,7 +55,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     public ArmSubsystem(ArmIO io) {
         this.io = io;
-        this.kinematics = new SimpleArmKinematics(arm, forearm, hand);
+        this.kinematics = new ArmKinematics(arm, forearm, hand);
 
         // Create the mechanism object with a 4M x 3M canvas
         this.mechanism = new Mechanism2d(4, 3);
