@@ -78,8 +78,9 @@ public class SwerveModuleIOFalcon500 implements SwerveModuleIO {
         steerConfig.supplyCurrLimit.enable = true;
         steerConfig.voltageCompSaturation = 12.0;
 
-        steerMotor.configAllSettings(steerConfig);
+        steerMotor.configAllSettings(steerConfig, 500);
         steerMotor.enableVoltageCompensation(true);
+        steerMotor.setNeutralMode(NeutralMode.Coast);
         steerMotor.setInverted(TalonFXInvertType.CounterClockwise);
 
         // Configure the steer encoder

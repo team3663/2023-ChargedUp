@@ -4,17 +4,18 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.utility.AdvantageKitHelper;
 import frc.robot.utility.MacAddressUtil;
 import frc.robot.utility.RobotIdentity;
-
-import java.util.stream.Collectors;
-
+import frc.robot.utility.config.RobotConfig;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 
+import java.io.IOException;
+import java.util.stream.Collectors;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -33,6 +34,17 @@ public class Robot extends LoggedRobot {
      */
     @Override
     public void robotInit() {
+        // Determine the robot identity
+        RobotIdentity identity = RobotIdentity.getIdentity();
+        identity = RobotIdentity.ROBOT_2023;
+        System.out.println("Detected identity: " + identity);
+        RobotConfig config;
+        try {
+            config = RobotConfig.loadConfig(identity);
+        } catch (IOException e) {
+            DriverStation.reportError("Failed to load robot configuration", e.getStackTrace());
+            throw new RuntimeException(e);
+        }
 
         Logger logger = AdvantageKitHelper.setupLogger(Constants.COMPETITION_MODE);
 
@@ -40,13 +52,13 @@ public class Robot extends LoggedRobot {
         logger.recordMetadata("RobotIdentity", RobotIdentity.getIdentity().toString());
 
         logger.recordMetadata("RobotMacAddresses",
-            MacAddressUtil.getMacAddresses().stream().collect(Collectors.joining(", ", "[", "]")));
+                MacAddressUtil.getMacAddresses().stream().collect(Collectors.joining(", ", "[", "]")));
 
         logger.start();
 
         // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
         // autonomous chooser on the dashboard.
-        m_robotContainer = new RobotContainer();
+        m_robotContainer = new RobotContainer(config);
     }
 
     /**
@@ -62,7 +74,7 @@ public class Robot extends LoggedRobot {
         // commands, running already-scheduled commands, removing finished or interrupted commands,
         // and running subsystem periodic() methods.  This must be called from the robot's periodic
         // block in order for anything in the Command-based framework to work.
-        
+
         CommandScheduler.getInstance().run();
     }
 

@@ -36,29 +36,12 @@ public final class AutoCommandFactory {
         return null;
     }
     
-    public static Command createTestAuto() {
-
-        return builder.fullAuto(PathPlanner.loadPath("TestPath", pathConstraints));
+    public static Command createCommonsTestAuto() {
+        return builder.fullAuto(PathPlanner.loadPath("CommonsTestPath", pathConstraints));
     }
 
-    public static Command createRotationTestAuto() {
-
-        return builder.fullAuto(PathPlanner.loadPath("RotationTestPath", pathConstraints));
-    }
-
-    public static Command createDiagonalTestAuto() {
-
-        return builder.fullAuto(PathPlanner.loadPath("DiagonalTestPath", pathConstraints));
-    }
-
-    public static Command createStraightTestAuto() {
-
-        return builder.fullAuto(PathPlanner.loadPath("StraightTestPath", pathConstraints));
-    }
-
-    public static Command createRotationTester() {
-
-        return builder.fullAuto(PathPlanner.loadPath("RotationTester", pathConstraints));
+    public static Command createCommonsRotationTestAuto() {
+        return builder.fullAuto(PathPlanner.loadPath("CommonsRotationTestPath", pathConstraints));
     }
 
     // Default constructor that just throws an exception if you attempt to create an

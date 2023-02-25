@@ -7,6 +7,9 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.robot.Robot;
+import frc.robot.utility.config.SwerveModuleConfig;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 public class SwerveModuleIOSim implements SwerveModuleIO {
     private static final double WHEEL_RADIUS_METERS = Units.inchesToMeters(2.0);
@@ -61,5 +64,18 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
     @Override
     public void setTargetSteerAngle(double targetSteerAngleRad) {
         steerFeedback.setSetpoint(targetSteerAngleRad);
+    }
+
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    public static class Config extends SwerveModuleConfig {
+        @Override
+        public SwerveModuleIO createIO(HardwareConfig hardwareConfig) {
+            if (hardwareConfig != null) {
+                throw new IllegalArgumentException("Hardware config must be null for simulation");
+            }
+
+            return new SwerveModuleIOSim();
+        }
     }
 }

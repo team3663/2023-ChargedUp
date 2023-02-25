@@ -3,6 +3,9 @@ package frc.robot.subsystems.drivetrain;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.sim.SimModelData;
+import frc.robot.utility.config.GyroConfig;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 public class GyroIOSim implements GyroIO {
 
@@ -34,5 +37,14 @@ public class GyroIOSim implements GyroIO {
         double deltaYaw = requestedVelocity * elapsedTime;
         currentYawRads = MathUtil.inputModulus(currentYawRads + deltaYaw, -Math.PI, Math.PI);
         inputs.yawRadians = currentYawRads;
+    }
+
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    public static class Config extends GyroConfig {
+        @Override
+        public GyroIO createIO() {
+            return new GyroIOSim();
+        }
     }
 }
