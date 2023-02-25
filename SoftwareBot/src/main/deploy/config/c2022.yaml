@@ -1,0 +1,53 @@
+arm: { }
+drivetrain:
+  trackwidth: 28 inches
+  wheelbase: 28 inches
+  maxTranslationalVelocity: 13.8 feet per second
+
+  gyroscope: !<Pigeon2>
+    id: 13
+
+  # Swerve module config
+  swerveModule: !<SdsMk4>
+    gearRatio: L3
+
+  # Front left
+  frontLeftModule: !<SdsMk4>
+    driveMotor:
+      id: 1
+    steerMotor:
+      id: 5
+    steerEncoder:
+      id: 9
+      offset: -131.5 degrees
+
+  # Front right
+  frontRightModule: !<SdsMk4>
+    driveMotor:
+      id: 2
+    steerMotor:
+      id: 6
+    steerEncoder:
+      id: 10
+      offset: -130.6 degrees
+
+  # Back left
+  backLeftModule: !<SdsMk4>
+    driveMotor:
+      id: 3
+    steerMotor:
+      id: 7
+    steerEncoder:
+      id: 11
+      offset: -95.3 degrees
+
+  # Back right
+  backRightModule: !<SdsMk4>
+    driveMotor:
+      id: 4
+    steerMotor:
+      id: 8
+    steerEncoder:
+      id: 12
+      offset: -112.5 degrees
+vision: { }

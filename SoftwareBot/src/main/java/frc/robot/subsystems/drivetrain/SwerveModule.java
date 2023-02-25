@@ -29,6 +29,9 @@ public class SwerveModule {
 
         double setpointRad = currentAngleRad + errorRad;
 
+        Logger.getInstance().recordOutput("Drivetrain/" + name + "/TargetAngleRad", setpointRad);
+        Logger.getInstance().recordOutput("Drivetrain/" + name + "/TargetVelocityMetersPerSec", state.speedMetersPerSecond);
+
         io.setTargetSteerAngle(setpointRad);
         io.setTargetDriveVelocity(state.speedMetersPerSecond);
     }

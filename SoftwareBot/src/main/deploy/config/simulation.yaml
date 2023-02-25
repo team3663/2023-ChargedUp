@@ -1,0 +1,19 @@
+arm: { }
+drivetrain:
+  trackwidth: 24 inches
+  wheelbase: 24 inches
+  followerTranslationPid:
+    p: 0.0
+    i: 0.0
+    d: 0.0
+  followerRotationPid:
+    p: 0.0
+    i: 0.0
+    d: 0.0
+  gyroscope: !<Sim> { }
+  swerveModule: !<Sim> { }
+  frontLeftModule: null
+  frontRightModule: null
+  backLeftModule: null
+  backRightModule: null
+vision: { }
