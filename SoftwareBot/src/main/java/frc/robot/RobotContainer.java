@@ -17,10 +17,12 @@ import frc.robot.commands.DriveCircleCommand;
 import frc.robot.commands.SetArmPoseCommand;
 import frc.robot.commands.DriveToPoseCommand;
 import frc.robot.photonvision.IPhotonVision;
+import frc.robot.subsystems.SubsystemFactory;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import frc.robot.utility.AutoCommandChooser;
 import frc.robot.utility.ControllerHelper;
+import frc.robot.utility.RobotIdentity;
 import frc.robot.utility.config.RobotConfig;
 
 /**
@@ -57,10 +59,14 @@ public class RobotContainer {
     }
 
     private void createSubsystems(RobotConfig config) {
-        photonvision = config.getVision().create();
 
-        armSubsystem = config.getArm().createSubsystem();
+ //       photonvision = config.getVision().create();
+ //       armSubsystem = config.getArm().createSubsystem();
         drivetrainSubsystem = config.getDrivetrain().createSubsystem(photonvision);
+
+        RobotIdentity identity = RobotIdentity.getIdentity();
+        armSubsystem = SubsystemFactory.createArm(identity);
+        photonvision = SubsystemFactory.createPhotonvision(identity);
     }
 
     private void createCommands() {
