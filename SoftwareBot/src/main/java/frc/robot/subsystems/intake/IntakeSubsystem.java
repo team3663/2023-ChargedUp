@@ -10,16 +10,17 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-  private final IntakeIO io;
-  private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
-  /** Creates a new IntakeSubsystem. */
-  public IntakeSubsystem(IntakeIO io) {
-    this.io = io;
-  }
+    private final IntakeIO io;
+    private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
 
-  @Override
-  public void periodic() {
-    io.updateInputs(inputs);
-    Logger.getInstance().processInputs("Intake/inputs", inputs);
-  }
+    /** Creates a new IntakeSubsystem. */
+    public IntakeSubsystem(IntakeIO io) {
+        this.io = io;
+    }
+
+    @Override
+    public void periodic() {
+        io.updateInputs(inputs);
+        Logger.getInstance().processInputs("Intake/inputs", inputs);
+    }
 }
