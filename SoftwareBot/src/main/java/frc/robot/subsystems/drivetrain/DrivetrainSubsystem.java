@@ -31,7 +31,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private ChassisSpeeds targetChassisVelocity = new ChassisSpeeds();
     private double[] chassisVelocityLogged = new double[3];
 
-    private final IPhotonVision photonvision;
+    private IPhotonVision photonvision;
 
     public DrivetrainSubsystem(DrivetrainConfig config, GyroIO gyroIO,
                                SwerveModuleIO frontLeftModuleIO, SwerveModuleIO frontRightModuleIO,
@@ -138,6 +138,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
         this.targetChassisVelocity = chassisSpeeds;
     }
 
+    // This should be injected via the contructor but we need it temporarily while we finish the config work.
+    public void setPhotonvision(IPhotonVision photon)
+    {
+        photonvision = photon;
+    }
+ 
     public Pose2d getPose() {
         return poseEstimator.getEstimatedPosition();
     }
