@@ -72,9 +72,8 @@ public class RobotContainer {
     }
 
     private void createCommands() {
-
-        // Setup the factory we use to generate our autonomous commands
-        AutoCommandFactory.init(drivetrainSubsystem);
+        // Initialize the auto command builder
+        AutoCommandFactory.init(drivetrainSubsystem, armSubsystem);
 
         // Create the default drive command and attach it to the drivetrain subsystem.
         drivetrainSubsystem.setDefaultCommand(new DefaultDrivetrainCommand(drivetrainSubsystem,
@@ -114,7 +113,7 @@ public class RobotContainer {
         // Register all the supported auto commands
         autoChooser.registerDefaultCreator("Do Nothing", () -> AutoCommandFactory.createNullAuto());
         autoChooser.registerCreator("Commons Test Path", () -> AutoCommandFactory.createCommonsTestAuto());
-        autoChooser.registerCreator("Commons Rotation Test Path", () -> AutoCommandFactory.createCommonsRotationTestAuto());
+        autoChooser.registerCreator("Commons Rotation Test Path", () -> AutoCommandFactory.createArmTestAuto());
 
         // Setup the chooser in shuffleboard
         autoChooser.setup("Driver", 0, 0, 2, 1);

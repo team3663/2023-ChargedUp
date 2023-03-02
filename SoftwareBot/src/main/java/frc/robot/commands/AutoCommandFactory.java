@@ -8,6 +8,8 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.arm.ArmPoseLibrary.ArmPoseID;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 
 public final class AutoCommandFactory {
@@ -19,7 +21,8 @@ public final class AutoCommandFactory {
     private static HashMap<String, Command> eventMap = new HashMap<>();
     private static SwerveAutoBuilder builder;
 
-    public static void init(DrivetrainSubsystem drivetrain) {
+    public static void init(DrivetrainSubsystem drivetrain, ArmSubsystem arm) {
+        eventMap.put("ArmOut", new SetArmPoseCommand(arm, ArmPoseID.SUBSTATION_PICKUP));
 
         builder = new SwerveAutoBuilder(
                 () -> drivetrain.getPose(),
@@ -40,8 +43,8 @@ public final class AutoCommandFactory {
         return builder.fullAuto(PathPlanner.loadPath("CommonsTestPath", pathConstraints));
     }
 
-    public static Command createCommonsRotationTestAuto() {
-        return builder.fullAuto(PathPlanner.loadPath("CommonsRotationTestPath", pathConstraints));
+    public static Command createArmTestAuto() {
+        return builder.fullAuto(PathPlanner.loadPath("ArmTestPath", pathConstraints));
     }
 
     // Default constructor that just throws an exception if you attempt to create an
