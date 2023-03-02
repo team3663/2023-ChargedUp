@@ -50,6 +50,14 @@ public final class Constants {
         public static final int DRIVETRAIN_BACK_RIGHT_MODULE_STEER_ENCODER = 12;
 
         public static final int DRIVETRAIN_PIGEON_ID = 13;
+
+        public static final int ARM_SHOULDER_MOTOR = 1;
+        public static final int ARM_ELBOW_MOTOR = 2;
+        public static final int ARM_WRIST_MOTOR = 3;
+
+        public static final int ARM_SHOULDER_ENCODER = 4;
+        public static final int ARM_ELBOW_ENCODER = 5;
+        public static final int ARM_WRIST_ENCODER = 6;
     }
 
     public static class CameraPoses {

@@ -113,7 +113,7 @@ public class RobotContainer {
         // Register all the supported auto commands
         autoChooser.registerDefaultCreator("Do Nothing", () -> AutoCommandFactory.createNullAuto());
         autoChooser.registerCreator("Commons Test Path", () -> AutoCommandFactory.createCommonsTestAuto());
-        autoChooser.registerCreator("Commons Rotation Test Path", () -> AutoCommandFactory.createArmTestAuto());
+        autoChooser.registerCreator("Arm Test Path", () -> AutoCommandFactory.createArmTestAuto());
 
         // Setup the chooser in shuffleboard
         autoChooser.setup("Driver", 0, 0, 2, 1);

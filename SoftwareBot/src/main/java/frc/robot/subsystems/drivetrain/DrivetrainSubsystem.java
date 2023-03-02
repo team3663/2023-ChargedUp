@@ -170,6 +170,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public void setTargetChassisVelocity(ChassisSpeeds targetChassisVelocity) {
         this.targetChassisVelocity = targetChassisVelocity;
     }
+    
+    public double getPitch() {
+        return gyroInputs.pitchRadians;
+    }
 
     public SwerveDriveKinematics getKinematics() {
         return kinematics;
