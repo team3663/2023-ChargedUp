@@ -13,8 +13,8 @@ drivetrain:
     d: 0.0
   gyroscope: !<Sim> { }
   swerveModule: !<Sim> { }
-  frontLeftModule: null
-  frontRightModule: null
-  backLeftModule: null
-  backRightModule: null
+  frontLeftModule: !<Sim> { }
+  frontRightModule: !<Sim> { }
+  backLeftModule: !<Sim> { }
+  backRightModule: !<Sim> { }
 vision: { }

@@ -66,16 +66,19 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
         steerFeedback.setSetpoint(targetSteerAngleRad);
     }
 
+
     @Data
     @EqualsAndHashCode(callSuper = true)
     public static class Config extends SwerveModuleConfig {
         @Override
         public SwerveModuleIO createIO(HardwareConfig hardwareConfig) {
-            if (hardwareConfig != null) {
-                throw new IllegalArgumentException("Hardware config must be null for simulation");
-            }
 
             return new SwerveModuleIOSim();
         }
+    }
+
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    public static class HardwareConfig extends SwerveModuleConfig.HardwareConfig {
     }
 }
