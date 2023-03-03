@@ -38,6 +38,10 @@ public final class AutoCommandFactory {
     public static Command createNullAuto() {
         return null;
     }
+
+    public static Command createTestAuto() {
+        return builder.fullAuto(PathPlanner.loadPath("TestPath", pathConstraints));
+    }
     
     public static Command createCommonsTestAuto() {
         return builder.fullAuto(PathPlanner.loadPath("CommonsTestPath", pathConstraints));

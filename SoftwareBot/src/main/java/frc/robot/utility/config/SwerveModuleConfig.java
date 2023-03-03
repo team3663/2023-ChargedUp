@@ -10,11 +10,12 @@ import lombok.Data;
 @Data
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME)
 @JsonSubTypes({@JsonSubTypes.Type(value = SwerveModuleIOSdsMk4.Config.class, name = "SdsMk4"),
-        @JsonSubTypes.Type(value = SwerveModuleIOSim.Config.class, name = "Sim")})
+@JsonSubTypes.Type(value = SwerveModuleIOSim.Config.class, name = "Sim")})
 public abstract class SwerveModuleConfig {
     @Data
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME)
-    @JsonSubTypes({@JsonSubTypes.Type(value = SwerveModuleIOSdsMk4.HardwareConfig.class, name = "SdsMk4")})
+    @JsonSubTypes({@JsonSubTypes.Type(value = SwerveModuleIOSdsMk4.HardwareConfig.class, name = "SdsMk4"),
+        @JsonSubTypes.Type(value = SwerveModuleIOSim.HardwareConfig.class, name = "Sim")})
     public abstract static class HardwareConfig {
     }
 
