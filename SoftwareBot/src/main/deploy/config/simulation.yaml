@@ -2,6 +2,7 @@ arm: { }
 drivetrain:
   trackwidth: 24 inches
   wheelbase: 24 inches
+  maxTranslationalVelocity: 13.8 feet per second
   followerTranslationPid:
     p: 0.0
     i: 0.0
@@ -12,8 +13,8 @@ drivetrain:
     d: 0.0
   gyroscope: !<Sim> { }
   swerveModule: !<Sim> { }
-  frontLeftModule: null
-  frontRightModule: null
-  backLeftModule: null
-  backRightModule: null
+  frontLeftModule: !<Sim> { }
+  frontRightModule: !<Sim> { }
+  backLeftModule: !<Sim> { }
+  backRightModule: !<Sim> { }
 vision: { }
