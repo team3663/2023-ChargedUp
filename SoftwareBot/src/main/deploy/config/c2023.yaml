@@ -2,7 +2,6 @@ arm: { }
 drivetrain:
   trackwidth: 20 inches
   wheelbase: 24 inches
-
   maxTranslationalVelocity: 13.8 feet per second
 
   gyroscope: !<Pigeon2>

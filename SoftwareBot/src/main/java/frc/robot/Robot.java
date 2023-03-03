@@ -36,8 +36,7 @@ public class Robot extends LoggedRobot {
     public void robotInit() {
         // Determine the robot identity
         RobotIdentity identity = RobotIdentity.getIdentity();
-        identity = RobotIdentity.ROBOT_2023;
-        System.out.println("Detected identity: " + identity);
+        System.out.println("=====Detected identity: " + identity);
         RobotConfig config;
         try {
             config = RobotConfig.loadConfig(identity);
