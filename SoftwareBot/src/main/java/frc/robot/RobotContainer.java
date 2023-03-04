@@ -6,7 +6,6 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -15,15 +14,17 @@ import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DriveCircleCommand;
 import frc.robot.commands.SetArmPoseCommand;
-import frc.robot.commands.DriveToPoseCommand;
 import frc.robot.photonvision.IPhotonVision;
 import frc.robot.subsystems.SubsystemFactory;
 import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.arm.ArmPoseLibrary.ArmPoseID;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import frc.robot.utility.AutoCommandChooser;
 import frc.robot.utility.ControllerHelper;
 import frc.robot.utility.RobotIdentity;
 import frc.robot.utility.config.RobotConfig;
+import frc.robot.utility.GameModeUtil;
+import frc.robot.utility.GamePiece;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -45,8 +46,6 @@ public class RobotContainer {
 
     // Commands
     private DriveCircleCommand driveCircleCommand;
-    private DriveToPoseCommand goToPoseCommand;
-    private DriveToPoseCommand goToOtherPoseCommand;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -73,9 +72,8 @@ public class RobotContainer {
     }
 
     private void createCommands() {
-
-        // Setup the factory we use to generate our autonomous commands
-        AutoCommandFactory.init(drivetrainSubsystem);
+        // Initialize the auto command builder
+        AutoCommandFactory.init(drivetrainSubsystem, armSubsystem);
 
         // Create the default drive command and attach it to the drivetrain subsystem.
         drivetrainSubsystem.setDefaultCommand(new DefaultDrivetrainCommand(drivetrainSubsystem,
@@ -85,9 +83,6 @@ public class RobotContainer {
         ));
 
         driveCircleCommand = new DriveCircleCommand(drivetrainSubsystem);
-
-        goToPoseCommand = new DriveToPoseCommand(drivetrainSubsystem, new Translation2d(1, 1), new Rotation2d(0.5));
-        goToOtherPoseCommand = new DriveToPoseCommand(drivetrainSubsystem, new Translation2d(0, 0), new Rotation2d(-0.5));
     }
 
     private void configureBindings() {
@@ -104,13 +99,12 @@ public class RobotContainer {
 
         driverController.a().whileTrue(driveCircleCommand);
 
-        driverController.povLeft().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(0.11, 0.16, Rotation2d.fromDegrees(110.0))));
-        driverController.povRight().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(0.51, 0.81, Rotation2d.fromDegrees(0.0))));
-        // driverController.povUp().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(1.5, 1.0, Rotation2d.fromDegrees(45.0))));
-        // driverController.povDown().onTrue(new SetArmPoseCommand(armSubsystem, new Pose2d(1.5, 0.2, Rotation2d.fromDegrees(0.0))));
+        driverController.povLeft().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.STOWED));
+        driverController.povRight().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SUBSTATION_PICKUP));
+        driverController.povDown().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SCORE_FLOOR));
         
-        driverController.b().onTrue(goToPoseCommand);
-        driverController.y().onTrue(goToOtherPoseCommand);
+        driverController.x().onTrue(new InstantCommand(() -> GameModeUtil.set(GamePiece.CUBE)));
+        driverController.y().onTrue(new InstantCommand(() -> GameModeUtil.set(GamePiece.CONE)));
     }
 
     private void setupAutoChooser() {
@@ -120,7 +114,7 @@ public class RobotContainer {
         autoChooser.registerDefaultCreator("Do Nothing", () -> AutoCommandFactory.createNullAuto());
         autoChooser.registerCreator("Test Path", () -> AutoCommandFactory.createTestAuto());
         autoChooser.registerCreator("Commons Test Path", () -> AutoCommandFactory.createCommonsTestAuto());
-        autoChooser.registerCreator("Commons Rotation Test Path", () -> AutoCommandFactory.createCommonsRotationTestAuto());
+        autoChooser.registerCreator("Commons Rotation Test Path", () -> AutoCommandFactory.createArmTestAuto());
 
         // Setup the chooser in shuffleboard
         autoChooser.setup("Driver", 0, 0, 2, 1);
