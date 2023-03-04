@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 
@@ -13,6 +14,8 @@ public class AutoBalanceCommand extends CommandBase {
 
     private final DrivetrainSubsystem drivetrain;
     private final PIDController controller = new PIDController(0, 0, 0);
+    
+    private final double tiltTolerance = Units.degreesToRadians(2);
     /** Creates a new AutoBalanceCommand. */
     public AutoBalanceCommand(DrivetrainSubsystem drivetrain) {
         this.drivetrain = drivetrain;
@@ -21,14 +24,14 @@ public class AutoBalanceCommand extends CommandBase {
 
     // Called when the command is initially scheduled.
     @Override
-    public void initialize() {
-        
-    }
+    public void initialize() {}
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        drivetrain.drive(new ChassisSpeeds(controller.calculate(drivetrain.getPitch(), 0), 0, 0));
+        double vX = controller.calculate(Math.sin(drivetrain.getPitch()), 0);
+        double vY = 0;
+        drivetrain.drive(new ChassisSpeeds(vX, vY, 0));
     }
 
     // Called once the command ends or is interrupted.
@@ -39,6 +42,6 @@ public class AutoBalanceCommand extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return drivetrain.getPitch() == 0;
+        return drivetrain.getPitch() == tiltTolerance;
     }
 }
