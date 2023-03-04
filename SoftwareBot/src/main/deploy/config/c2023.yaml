@@ -1,4 +1,27 @@
-arm: { }
+arm:
+  hardware: !<Comp>
+    shoulderMotor:
+      id: 15
+      inverted: false
+    shoulderEncoder:
+      id: 4
+      inverted: true
+      offset: 104 degrees
+    elbowMotor:
+      id: 2
+      inverted: true
+    elbowEncoder:
+      id: 5
+      inverted: true
+      offset: 158.2 degrees
+    wristMotor:
+      id: 3
+      inverted: true
+    wristEncoder:
+      id: 6
+      inverted: true
+      offset: 0 degrees
+
 drivetrain:
   trackwidth: 20 inches
   wheelbase: 24 inches
