@@ -19,12 +19,12 @@ public class ArmSubsystem extends SubsystemBase {
     private static final double HAND_LENGTH_METERS = Units.inchesToMeters(17);
 
     // angle constraints for each joint
-    private static final double SHOULDER_MIN_ANGLE_RAD = Units.degreesToRadians(93);
-    private static final double SHOULDER_MAX_ANGLE_RAD = Units.degreesToRadians(156);
+    private static final double SHOULDER_MIN_ANGLE_RAD = Units.degreesToRadians(91);
+    private static final double SHOULDER_MAX_ANGLE_RAD = Units.degreesToRadians(157.25);
     private static final double ELBOW_MIN_ANGLE_RAD = Units.degreesToRadians(-173);
     private static final double ELBOW_MAX_ANGLE_RAD = Units.degreesToRadians(-3);
-    private static final double WRIST_MIN_ANGLE_RAD = Units.degreesToRadians(-90);
-    private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(90);
+    private static final double WRIST_MIN_ANGLE_RAD = Units.degreesToRadians(-1);
+    private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(120);
 
     // private static final double ELBOW_VELOCITY_CONSTANT = 1.6;
     private static final double ELBOW_BACKLASH_CONSTANT = Units.degreesToRadians(5);
@@ -33,7 +33,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     private final ArmIO io;
     private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
-    private Pose2d targetPose = new Pose2d(0.002, 0.16, Rotation2d.fromDegrees(0.0));
+    private Pose2d targetPose = new Pose2d(0.002, 0.16, Rotation2d.fromDegrees(90.0));
     private IArmKinematics kinematics;
     private Mechanism2d mechanism;
 
@@ -56,7 +56,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     private final PIDController shoulderController = new PIDController(30.0, 0.0, 0.0);
     private final PIDController elbowController = new PIDController(2.7, 0.0, 0.0);
-    private final PIDController wristController = new PIDController(1.0, 0.0, 0.0);
+    private final PIDController wristController = new PIDController(20.0, 0.0, 0.0);
 
     public ArmSubsystem(ArmIO io) {
         this.io = io;
