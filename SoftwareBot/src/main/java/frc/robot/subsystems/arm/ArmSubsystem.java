@@ -14,17 +14,22 @@ import org.littletonrobotics.junction.Logger;
 public class ArmSubsystem extends SubsystemBase {
 
     // Lengths of arms three linkages (arm, forearm & hand)
-    private static final double ARM_LENGTH_METERS = Units.inchesToMeters(28);
-    private static final double FOREARM_LENGTH_METERS = Units.inchesToMeters(30);
+    private static final double ARM_LENGTH_METERS = Units.inchesToMeters(29.25);
+    private static final double FOREARM_LENGTH_METERS = Units.inchesToMeters(27.5);
     private static final double HAND_LENGTH_METERS = Units.inchesToMeters(17);
 
     // angle constraints for each joint
-    private static final double SHOULDER_MIN_ANGLE_RAD = Units.degreesToRadians(90);
-    private static final double SHOULDER_MAX_ANGLE_RAD = Units.degreesToRadians(150);
-    private static final double ELBOW_MIN_ANGLE_RAD = Units.degreesToRadians(-170);
-    private static final double ELBOW_MAX_ANGLE_RAD = Units.degreesToRadians(-80);
+    private static final double SHOULDER_MIN_ANGLE_RAD = Units.degreesToRadians(93);
+    private static final double SHOULDER_MAX_ANGLE_RAD = Units.degreesToRadians(156);
+    private static final double ELBOW_MIN_ANGLE_RAD = Units.degreesToRadians(-173);
+    private static final double ELBOW_MAX_ANGLE_RAD = Units.degreesToRadians(-3);
     private static final double WRIST_MIN_ANGLE_RAD = Units.degreesToRadians(-90);
-    private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(135);
+    private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(90);
+
+    // private static final double ELBOW_VELOCITY_CONSTANT = 1.6;
+    private static final double ELBOW_BACKLASH_CONSTANT = 5;
+    private static double elbowGravityGain = 0;
+    private static final double ELBOW_GRAVITY_GAIN_COEFFICIENT = 0.25;
 
     private final ArmIO io;
     private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
@@ -50,7 +55,7 @@ public class ArmSubsystem extends SubsystemBase {
     private final MechanismLigament2d targetPositionLigament;
 
     private final PIDController shoulderController = new PIDController(1.0, 0.0, 0.0);
-    private final PIDController elbowController = new PIDController(10.0, 1.0, 2.0);
+    private final PIDController elbowController = new PIDController(2.7, 0.0, 0.0);
     private final PIDController wristController = new PIDController(1.0, 0.0, 0.0);
 
     public ArmSubsystem(ArmIO io) {
@@ -77,12 +82,25 @@ public class ArmSubsystem extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.getInstance().processInputs("Arm/Inputs", inputs);
 
+        elbowGravityGain = Math.abs(Math.cos(inputs.shoulderAngleRad + inputs.elbowAngleRad)) * ELBOW_GRAVITY_GAIN_COEFFICIENT;
+        Logger.getInstance().recordOutput("Arm/elbowGravityGain", elbowGravityGain);
+        Logger.getInstance().recordOutput("Arm/ForearmFloorRelativeAngle", inputs.shoulderAngleRad + inputs.elbowAngleRad);
+
         // Convert our target pose (task space) to an arm state object (c-space) and update the IO object with new values.
         ArmState targetState = kinematics.inverse(targetPose);
+        // Add ELBOW_BACKLASH_CONSTANT to compensate for backlash in the gearbox.
+        targetState.elbowAngleRad += ELBOW_BACKLASH_CONSTANT;
 
-        io.setShoulderVoltage(shoulderController.calculate(inputs.shoulderAngleRad, targetState.shoulderAngleRad));
-        io.setElbowVoltage(elbowController.calculate(inputs.elbowAngleRad, targetState.elbowAngleRad));
-        io.setWristVoltage(wristController.calculate(inputs.wristAngleRad, targetState.wristAngleRad));
+        double shoulderVoltage = shoulderController.calculate(inputs.shoulderAngleRad, targetState.shoulderAngleRad);
+        double elbowVoltage = elbowController.calculate(inputs.elbowAngleRad, targetState.elbowAngleRad) * (1 + elbowGravityGain);
+        double wristVoltage = wristController.calculate(inputs.wristAngleRad, targetState.wristAngleRad);
+
+        Logger.getInstance().recordOutput("Arm/ElbowSetpointAngle", elbowController.getSetpoint());
+        Logger.getInstance().recordOutput("Arm/ElbowVoltage", elbowVoltage);
+        
+        io.setShoulderVoltage(applyJointLimits(shoulderVoltage, inputs.shoulderAngleRad, SHOULDER_MIN_ANGLE_RAD, SHOULDER_MAX_ANGLE_RAD));
+        io.setElbowVoltage(applyJointLimits(elbowVoltage, inputs.elbowAngleRad, ELBOW_MIN_ANGLE_RAD, ELBOW_MAX_ANGLE_RAD));
+        io.setWristVoltage(applyJointLimits(wristVoltage, inputs.wristAngleRad, WRIST_MIN_ANGLE_RAD, WRIST_MAX_ANGLE_RAD));   
 
         // Copy the target angles into an array we can pass to AdvantageKit to be logged.
         targetAnglesLogged[0] = targetState.shoulderAngleRad;
@@ -103,6 +121,16 @@ public class ArmSubsystem extends SubsystemBase {
         targetForearmLigament.setAngle(Units.radiansToDegrees(targetState.elbowAngleRad));
         targetIntakeLigament.setAngle(Units.radiansToDegrees(targetState.wristAngleRad));
         Logger.getInstance().recordOutput("Arm/Mechanism", mechanism);
+    }
+
+    private double applyJointLimits(double voltage, double current, double min, double max) {
+        if (current > max) {
+            return Math.min(voltage, 0);
+        }
+        if (current < min) {
+            return Math.max(voltage, 0);
+        }
+        return voltage;
     }
 
     public void setPose(Pose2d targetPose) {

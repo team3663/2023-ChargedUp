@@ -1,5 +1,6 @@
 package frc.robot.utility.config;
 
+import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
@@ -12,6 +13,7 @@ import lombok.Data;
 public final class CanCoderConfig {
     private int id;
     private String canBus = "rio";
+    private boolean inverted;
     @JsonUnits(JsonUnits.Unit.DEGREES)
     private double offset;
 
@@ -19,8 +21,9 @@ public final class CanCoderConfig {
         WPI_CANCoder encoder = new WPI_CANCoder(id, canBus);
         CANCoderConfiguration config = new CANCoderConfiguration();
         config.magnetOffsetDegrees = Units.radiansToDegrees(offset);
+        config.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
         config.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
-        config.sensorDirection = false;
+        config.sensorDirection = inverted;
 
         encoder.configAllSettings(config);
 
