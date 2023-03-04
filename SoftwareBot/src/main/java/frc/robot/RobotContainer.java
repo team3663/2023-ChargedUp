@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -76,10 +78,11 @@ public class RobotContainer {
         AutoCommandFactory.init(drivetrainSubsystem, armSubsystem);
 
         // Create the default drive command and attach it to the drivetrain subsystem.
+        Supplier<Boolean> isSlowmode = () -> driverController.rightBumper().getAsBoolean();
         drivetrainSubsystem.setDefaultCommand(new DefaultDrivetrainCommand(drivetrainSubsystem,
-                () -> ControllerHelper.modifyAxis(-driverController.getLeftY()) * drivetrainSubsystem.getMaxTranslationalVelocityMetersPerSecond(),
-                () -> ControllerHelper.modifyAxis(-driverController.getLeftX()) * drivetrainSubsystem.getMaxTranslationalVelocityMetersPerSecond(),
-                () -> ControllerHelper.modifyAxis(-driverController.getRightX()) * drivetrainSubsystem.getMaxAngularVelocityRadPerSec()
+                () -> ControllerHelper.modifyAxis(-driverController.getLeftY(), isSlowmode) * drivetrainSubsystem.getMaxTranslationalVelocityMetersPerSecond(),
+                () -> ControllerHelper.modifyAxis(-driverController.getLeftX(), isSlowmode) * drivetrainSubsystem.getMaxTranslationalVelocityMetersPerSecond(),
+                () -> ControllerHelper.modifyAxis(-driverController.getRightX(), isSlowmode) * drivetrainSubsystem.getMaxAngularVelocityRadPerSec()
         ));
 
         driveCircleCommand = new DriveCircleCommand(drivetrainSubsystem);
@@ -93,6 +96,7 @@ public class RobotContainer {
             driverController.start().onTrue(new InstantCommand(() -> drivetrainSubsystem.resetPose(new Pose2d())));
         }
 
+        // This command resets the gyro's yaw value. As it does not interfere with pose estimation it is safe for competition use.
         driverController.back().onTrue(new InstantCommand(
             () -> drivetrainSubsystem.resetPose(new Pose2d(drivetrainSubsystem.getPose().getX(), drivetrainSubsystem.getPose().getY(), new Rotation2d()))
         ));
