@@ -27,13 +27,13 @@ public class ArmSubsystem extends SubsystemBase {
     private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(90);
 
     // private static final double ELBOW_VELOCITY_CONSTANT = 1.6;
-    private static final double ELBOW_BACKLASH_CONSTANT = 5;
+    private static final double ELBOW_BACKLASH_CONSTANT = Units.degreesToRadians(5);
     private static double elbowGravityGain = 0;
     private static final double ELBOW_GRAVITY_GAIN_COEFFICIENT = 0.25;
 
     private final ArmIO io;
     private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
-    private Pose2d targetPose = new Pose2d(0.51, 0.81, Rotation2d.fromDegrees(0.0));
+    private Pose2d targetPose = new Pose2d(0.002, 0.16, Rotation2d.fromDegrees(0.0));
     private IArmKinematics kinematics;
     private Mechanism2d mechanism;
 
@@ -54,7 +54,7 @@ public class ArmSubsystem extends SubsystemBase {
     private final MechanismRoot2d targetPositionRoot;
     private final MechanismLigament2d targetPositionLigament;
 
-    private final PIDController shoulderController = new PIDController(1.0, 0.0, 0.0);
+    private final PIDController shoulderController = new PIDController(30.0, 0.0, 0.0);
     private final PIDController elbowController = new PIDController(2.7, 0.0, 0.0);
     private final PIDController wristController = new PIDController(1.0, 0.0, 0.0);
 
@@ -121,6 +121,13 @@ public class ArmSubsystem extends SubsystemBase {
         targetForearmLigament.setAngle(Units.radiansToDegrees(targetState.elbowAngleRad));
         targetIntakeLigament.setAngle(Units.radiansToDegrees(targetState.wristAngleRad));
         Logger.getInstance().recordOutput("Arm/Mechanism", mechanism);
+
+        Pose2d currentPose = kinematics.forward(new ArmState(
+            inputs.shoulderAngleRad,
+            inputs.elbowAngleRad,
+            inputs.wristAngleRad
+        ));
+        Logger.getInstance().recordOutput("Arm/CurrentPose", currentPose);
     }
 
     private double applyJointLimits(double voltage, double current, double min, double max) {

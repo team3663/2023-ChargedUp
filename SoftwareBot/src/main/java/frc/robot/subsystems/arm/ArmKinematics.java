@@ -87,6 +87,10 @@ public class ArmKinematics implements IArmKinematics {
             System.out.println("Invalid wrist angle");
         }
     
+        Logger.getInstance().recordOutput("Arm/kinematicsShoulderAngle", shoulderAngle);
+        Logger.getInstance().recordOutput("Arm/kinematicsElbowAngle", elbowAngle);
+        Logger.getInstance().recordOutput("Arm/kinematicsWristAngle", wristAngle);
+
         Logger.getInstance().recordOutput("Arm/clampedShoulderAngle", shoulderAngleClamped);
         Logger.getInstance().recordOutput("Arm/clampedElbowAngle", elbowAngleClamped);
         Logger.getInstance().recordOutput("Arm/clampedWristAngle", wristAngleClamped);
