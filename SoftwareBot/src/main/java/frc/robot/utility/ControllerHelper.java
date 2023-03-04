@@ -7,7 +7,7 @@ import edu.wpi.first.math.MathUtil;
 public class ControllerHelper {
 
     private static double deadbandWidth = 0.1;
-    private static double slowmodeValue = 2;
+    private static double slowmodeValue = 4;
     
     /**
      * @param value - Raw value read from controller axis to be modified
