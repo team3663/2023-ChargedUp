@@ -59,5 +59,17 @@ public final class Constants {
             Units.inchesToMeters(30),
             new Rotation3d(0, 0, Math.PI / 2)
         );
+
+        // TODO: Verify camera poses
+        private static final double cx = Units.inchesToMeters(4.5);
+        private static final double cy = Units.inchesToMeters(8.5);
+        private static final double cz = Units.inchesToMeters(25.5);
+
+        public static final Pose3d LEFT_CAMERA_POSE = new Pose3d(
+            -cx, cy, cz, new Rotation3d(0, 0, Units.degreesToRadians(30))
+        );
+        public static final Pose3d RIGHT_CAMERA_POSE = new Pose3d(
+            -cx, -cy, cz, new Rotation3d(0, 0, Units.degreesToRadians(-30))
+        );
     }
 }

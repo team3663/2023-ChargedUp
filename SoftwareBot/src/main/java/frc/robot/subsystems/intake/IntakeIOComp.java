@@ -12,8 +12,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 /** Add your docs here. */
 public class IntakeIOComp implements IntakeIO {
 
-    // Converts RPM into rad/sec
-    // TODO: Verify that this works
+    // Converts RPM into rad/sec. This is a potential source of problems
     private final double ENCODER_VELOCITY_COEFFICIENT = 2 * Math.PI / 60;
 
     private final double INTAKE_CURRENT_LIMIT = 40;

@@ -30,6 +30,19 @@ public final class SubsystemFactory {
                 );
                 break;
 
+            case ROBOT_2023:
+                    photon = new PhotonVisionUtil(
+                        new PhotonCamera[] {
+                            new PhotonCamera("Left_Camera"),
+                            new PhotonCamera("Right_Camera")
+                        },
+                        new Transform3d[] {
+                            new Transform3d(new Pose3d(), Constants.CameraPoses.LEFT_CAMERA_POSE),
+                            new Transform3d(new Pose3d(), Constants.CameraPoses.LEFT_CAMERA_POSE)
+                        }
+                    );
+                    break;
+
             default:
                 photon = new IPhotonVision() {};
                 break;
