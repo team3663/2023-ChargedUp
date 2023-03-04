@@ -2,23 +2,21 @@ package frc.robot.subsystems.arm;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
-import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
-import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
-import com.ctre.phoenix.sensors.CANCoderConfiguration;
-import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.util.Units;
+import frc.robot.utility.config.ArmConfig;
+import frc.robot.utility.config.CanCoderConfig;
+import frc.robot.utility.config.Falcon500Config;
+import frc.robot.utility.config.NeoConfig;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 public class ArmIOComp implements ArmIO {
-    private static final double SHOULDER_OFFSET_DEG = 0;
-    private static final double ELBOW_OFFSET_DEG = 0;
-    private static final double WRIST_OFFSET_RAD = 0;
-
     private static final double SHOULDER_CURRENT_LIMIT = 40;
     private static final double ELBOW_CURRENT_LIMIT = 40;
     private static final double WRIST_CURRENT_LIMIT = 40;
@@ -56,17 +54,16 @@ public class ArmIOComp implements ArmIO {
 
         shoulderMotor.setSmartCurrentLimit((int) SHOULDER_CURRENT_LIMIT);
         shoulderMotor.enableVoltageCompensation(12);
-        shoulderMotor.setInverted(true);
 
         TalonFXConfiguration elbowConfig = new TalonFXConfiguration();
         elbowConfig.supplyCurrLimit.currentLimit = ELBOW_CURRENT_LIMIT;
         elbowConfig.supplyCurrLimit.enable = true;
         elbowConfig.voltageCompSaturation = 12;
+        elbowConfig.neutralDeadband = 0.0;
 
         elbowMotor.configAllSettings(elbowConfig);
         elbowMotor.enableVoltageCompensation(true);
         elbowMotor.setNeutralMode(NeutralMode.Brake);
-        elbowMotor.setInverted(TalonFXInvertType.CounterClockwise);
 
         TalonFXConfiguration wristConfig = new TalonFXConfiguration();
         wristConfig.supplyCurrLimit.currentLimit = WRIST_CURRENT_LIMIT;
@@ -76,44 +73,21 @@ public class ArmIOComp implements ArmIO {
         wristMotor.configAllSettings(wristConfig);
         wristMotor.enableVoltageCompensation(true);
         wristMotor.setNeutralMode(NeutralMode.Brake);
-        wristMotor.setInverted(TalonFXInvertType.CounterClockwise);
-
-        // Remember that if the motor is inverted the encoder must be as well. If issues arise, this is the first place to look.
-        CANCoderConfiguration shoulderEncoderConfig = new CANCoderConfiguration();
-        shoulderEncoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
-        shoulderEncoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
-        shoulderEncoderConfig.magnetOffsetDegrees = SHOULDER_OFFSET_DEG;
-        shoulderEncoderConfig.sensorDirection = false;
-        shoulderEncoder.configAllSettings(shoulderEncoderConfig);
-
-        CANCoderConfiguration elbowEncoderConfig = new CANCoderConfiguration();
-        elbowEncoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
-        elbowEncoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
-        elbowEncoderConfig.magnetOffsetDegrees = ELBOW_OFFSET_DEG;
-        elbowEncoderConfig.sensorDirection = false;
-        elbowEncoder.configAllSettings(elbowEncoderConfig);
-
-        CANCoderConfiguration wristEncoderConfig = new CANCoderConfiguration();
-        wristEncoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
-        wristEncoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
-        wristEncoderConfig.magnetOffsetDegrees = WRIST_OFFSET_RAD;
-        wristEncoderConfig.sensorDirection = false;
-        wristEncoder.configAllSettings(wristEncoderConfig);
     }
 
     @Override
     public void updateInputs(ArmIOInputs inputs) {
-        inputs.shoulderAngleRad = shoulderEncoder.getAbsolutePosition();
+        inputs.shoulderAngleRad = Units.degreesToRadians(shoulderEncoder.getAbsolutePosition());
         inputs.shoulderAngularVelRadPerSec = Units.degreesToRadians(shoulderEncoder.getVelocity());
         inputs.shoulderCurrentDrawAmps = shoulderMotor.getOutputCurrent();
         inputs.shoulderAppliedVoltage = shoulderMotor.getAppliedOutput() * 12;
 
-        inputs.elbowAngleRad = elbowEncoder.getAbsolutePosition();
+        inputs.elbowAngleRad = Units.degreesToRadians(elbowEncoder.getAbsolutePosition());
         inputs.elbowAngularVelRadPerSec = Units.degreesToRadians(elbowEncoder.getVelocity());
         inputs.elbowCurrentDrawAmps = elbowMotor.getMotorOutputVoltage();
         inputs.elbowAppliedVoltage = elbowMotor.getSupplyCurrent();
 
-        inputs.wristAngleRad = wristEncoder.getAbsolutePosition();
+        inputs.wristAngleRad = Units.degreesToRadians(wristEncoder.getAbsolutePosition());
         inputs.wristAngularVelRadPerSec = Units.degreesToRadians(wristEncoder.getVelocity());
         inputs.wristCurrentDrawAmps = wristMotor.getMotorOutputVoltage();
         inputs.wristAppliedVoltage = wristMotor.getSupplyCurrent();
@@ -138,5 +112,27 @@ public class ArmIOComp implements ArmIO {
         return new ArmState(Units.degreesToRadians(shoulderEncoder.getAbsolutePosition()),
                 Units.degreesToRadians(elbowEncoder.getAbsolutePosition()),
                 Units.degreesToRadians(wristEncoder.getAbsolutePosition()));
+    }
+
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    public static class HardwareConfig extends ArmConfig.HardwareConfig {
+        private NeoConfig shoulderMotor;
+        private CanCoderConfig shoulderEncoder;
+        private Falcon500Config elbowMotor;
+        private CanCoderConfig elbowEncoder;
+        private Falcon500Config wristMotor;
+        private CanCoderConfig wristEncoder;
+
+        public ArmIO createIO() {
+            return new ArmIOComp(
+                shoulderMotor.create(),
+                shoulderEncoder.create(),
+                elbowMotor.create(),
+                elbowEncoder.create(),
+                wristMotor.create(),
+                wristEncoder.create()
+            );
+        }
     }
 }
