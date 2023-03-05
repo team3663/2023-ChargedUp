@@ -9,6 +9,12 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxRelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import frc.robot.utility.config.CanCoderConfig;
+import frc.robot.utility.config.IntakeConfig;
+import frc.robot.utility.config.PLGConfig;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 /** Add your docs here. */
 public class IntakeIOComp implements IntakeIO {
 
@@ -23,18 +29,22 @@ public class IntakeIOComp implements IntakeIO {
     private final RelativeEncoder intakeEncoder;
 
     public IntakeIOComp(int intakeMotorId, int intakeEncoderId) {
-        this(intakeMotorId, intakeEncoderId, "rio");
+        this(new CANSparkMax(intakeMotorId, MotorType.kBrushed), "rio");
     }
 
-    public IntakeIOComp(int intakeMotorId, int intakeEncoderId, String canBusName) {
-        intakeMotor = new CANSparkMax(intakeMotorId, MotorType.kBrushed);
-        intakeEncoder = intakeMotor.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 45);
+    public IntakeIOComp(CANSparkMax intakeMotor, String canBusName) {
+        this(intakeMotor, intakeMotor.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 45), "rio");
+    }
 
-        intakeMotor.setSmartCurrentLimit((int) INTAKE_CURRENT_LIMIT);
-        intakeMotor.enableVoltageCompensation(12);
-        intakeMotor.setInverted(false);
+    public IntakeIOComp(CANSparkMax motor, RelativeEncoder encoder, String CanBusName) {
+        intakeMotor = motor;
+        intakeEncoder = encoder;
 
-        intakeEncoder.setVelocityConversionFactor(ENCODER_VELOCITY_COEFFICIENT);
+        motor.setSmartCurrentLimit((int) INTAKE_CURRENT_LIMIT);
+        motor.enableVoltageCompensation(12);
+        motor.setInverted(false);
+
+        encoder.setVelocityConversionFactor(ENCODER_VELOCITY_COEFFICIENT);
     }
 
     public void updateInputs(IntakeIOInputs inputs) {
@@ -45,5 +55,19 @@ public class IntakeIOComp implements IntakeIO {
 
     public void setVoltage(double volts) {
         intakeMotor.setVoltage(volts);
+    }
+
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    public static class HardwareConfig extends IntakeConfig.HardwareConfig {
+        private PLGConfig motor;
+        private CanCoderConfig encoder;
+
+        public IntakeIO createIO() {
+            return new IntakeIOComp(
+                motor.create(),
+                "rio"
+            );
+        }
     }
 }

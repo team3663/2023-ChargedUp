@@ -13,12 +13,14 @@ import frc.robot.Constants.ControllerPorts;
 import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DriveCircleCommand;
+import frc.robot.commands.IntakeFeedCommand;
 import frc.robot.commands.SetArmPoseCommand;
 import frc.robot.photonvision.IPhotonVision;
 import frc.robot.subsystems.SubsystemFactory;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.arm.ArmPoseLibrary.ArmPoseID;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
+import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.utility.AutoCommandChooser;
 import frc.robot.utility.ControllerHelper;
 import frc.robot.utility.RobotIdentity;
@@ -41,6 +43,7 @@ public class RobotContainer {
     // Subsystems       
     private DrivetrainSubsystem drivetrainSubsystem;
     private ArmSubsystem armSubsystem;
+    private IntakeSubsystem intakeSubsystem;
 
     // Utilities
     private IPhotonVision photonvision;
@@ -70,6 +73,7 @@ public class RobotContainer {
 
         drivetrainSubsystem = config.getDrivetrain().createSubsystem(photonvision);
         drivetrainSubsystem.setPhotonvision(photonvision);
+        intakeSubsystem = null;
     }
 
     private void createCommands() {
@@ -109,6 +113,8 @@ public class RobotContainer {
         driverController.y().onTrue(new InstantCommand(() -> GameModeUtil.set(GamePiece.CONE)));
 
         operatorController.a().onTrue(driveCircleCommand);
+
+        driverController.leftTrigger().onTrue(new IntakeFeedCommand(intakeSubsystem, 10));
     }
 
     private void setupAutoChooser() {

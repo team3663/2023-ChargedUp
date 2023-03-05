@@ -18,6 +18,6 @@ public interface IntakeIO {
     default void updateInputs(IntakeIOInputs inputs) {
     }
     
-    default void setIntakeVoltage(double volts) {
+    default void setVoltage(double volts) {
     }
 }
