@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerPorts;
+import frc.robot.commands.AdjustArmPoseCommand;
 import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DriveCircleCommand;
@@ -37,6 +38,7 @@ import frc.robot.utility.GamePiece;
 public class RobotContainer {
 
     private final CommandXboxController driverController = new CommandXboxController(ControllerPorts.DRIVER);
+    private final CommandXboxController operatorController = new CommandXboxController(ControllerPorts.OPERATOR);
     private AutoCommandChooser autoChooser;
 
     // Subsystems       
@@ -90,6 +92,10 @@ public class RobotContainer {
 
     private void configureBindings() {
 
+        //
+        // Driver controller bindings
+        //
+
         // Button to reset the robot's pose to a default starting point.  Handy when running in the simulator and 
         // you accidently lose the robot outside the game field, should NOT be configured in the competition bot.
         if (Robot.isSimulation()) {
@@ -109,6 +115,15 @@ public class RobotContainer {
         
         driverController.x().onTrue(new InstantCommand(() -> GameModeUtil.set(GamePiece.CUBE)));
         driverController.y().onTrue(new InstantCommand(() -> GameModeUtil.set(GamePiece.CONE)));
+
+        //
+        // Operator controller bindings
+        //
+        
+        operatorController.povUp().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0.025, 0));
+        operatorController.povDown().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, -0.025, 0));   
+        operatorController.povLeft().onTrue(new AdjustArmPoseCommand(armSubsystem, -0.025, 0, 0));
+        operatorController.povRight().onTrue(new AdjustArmPoseCommand(armSubsystem, 0.025, 0, 0));
     }
 
     private void setupAutoChooser() {
