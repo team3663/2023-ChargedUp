@@ -73,7 +73,7 @@ public class RobotContainer {
 
         drivetrainSubsystem = config.getDrivetrain().createSubsystem(photonvision);
         drivetrainSubsystem.setPhotonvision(photonvision);
-        intakeSubsystem = null;
+        intakeSubsystem = config.getIntake().createSubsystem();
     }
 
     private void createCommands() {
@@ -115,6 +115,7 @@ public class RobotContainer {
         operatorController.a().onTrue(driveCircleCommand);
 
         driverController.leftTrigger().onTrue(new IntakeFeedCommand(intakeSubsystem, 10));
+        driverController.rightTrigger().onTrue(new IntakeFeedCommand(intakeSubsystem, -10));
     }
 
     private void setupAutoChooser() {

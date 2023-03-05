@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 public final class IntakeConfig {
     
-    public IntakeSubsystem create() {
+    public IntakeSubsystem createSubsystem() {
         return new IntakeSubsystem(null);
     }
 
