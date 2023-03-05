@@ -60,6 +60,7 @@ public class ArmKinematics implements IArmKinematics {
         double x = pose.getX();
         double y = pose.getY();
         double handAngle = pose.getRotation().getRadians();
+        boolean validState = true;
     
         // Calculate the elbow angle, there are two possible symetrical solutions for the elbow angle, we choose the negative one since
         // it gives us poses using higher shoulder angles, which we prefer.
@@ -79,12 +80,15 @@ public class ArmKinematics implements IArmKinematics {
         double wristAngleClamped = MathUtil.clamp(wristAngle, hand.minAngleRad, hand.maxAngleRad);
 
         if (shoulderAngleClamped != shoulderAngle) {
+            validState = false;
             System.out.printf("===== Shoulder angle %.3f outside [%.3f, %.3f]\n", Units.radiansToDegrees(shoulderAngle), Units.radiansToDegrees(arm.minAngleRad), Units.radiansToDegrees(arm.maxAngleRad));
         }
         if (elbowAngleClamped != elbowAngle) {
+            validState = false;
             System.out.printf("===== Elbow angle %.3f outside [%.3f, %.3f]\n", Units.radiansToDegrees(elbowAngle), Units.radiansToDegrees(forearm.minAngleRad), Units.radiansToDegrees(forearm.maxAngleRad));
         }
         if (wristAngleClamped != wristAngle) {
+            validState = false;
             System.out.printf("===== Wrist angle %.3f outside [%.3f, %.3f]\n", Units.radiansToDegrees(wristAngle), Units.radiansToDegrees(hand.minAngleRad), Units.radiansToDegrees(hand.maxAngleRad));
         }
     
@@ -93,6 +97,6 @@ public class ArmKinematics implements IArmKinematics {
         Logger.getInstance().recordOutput("Arm/RawElbowAngle", elbowAngle);
         Logger.getInstance().recordOutput("Arm/RawWristAngle", wristAngle);
 
-        return new ArmState(shoulderAngleClamped, elbowAngleClamped, wristAngleClamped);
+        return new ArmState(shoulderAngleClamped, elbowAngleClamped, wristAngleClamped, validState);
       }
 }

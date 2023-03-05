@@ -38,6 +38,9 @@ public class ArmSubsystem extends SubsystemBase {
     // Initial target pose, this is our stowed position.
     private Pose2d targetPose = new Pose2d(0.002, 0.16, Rotation2d.fromDegrees(90.0));
 
+    // Arms current target state
+    ArmState targetState;
+
     private double[] logBuffer = new double[3];
 
     private final ArmLinkage arm = new ArmLinkage(ARM_LENGTH_METERS, SHOULDER_MIN_ANGLE_RAD, SHOULDER_MAX_ANGLE_RAD);
@@ -46,14 +49,16 @@ public class ArmSubsystem extends SubsystemBase {
 
     private final MechanismLigament2d currentArmLigament = new MechanismLigament2d("CurrentArm", ARM_LENGTH_METERS, 90.0, 10, new Color8Bit(0, 0, 255));
     private final MechanismLigament2d currentForearmLigament = new MechanismLigament2d("CurrentForearm", FOREARM_LENGTH_METERS, 0.0, 10, new Color8Bit(0, 255, 0));
-    private final MechanismLigament2d currentIntakeLigament = new MechanismLigament2d("CurrentIntake", HAND_LENGTH_METERS, 0.0, 10, new Color8Bit(255, 0, 0));
+    private final MechanismLigament2d currentIntakeLigament = new MechanismLigament2d("CurrentIntake", HAND_LENGTH_METERS, 0.0, 10, new Color8Bit(255, 255, 0));
 
     private final MechanismLigament2d targetArmLigament = new MechanismLigament2d("TargetArm", ARM_LENGTH_METERS, 90.0, 10, new Color8Bit(0, 0, 128));
     private final MechanismLigament2d targetForearmLigament = new MechanismLigament2d("TargetForearm", FOREARM_LENGTH_METERS, 0.0, 10, new Color8Bit(0, 128, 0));
-    private final MechanismLigament2d targetIntakeLigament = new MechanismLigament2d("TargetIntake", HAND_LENGTH_METERS, 0.0, 10, new Color8Bit(128, 0, 0));
+    private final MechanismLigament2d targetIntakeLigament = new MechanismLigament2d("TargetIntake", HAND_LENGTH_METERS, 0.0, 10, new Color8Bit(128, 128, 0));
 
     private final MechanismRoot2d targetPositionRoot;
     private final MechanismLigament2d targetPositionLigament;
+    private final Color8Bit validStateColor = new Color8Bit(255, 255, 255);
+    private final Color8Bit invalidStateColor = new Color8Bit(255, 0, 0);
 
     private final PIDController shoulderController = new PIDController(30.0, 0.0, 0.0);
     private final PIDController elbowController = new PIDController(2.7, 0.0, 0.0);
@@ -61,7 +66,10 @@ public class ArmSubsystem extends SubsystemBase {
 
     public ArmSubsystem(ArmIO io) {
         this.io = io;
+
+        // Create arm kinematics and use it to calculate initial target state
         this.kinematics = new ArmKinematics(arm, forearm, hand);
+        targetState = kinematics.inverse(targetPose);
 
         // Create the mechanism object with a 4M x 3M canvas
         this.mechanism = new Mechanism2d(4, 3);
@@ -83,14 +91,11 @@ public class ArmSubsystem extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.getInstance().processInputs("Arm/Inputs", inputs);
 
+        // Calculate a gravity gain value that we use to scale output of the elbow controller based on the angle of the forearm
+        // This helps to compensate for the change in moment of the forearm as its angle changes relative to the floor by increasing
+        // the applied voltage for the elbow joint the closer to horizontal it is.
         double elbowGravityGain = 1 + Math.abs(Math.cos(inputs.shoulderAngleRad + inputs.elbowAngleRad)) * ELBOW_GRAVITY_GAIN_COEFFICIENT;
         Logger.getInstance().recordOutput("Arm/ElbowGravityGain", elbowGravityGain);
-
-        // Convert our target pose (task space) to an arm state object (c-space) and update the IO object with new values.
-        ArmState targetState = kinematics.inverse(targetPose);
-
-        // Add constant value to compensate for backlash in the elbow gearbox
-        targetState.elbowAngleRad += ELBOW_BACKLASH_CONSTANT;
 
         double shoulderVoltage = shoulderController.calculate(inputs.shoulderAngleRad, targetState.shoulderAngleRad);
         double elbowVoltage = elbowController.calculate(inputs.elbowAngleRad, targetState.elbowAngleRad) * elbowGravityGain;
@@ -119,6 +124,10 @@ public class ArmSubsystem extends SubsystemBase {
 
         targetPositionRoot.setPosition(targetPose.getX() + 2, targetPose.getY() + 1);
         targetPositionLigament.setAngle(targetPose.getRotation().getDegrees());
+
+        // If the targetPose resulted in a valid arms state then set color of the targetPositionLigament
+        // to white, for invalid states make it red.
+        targetPositionLigament.setColor(targetState.valid ? validStateColor : invalidStateColor);
 
         targetArmLigament.setAngle(Units.radiansToDegrees(targetState.shoulderAngleRad));
         targetForearmLigament.setAngle(Units.radiansToDegrees(targetState.elbowAngleRad));
@@ -150,6 +159,12 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void setPose(Pose2d targetPose) {
         this.targetPose = targetPose;
+
+        // Calculate desired target state from the new target pose.
+        targetState = kinematics.inverse(targetPose);
+
+        // Add constant value to compensate for backlash in the elbow gearbox
+        targetState.elbowAngleRad += ELBOW_BACKLASH_CONSTANT;
     }
 
     public Pose2d getPose() {
