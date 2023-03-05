@@ -15,6 +15,7 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 
 public class ArmKinematics implements IArmKinematics {
 
@@ -73,31 +74,24 @@ public class ArmKinematics implements IArmKinematics {
         // Now calculate the wrist angle that gives the desired hand angle based on the forearm angle we just calculated
         double wristAngle = handAngle - forearmAngle;
 
-        Logger.getInstance().recordOutput("Arm/rawShoulderAngle", shoulderAngle);
-        Logger.getInstance().recordOutput("Arm/rawElbowAngle", elbowAngle);
-        Logger.getInstance().recordOutput("Arm/rawWristAngle", wristAngle);
-
         double shoulderAngleClamped = MathUtil.clamp(shoulderAngle, arm.minAngleRad, arm.maxAngleRad);
         double elbowAngleClamped = MathUtil.clamp(elbowAngle, forearm.minAngleRad, forearm.maxAngleRad);
         double wristAngleClamped = MathUtil.clamp(wristAngle, hand.minAngleRad, hand.maxAngleRad);
 
         if (shoulderAngleClamped != shoulderAngle) {
-            System.out.println("Invalid shoulder angle");
+            System.out.printf("===== Shoulder angle %.3f outside [%.3f, %.3f]\n", Units.radiansToDegrees(shoulderAngle), Units.radiansToDegrees(arm.minAngleRad), Units.radiansToDegrees(arm.maxAngleRad));
         }
         if (elbowAngleClamped != elbowAngle) {
-            System.out.println("Invalid elbow angle");
+            System.out.printf("===== Elbow angle %.3f outside [%.3f, %.3f]\n", Units.radiansToDegrees(elbowAngle), Units.radiansToDegrees(forearm.minAngleRad), Units.radiansToDegrees(forearm.maxAngleRad));
         }
         if (wristAngleClamped != wristAngle) {
-            System.out.println("Invalid wrist angle");
+            System.out.printf("===== Wrist angle %.3f outside [%.3f, %.3f]\n", Units.radiansToDegrees(wristAngle), Units.radiansToDegrees(hand.minAngleRad), Units.radiansToDegrees(hand.maxAngleRad));
         }
     
-        Logger.getInstance().recordOutput("Arm/kinematicsShoulderAngle", shoulderAngle);
-        Logger.getInstance().recordOutput("Arm/kinematicsElbowAngle", elbowAngle);
-        Logger.getInstance().recordOutput("Arm/kinematicsWristAngle", wristAngle);
-
-        Logger.getInstance().recordOutput("Arm/clampedShoulderAngle", shoulderAngleClamped);
-        Logger.getInstance().recordOutput("Arm/clampedElbowAngle", elbowAngleClamped);
-        Logger.getInstance().recordOutput("Arm/clampedWristAngle", wristAngleClamped);
+        // Log the raw (non-clamped) joint angles to AK
+        Logger.getInstance().recordOutput("Arm/RawShoulderAngle", shoulderAngle);
+        Logger.getInstance().recordOutput("Arm/RawElbowAngle", elbowAngle);
+        Logger.getInstance().recordOutput("Arm/RawWristAngle", wristAngle);
 
         return new ArmState(shoulderAngleClamped, elbowAngleClamped, wristAngleClamped);
       }

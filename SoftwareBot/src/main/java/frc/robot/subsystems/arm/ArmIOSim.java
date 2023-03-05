@@ -12,6 +12,9 @@ import edu.wpi.first.math.numbers.N6;
 import edu.wpi.first.math.system.NumericalIntegration;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import frc.robot.utility.config.ArmConfig;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 public class ArmIOSim implements ArmIO {
     private static final double ARM_CG_MOMENT_OF_INERTIA = 0.5;
@@ -155,4 +158,14 @@ public class ArmIOSim implements ArmIO {
     public void setWristVoltage(double volts) {
         this.wristVolts = MathUtil.clamp(volts, -12.0, 12.0);
     }
+
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    public static class HardwareConfig extends ArmConfig.HardwareConfig {
+
+        public ArmIO createIO() {
+            return new ArmIOSim();
+        }
+    }
+
 }

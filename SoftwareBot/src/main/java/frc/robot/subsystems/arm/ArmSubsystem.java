@@ -23,21 +23,22 @@ public class ArmSubsystem extends SubsystemBase {
     private static final double SHOULDER_MAX_ANGLE_RAD = Units.degreesToRadians(157.25);
     private static final double ELBOW_MIN_ANGLE_RAD = Units.degreesToRadians(-173);
     private static final double ELBOW_MAX_ANGLE_RAD = Units.degreesToRadians(-3);
-    private static final double WRIST_MIN_ANGLE_RAD = Units.degreesToRadians(-1);
+    private static final double WRIST_MIN_ANGLE_RAD = Units.degreesToRadians(-90);
     private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(120);
 
     // private static final double ELBOW_VELOCITY_CONSTANT = 1.6;
     private static final double ELBOW_BACKLASH_CONSTANT = Units.degreesToRadians(5);
-    private static double elbowGravityGain = 0;
     private static final double ELBOW_GRAVITY_GAIN_COEFFICIENT = 0.25;
 
     private final ArmIO io;
     private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
-    private Pose2d targetPose = new Pose2d(0.002, 0.16, Rotation2d.fromDegrees(90.0));
     private IArmKinematics kinematics;
     private Mechanism2d mechanism;
 
-    private double[] targetAnglesLogged = new double[3];
+    // Initial target pose, this is our stowed position.
+    private Pose2d targetPose = new Pose2d(0.002, 0.16, Rotation2d.fromDegrees(90.0));
+
+    private double[] logBuffer = new double[3];
 
     private final ArmLinkage arm = new ArmLinkage(ARM_LENGTH_METERS, SHOULDER_MIN_ANGLE_RAD, SHOULDER_MAX_ANGLE_RAD);
     private final ArmLinkage forearm = new ArmLinkage(FOREARM_LENGTH_METERS, ELBOW_MIN_ANGLE_RAD, ELBOW_MAX_ANGLE_RAD);
@@ -82,33 +83,35 @@ public class ArmSubsystem extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.getInstance().processInputs("Arm/Inputs", inputs);
 
-        elbowGravityGain = Math.abs(Math.cos(inputs.shoulderAngleRad + inputs.elbowAngleRad)) * ELBOW_GRAVITY_GAIN_COEFFICIENT;
-        Logger.getInstance().recordOutput("Arm/elbowGravityGain", elbowGravityGain);
-        Logger.getInstance().recordOutput("Arm/ForearmFloorRelativeAngle", inputs.shoulderAngleRad + inputs.elbowAngleRad);
+        double elbowGravityGain = 1 + Math.abs(Math.cos(inputs.shoulderAngleRad + inputs.elbowAngleRad)) * ELBOW_GRAVITY_GAIN_COEFFICIENT;
+        Logger.getInstance().recordOutput("Arm/ElbowGravityGain", elbowGravityGain);
 
         // Convert our target pose (task space) to an arm state object (c-space) and update the IO object with new values.
         ArmState targetState = kinematics.inverse(targetPose);
-        // Add ELBOW_BACKLASH_CONSTANT to compensate for backlash in the gearbox.
+
+        // Add constant value to compensate for backlash in the elbow gearbox
         targetState.elbowAngleRad += ELBOW_BACKLASH_CONSTANT;
 
         double shoulderVoltage = shoulderController.calculate(inputs.shoulderAngleRad, targetState.shoulderAngleRad);
-        double elbowVoltage = elbowController.calculate(inputs.elbowAngleRad, targetState.elbowAngleRad) * (1 + elbowGravityGain);
+        double elbowVoltage = elbowController.calculate(inputs.elbowAngleRad, targetState.elbowAngleRad) * elbowGravityGain;
         double wristVoltage = wristController.calculate(inputs.wristAngleRad, targetState.wristAngleRad);
-
-        Logger.getInstance().recordOutput("Arm/ElbowSetpointAngle", elbowController.getSetpoint());
-        Logger.getInstance().recordOutput("Arm/ElbowVoltage", elbowVoltage);
         
         io.setShoulderVoltage(applyJointLimits(shoulderVoltage, inputs.shoulderAngleRad, SHOULDER_MIN_ANGLE_RAD, SHOULDER_MAX_ANGLE_RAD));
         io.setElbowVoltage(applyJointLimits(elbowVoltage, inputs.elbowAngleRad, ELBOW_MIN_ANGLE_RAD, ELBOW_MAX_ANGLE_RAD));
         io.setWristVoltage(applyJointLimits(wristVoltage, inputs.wristAngleRad, WRIST_MIN_ANGLE_RAD, WRIST_MAX_ANGLE_RAD));   
 
-        // Copy the target angles into an array we can pass to AdvantageKit to be logged.
-        targetAnglesLogged[0] = targetState.shoulderAngleRad;
-        targetAnglesLogged[1] = targetState.elbowAngleRad;
-        targetAnglesLogged[2] = targetState.wristAngleRad;
+        // Log current joint voltages
+        logBuffer[0] = inputs.shoulderAppliedVoltage;
+        logBuffer[1] = inputs.elbowAppliedVoltage;
+        logBuffer[2] = inputs.wristAppliedVoltage;
+        Logger.getInstance().recordOutput("Arm/JointVoltages", logBuffer);
 
-        Logger.getInstance().recordOutput("Arm/Pose", targetPose);
-        Logger.getInstance().recordOutput("Arm/TargetAngles", targetAnglesLogged);
+        // Log target pose and arm state
+        logBuffer[0] = targetState.shoulderAngleRad;
+        logBuffer[1] = targetState.elbowAngleRad;
+        logBuffer[2] = targetState.wristAngleRad;
+        Logger.getInstance().recordOutput("Arm/TargetPose", targetPose);
+        Logger.getInstance().recordOutput("Arm/TargetState", logBuffer);
 
         currentArmLigament.setAngle(Units.radiansToDegrees(inputs.shoulderAngleRad));
         currentForearmLigament.setAngle(Units.radiansToDegrees(inputs.elbowAngleRad));
@@ -121,22 +124,27 @@ public class ArmSubsystem extends SubsystemBase {
         targetForearmLigament.setAngle(Units.radiansToDegrees(targetState.elbowAngleRad));
         targetIntakeLigament.setAngle(Units.radiansToDegrees(targetState.wristAngleRad));
         Logger.getInstance().recordOutput("Arm/Mechanism", mechanism);
-
-        Pose2d currentPose = kinematics.forward(new ArmState(
-            inputs.shoulderAngleRad,
-            inputs.elbowAngleRad,
-            inputs.wristAngleRad
-        ));
+        
+        // Log current state and pose out to AdvantateKit
+        ArmState currentState = new ArmState(inputs.shoulderAngleRad, inputs.elbowAngleRad, inputs.wristAngleRad);
+        Pose2d currentPose = kinematics.forward(currentState);  
+        logBuffer[0] = currentState.shoulderAngleRad;
+        logBuffer[1] = currentState.elbowAngleRad;
+        logBuffer[2] = currentState.wristAngleRad;
         Logger.getInstance().recordOutput("Arm/CurrentPose", currentPose);
+        Logger.getInstance().recordOutput("Arm/CurrentState", logBuffer);
     }
 
-    private double applyJointLimits(double voltage, double current, double min, double max) {
-        if (current > max) {
+    private double applyJointLimits(double voltage, double currentAngle, double minAngle, double maxAngle) {
+
+        if (currentAngle > maxAngle) {
             return Math.min(voltage, 0);
         }
-        if (current < min) {
+        
+        if (currentAngle < minAngle) {
             return Math.max(voltage, 0);
         }
+
         return voltage;
     }
 
