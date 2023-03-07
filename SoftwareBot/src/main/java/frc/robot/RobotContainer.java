@@ -16,6 +16,7 @@ import frc.robot.Constants.ControllerPorts;
 import frc.robot.commands.AdjustArmPoseCommand;
 import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
+import frc.robot.commands.DefaultLedCommand;
 import frc.robot.commands.DriveCircleCommand;
 import frc.robot.commands.SetArmPoseCommand;
 import frc.robot.photonvision.IPhotonVision;
@@ -52,7 +53,6 @@ public class RobotContainer {
     private IPhotonVision photonvision;
 
     // Commands
-    private DriveCircleCommand driveCircleCommand;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -76,7 +76,6 @@ public class RobotContainer {
 
         drivetrainSubsystem = config.getDrivetrain().createSubsystem(photonvision);
         drivetrainSubsystem.setPhotonvision(photonvision);
-
         ledSubsystem =  new LedSubsystem(Constants.DioIds.RED_LED_ID, Constants.DioIds.GREEN_LED_ID, Constants.DioIds.BLUE_LED_ID);
     }
 
@@ -92,7 +91,9 @@ public class RobotContainer {
                 () -> ControllerHelper.modifyAxis(-driverController.getRightX(), isSlowmode) * drivetrainSubsystem.getMaxAngularVelocityRadPerSec()
         ));
 
-        driveCircleCommand = new DriveCircleCommand(drivetrainSubsystem);
+        // Create the default command for the LED subsystem attach it.
+        DefaultLedCommand ledCommand = new DefaultLedCommand(ledSubsystem);
+        ledSubsystem.setDefaultCommand(ledCommand);
     }
 
     private void configureBindings() {
@@ -111,8 +112,6 @@ public class RobotContainer {
         driverController.back().onTrue(new InstantCommand(
             () -> drivetrainSubsystem.resetPose(new Pose2d(drivetrainSubsystem.getPose().getX(), drivetrainSubsystem.getPose().getY(), new Rotation2d()))
         ));
-
-        driverController.a().whileTrue(driveCircleCommand);
 
         driverController.povLeft().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.STOWED));
         driverController.povRight().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SUBSTATION_PICKUP));
