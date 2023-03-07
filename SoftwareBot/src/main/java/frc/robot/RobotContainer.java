@@ -19,6 +19,7 @@ import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DriveCircleCommand;
 import frc.robot.commands.SetArmPoseCommand;
 import frc.robot.photonvision.IPhotonVision;
+import frc.robot.subsystems.LedSubsystem;
 import frc.robot.subsystems.SubsystemFactory;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.arm.ArmPoseLibrary.ArmPoseID;
@@ -45,6 +46,7 @@ public class RobotContainer {
     // Subsystems       
     private DrivetrainSubsystem drivetrainSubsystem;
     private ArmSubsystem armSubsystem;
+    private LedSubsystem ledSubsystem;
 
     // Utilities
     private IPhotonVision photonvision;
@@ -74,6 +76,8 @@ public class RobotContainer {
 
         drivetrainSubsystem = config.getDrivetrain().createSubsystem(photonvision);
         drivetrainSubsystem.setPhotonvision(photonvision);
+
+        ledSubsystem =  new LedSubsystem(Constants.DioIds.RED_LED_ID, Constants.DioIds.GREEN_LED_ID, Constants.DioIds.BLUE_LED_ID);
     }
 
     private void createCommands() {
