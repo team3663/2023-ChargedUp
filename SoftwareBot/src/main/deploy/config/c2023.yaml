@@ -22,6 +22,15 @@ arm:
       inverted: true
       offset: 0 degrees
 
+intake:
+  hardware: !<Comp>
+    intakeMotor:
+      id: 45 ## TODO: Get the right ID
+      inverted: false
+    intakeEncoder:
+      id: 46 ## TODO: Get the right ID
+      inverted: false
+
 drivetrain:
   trackwidth: 20 inches
   wheelbase: 24 inches

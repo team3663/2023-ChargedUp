@@ -4,47 +4,36 @@
 
 package frc.robot.subsystems.intake;
 
+import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxRelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import frc.robot.utility.config.CanCoderConfig;
 import frc.robot.utility.config.IntakeConfig;
-import frc.robot.utility.config.PLGConfig;
+import frc.robot.utility.config.NeoConfig;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /** Add your docs here. */
 public class IntakeIOComp implements IntakeIO {
 
-    // Converts RPM into rad/sec
-    // TODO: Verify that this works
-    private final double ENCODER_VELOCITY_COEFFICIENT = 2 * Math.PI / 60;
-
     private final double INTAKE_CURRENT_LIMIT = 40;
 
     private final CANSparkMax intakeMotor;
 
-    private final RelativeEncoder intakeEncoder;
+    private final CANCoder intakeEncoder;
 
     public IntakeIOComp(int intakeMotorId, int intakeEncoderId) {
-        this(new CANSparkMax(intakeMotorId, MotorType.kBrushed), "rio");
+        this(new CANSparkMax(intakeMotorId, MotorType.kBrushless), new CANCoder(intakeEncoderId, "rio"));
     }
 
-    public IntakeIOComp(CANSparkMax intakeMotor, String canBusName) {
-        this(intakeMotor, intakeMotor.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 45), "rio");
-    }
+    public IntakeIOComp(CANSparkMax intakeMotor, CANCoder intakeEncoder) {
+        this.intakeMotor = intakeMotor;
+        this.intakeEncoder = intakeEncoder;
 
-    public IntakeIOComp(CANSparkMax motor, RelativeEncoder encoder, String CanBusName) {
-        intakeMotor = motor;
-        intakeEncoder = encoder;
-
-        motor.setSmartCurrentLimit((int) INTAKE_CURRENT_LIMIT);
-        motor.enableVoltageCompensation(12);
-        motor.setInverted(false);
-
-        encoder.setVelocityConversionFactor(ENCODER_VELOCITY_COEFFICIENT);
+        intakeMotor.setSmartCurrentLimit((int) INTAKE_CURRENT_LIMIT);
+        intakeMotor.enableVoltageCompensation(12);
+        intakeMotor.setInverted(false);
     }
 
     public void updateInputs(IntakeIOInputs inputs) {
@@ -60,13 +49,13 @@ public class IntakeIOComp implements IntakeIO {
     @Data
     @EqualsAndHashCode(callSuper = true)
     public static class HardwareConfig extends IntakeConfig.HardwareConfig {
-        private PLGConfig motor;
+        private NeoConfig motor;
         private CanCoderConfig encoder;
 
         public IntakeIO createIO() {
             return new IntakeIOComp(
                 motor.create(),
-                "rio"
+                encoder.create()
             );
         }
     }
