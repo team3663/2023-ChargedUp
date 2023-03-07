@@ -1,4 +1,5 @@
 arm: { }
+intake: { }
 drivetrain:
   trackwidth: 24 inches
   wheelbase: 24 inches

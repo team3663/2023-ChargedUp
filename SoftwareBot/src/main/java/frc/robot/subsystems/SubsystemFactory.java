@@ -10,6 +10,9 @@ import frc.robot.photonvision.PhotonVisionUtil;
 import frc.robot.subsystems.arm.ArmIO;
 import frc.robot.subsystems.arm.ArmIOSim;
 import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.intake.IntakeIOComp;
+import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.utility.RobotIdentity;
 
 public final class SubsystemFactory {
@@ -45,6 +48,19 @@ public final class SubsystemFactory {
             default:
                 return new ArmSubsystem(new ArmIO() {
                 });
+        }
+    }
+
+    public static IntakeSubsystem createIntake(RobotIdentity identity) {
+        switch (identity) {
+            case SIMULATION:
+                return new IntakeSubsystem(new IntakeIOSim());
+            case ROBOT_2022:
+                return new IntakeSubsystem(new IntakeIOSim());
+            case ROBOT_2023:
+                return new IntakeSubsystem(new IntakeIOComp(45, 46));
+            default:
+                return new IntakeSubsystem(new IntakeIOSim());
         }
     }
 }

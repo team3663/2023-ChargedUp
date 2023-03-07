@@ -62,18 +62,19 @@ public class RobotContainer {
     }
 
     private void createSubsystems(RobotConfig config) {
+        
+        RobotIdentity identity = RobotIdentity.getIdentity();
 
         // photonvision = config.getVision().create();
         armSubsystem = config.getArm().createSubsystem();
 
+        // intakeSubsystem = config.getIntake().createSubsystem();
+        intakeSubsystem = SubsystemFactory.createIntake(identity);
 
-        RobotIdentity identity = RobotIdentity.getIdentity();
-        // armSubsystem = SubsystemFactory.createArm(identity);
         photonvision = SubsystemFactory.createPhotonvision(identity);
 
         drivetrainSubsystem = config.getDrivetrain().createSubsystem(photonvision);
         drivetrainSubsystem.setPhotonvision(photonvision);
-        intakeSubsystem = config.getIntake().createSubsystem();
     }
 
     private void createCommands() {
