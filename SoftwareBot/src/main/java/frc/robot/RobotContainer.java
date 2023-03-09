@@ -17,7 +17,7 @@ import frc.robot.commands.AdjustArmPoseCommand;
 import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DefaultLedCommand;
-import frc.robot.commands.DriveCircleCommand;
+import frc.robot.commands.IntakeFeedCommand;
 import frc.robot.commands.SetArmPoseCommand;
 import frc.robot.photonvision.IPhotonVision;
 import frc.robot.subsystems.LedSubsystem;
@@ -25,6 +25,7 @@ import frc.robot.subsystems.SubsystemFactory;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.arm.ArmPoseLibrary.ArmPoseID;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
+import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.utility.AutoCommandChooser;
 import frc.robot.utility.ControllerHelper;
 import frc.robot.utility.RobotIdentity;
@@ -48,6 +49,7 @@ public class RobotContainer {
     private DrivetrainSubsystem drivetrainSubsystem;
     private ArmSubsystem armSubsystem;
     private LedSubsystem ledSubsystem;
+    private IntakeSubsystem intakeSubsystem;
 
     // Utilities
     private IPhotonVision photonvision;
@@ -65,14 +67,14 @@ public class RobotContainer {
     }
 
     private void createSubsystems(RobotConfig config) {
-
-        // photonvision = config.getVision().create();
-        armSubsystem = config.getArm().createSubsystem();
-
-
+        
         RobotIdentity identity = RobotIdentity.getIdentity();
-        // armSubsystem = SubsystemFactory.createArm(identity);
+
         photonvision = SubsystemFactory.createPhotonvision(identity);
+
+
+        armSubsystem = config.getArm().createSubsystem();
+        intakeSubsystem = config.getIntake().createSubsystem();
 
         drivetrainSubsystem = config.getDrivetrain().createSubsystem(photonvision);
         drivetrainSubsystem.setPhotonvision(photonvision);
@@ -113,10 +115,13 @@ public class RobotContainer {
             () -> drivetrainSubsystem.resetPose(new Pose2d(drivetrainSubsystem.getPose().getX(), drivetrainSubsystem.getPose().getY(), new Rotation2d()))
         ));
 
+        // driverController.povUp().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SCORE_HI));
         driverController.povLeft().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.STOWED));
-        driverController.povRight().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SUBSTATION_PICKUP));
+        // driverController.povRight().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SCORE_MED));
         driverController.povDown().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SCORE_FLOOR));
         
+        driverController.a().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SUBSTATION_PICKUP));
+        driverController.b().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.FLOOR_PICKUP));
         driverController.x().onTrue(new InstantCommand(() -> GameModeUtil.set(GamePiece.CUBE)));
         driverController.y().onTrue(new InstantCommand(() -> GameModeUtil.set(GamePiece.CONE)));
 
@@ -130,6 +135,9 @@ public class RobotContainer {
         operatorController.povRight().onTrue(new AdjustArmPoseCommand(armSubsystem, 0.025, 0, 0));
         operatorController.leftBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(2)));
         operatorController.rightBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(-2)));
+
+        driverController.leftTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> driverController.getLeftTriggerAxis()));
+        driverController.rightTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> -driverController.getRightTriggerAxis()));
     }
 
     private void setupAutoChooser() {
