@@ -20,7 +20,13 @@ arm:
     wristEncoder:
       id: 6
       inverted: true
-      offset: 0 degrees
+      offset: -130 degrees
+
+intake:
+  hardware: !<Comp>
+    motor:
+      id: 20
+      inverted: false
 
 drivetrain:
   trackwidth: 20 inches

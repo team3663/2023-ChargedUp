@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 @Data
 public class RobotConfig {
     private ArmConfig arm = new ArmConfig();
+    private IntakeConfig intake = new IntakeConfig();
     private DrivetrainConfig drivetrain = new DrivetrainConfig();
     private VisionConfig vision = new VisionConfig();
 
