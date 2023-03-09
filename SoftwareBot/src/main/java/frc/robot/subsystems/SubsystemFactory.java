@@ -58,7 +58,7 @@ public final class SubsystemFactory {
             case ROBOT_2022:
                 return new IntakeSubsystem(new IntakeIOSim());
             case ROBOT_2023:
-                return new IntakeSubsystem(new IntakeIOComp(45, 46));
+                return new IntakeSubsystem(new IntakeIOComp(20));
             default:
                 return new IntakeSubsystem(new IntakeIOSim());
         }

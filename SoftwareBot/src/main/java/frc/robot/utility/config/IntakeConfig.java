@@ -10,9 +10,10 @@ import lombok.Data;
 
 @Data
 public final class IntakeConfig {
-    
+    private HardwareConfig hardware;
+
     public IntakeSubsystem createSubsystem() {
-        return new IntakeSubsystem(null);
+        return new IntakeSubsystem(hardware.createIO());
     }
 
     @Data

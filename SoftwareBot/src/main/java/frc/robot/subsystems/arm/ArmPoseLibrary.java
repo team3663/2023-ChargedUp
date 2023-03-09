@@ -37,7 +37,8 @@ public class ArmPoseLibrary {
         conePoses.put(ArmPoseID.SCORE_MED, new Pose2d());
         conePoses.put(ArmPoseID.SCORE_HI, new Pose2d());
 
-        genericPoses.put(ArmPoseID.STOWED, new Pose2d(0.002, 0.16, Rotation2d.fromDegrees(90.0)));
+        genericPoses.put(ArmPoseID.STOWED, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(90.0)));
+        genericPoses.put(ArmPoseID.FLOOR_PICKUP, new Pose2d(0.5, 0.5, Rotation2d.fromDegrees(90.0)));
     }
 
     public static Pose2d get(ArmPoseID poseID) {

@@ -4,8 +4,6 @@
 
 package frc.robot.commands;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.utility.GameModeUtil;
@@ -13,12 +11,12 @@ import frc.robot.utility.GamePiece;
 
 public class IntakeFeedCommand extends CommandBase {
     private final IntakeSubsystem intake;
-    private final Supplier<Double> percentOutput;
+    private double volts;
 
     /** Creates a new IntakeFeedCommand. */
-    public IntakeFeedCommand(IntakeSubsystem intake, Supplier<Double> percentOutput) {
+    public IntakeFeedCommand(IntakeSubsystem intake, double percentOutput) {
         this.intake = intake;
-        this.percentOutput = percentOutput;
+        volts = percentOutput * 12;
 
         addRequirements(intake);
     }
@@ -26,22 +24,20 @@ public class IntakeFeedCommand extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        if (GameModeUtil.get() == GamePiece.CONE) {
+            volts = -volts;
+        }
+        intake.setVoltage(volts);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if (GameModeUtil.get() == GamePiece.CUBE) {
-            intake.setVoltage(percentOutput.get() * 12);
-        } else {
-            intake.setVoltage(percentOutput.get() * -12);
-        }
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        intake.setVoltage(0);
     }
 
     // Returns true when the command should end.

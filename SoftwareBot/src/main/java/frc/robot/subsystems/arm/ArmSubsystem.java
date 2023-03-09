@@ -1,14 +1,16 @@
 package frc.robot.subsystems.arm;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.arm.ArmPoseLibrary.ArmPoseID;
+
 import org.littletonrobotics.junction.Logger;
 
 public class ArmSubsystem extends SubsystemBase {
@@ -20,14 +22,17 @@ public class ArmSubsystem extends SubsystemBase {
 
     // angle constraints for each joint
     private static final double SHOULDER_MIN_ANGLE_RAD = Units.degreesToRadians(91);
-    private static final double SHOULDER_MAX_ANGLE_RAD = Units.degreesToRadians(157.25);
+    private static final double SHOULDER_MAX_ANGLE_RAD = Units.degreesToRadians(155);
     private static final double ELBOW_MIN_ANGLE_RAD = Units.degreesToRadians(-173);
     private static final double ELBOW_MAX_ANGLE_RAD = Units.degreesToRadians(-3);
     private static final double WRIST_MIN_ANGLE_RAD = Units.degreesToRadians(-90);
-    private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(120);
+    private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(135);
+
+    // While the elbow is inside the danger zone, the wrist must stay within its safety zone to prevent damage.
+    private static final double ELBOW_DANGER_ZONE_RAD = Units.degreesToRadians(-130);
+    private static final double WRIST_SAFETY_ANGLE_RAD = Units.degreesToRadians(45);
 
     // private static final double ELBOW_VELOCITY_CONSTANT = 1.6;
-    private static final double ELBOW_BACKLASH_CONSTANT = Units.degreesToRadians(5);
     private static final double ELBOW_GRAVITY_GAIN_COEFFICIENT = 0.25;
 
     private final ArmIO io;
@@ -35,8 +40,8 @@ public class ArmSubsystem extends SubsystemBase {
     private IArmKinematics kinematics;
     private Mechanism2d mechanism;
 
-    // Initial target pose, this is our stowed position.
-    private Pose2d targetPose = new Pose2d(0.002, 0.16, Rotation2d.fromDegrees(90.0));
+    // Initial target pose, this should always be our stowed position.
+    private Pose2d targetPose = ArmPoseLibrary.get(ArmPoseID.STOWED);
 
     // Arms current target state
     ArmState targetState;
@@ -62,7 +67,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     private final PIDController shoulderController = new PIDController(10.0, 0.0, 0.0);
     private final PIDController elbowController = new PIDController(2.7, 0.0, 0.0);
-    private final PIDController wristController = new PIDController(20.0, 0.0, 0.0);
+    private final PIDController wristController = new PIDController(1.0, 0.0, 0.0);
 
     public ArmSubsystem(ArmIO io) {
         this.io = io;
@@ -97,9 +102,25 @@ public class ArmSubsystem extends SubsystemBase {
         double elbowGravityGain = 1 + Math.abs(Math.cos(inputs.shoulderAngleRad + inputs.elbowAngleRad)) * ELBOW_GRAVITY_GAIN_COEFFICIENT;
         Logger.getInstance().recordOutput("Arm/ElbowGravityGain", elbowGravityGain);
 
-        double shoulderVoltage = shoulderController.calculate(inputs.shoulderAngleRad, targetState.shoulderAngleRad);
-        double elbowVoltage = elbowController.calculate(inputs.elbowAngleRad, targetState.elbowAngleRad) * elbowGravityGain;
-        double wristVoltage = wristController.calculate(inputs.wristAngleRad, targetState.wristAngleRad);
+        double targetWristAngle = targetState.wristAngleRad;
+        double targetElbowAngle = targetState.elbowAngleRad;
+        double targetShoulderAngle = MathUtil.clamp(targetState.shoulderAngleRad, SHOULDER_MIN_ANGLE_RAD, SHOULDER_MAX_ANGLE_RAD);
+
+        if (inputs.elbowAngleRad < ELBOW_DANGER_ZONE_RAD || targetElbowAngle < ELBOW_DANGER_ZONE_RAD) {
+            targetWristAngle = Math.max(targetWristAngle, WRIST_SAFETY_ANGLE_RAD);
+        }
+        if (inputs.wristAngleRad < WRIST_SAFETY_ANGLE_RAD && inputs.elbowAngleRad > ELBOW_DANGER_ZONE_RAD) {
+            targetElbowAngle = Math.max(targetState.elbowAngleRad, ELBOW_DANGER_ZONE_RAD);
+        }
+
+        double shoulderVoltage = shoulderController.calculate(inputs.shoulderAngleRad, targetShoulderAngle);
+        double elbowVoltage = elbowController.calculate(inputs.elbowAngleRad, targetElbowAngle) * elbowGravityGain;
+        double wristVoltage = wristController.calculate(inputs.wristAngleRad, targetWristAngle);
+
+        // TODO: Remove this
+        // shoulderVoltage = MathUtil.clamp(shoulderVoltage, -2, 2);
+        // elbowVoltage = MathUtil.clamp(elbowVoltage, -2, 2);
+        // wristVoltage = MathUtil.clamp(wristVoltage, -2, 2);
         
         io.setShoulderVoltage(applyJointLimits(shoulderVoltage, inputs.shoulderAngleRad, SHOULDER_MIN_ANGLE_RAD, SHOULDER_MAX_ANGLE_RAD));
         io.setElbowVoltage(applyJointLimits(elbowVoltage, inputs.elbowAngleRad, ELBOW_MIN_ANGLE_RAD, ELBOW_MAX_ANGLE_RAD));
@@ -162,9 +183,6 @@ public class ArmSubsystem extends SubsystemBase {
 
         // Calculate desired target state from the new target pose.
         targetState = kinematics.inverse(targetPose);
-
-        // Add constant value to compensate for backlash in the elbow gearbox
-        targetState.elbowAngleRad += ELBOW_BACKLASH_CONSTANT;
     }
 
     public Pose2d getPose() {

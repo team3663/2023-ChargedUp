@@ -73,8 +73,8 @@ public class RobotContainer {
         // photonvision = config.getVision().create();
         armSubsystem = config.getArm().createSubsystem();
 
-        // intakeSubsystem = config.getIntake().createSubsystem();
-        intakeSubsystem = SubsystemFactory.createIntake(identity);
+        intakeSubsystem = config.getIntake().createSubsystem();
+        // intakeSubsystem = SubsystemFactory.createIntake(identity);
 
         photonvision = SubsystemFactory.createPhotonvision(identity);
 
@@ -117,10 +117,13 @@ public class RobotContainer {
             () -> drivetrainSubsystem.resetPose(new Pose2d(drivetrainSubsystem.getPose().getX(), drivetrainSubsystem.getPose().getY(), new Rotation2d()))
         ));
 
+        // driverController.povUp().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SCORE_HI));
         driverController.povLeft().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.STOWED));
-        driverController.povRight().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SUBSTATION_PICKUP));
+        // driverController.povRight().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SCORE_MED));
         driverController.povDown().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SCORE_FLOOR));
         
+        driverController.a().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SUBSTATION_PICKUP));
+        driverController.b().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.FLOOR_PICKUP));
         driverController.x().onTrue(new InstantCommand(() -> GameModeUtil.set(GamePiece.CUBE)));
         driverController.y().onTrue(new InstantCommand(() -> GameModeUtil.set(GamePiece.CONE)));
 
@@ -135,8 +138,8 @@ public class RobotContainer {
         operatorController.leftBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(2)));
         operatorController.rightBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(-2)));
 
-        driverController.leftTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, .8));
-        driverController.rightTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, -.8));
+        driverController.leftTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> driverController.getLeftTriggerAxis()));
+        driverController.rightTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> -driverController.getRightTriggerAxis()));
     }
 
     private void setupAutoChooser() {

@@ -4,11 +4,9 @@
 
 package frc.robot.subsystems.intake;
 
-import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import frc.robot.utility.config.CanCoderConfig;
 import frc.robot.utility.config.IntakeConfig;
 import frc.robot.utility.config.NeoConfig;
 import lombok.Data;
@@ -21,23 +19,19 @@ public class IntakeIOComp implements IntakeIO {
 
     private final CANSparkMax intakeMotor;
 
-    private final CANCoder intakeEncoder;
-
-    public IntakeIOComp(int intakeMotorId, int intakeEncoderId) {
-        this(new CANSparkMax(intakeMotorId, MotorType.kBrushless), new CANCoder(intakeEncoderId, "rio"));
+    public IntakeIOComp(int intakeMotorId) {
+        this(new CANSparkMax(intakeMotorId, MotorType.kBrushless));
     }
 
-    public IntakeIOComp(CANSparkMax intakeMotor, CANCoder intakeEncoder) {
+    public IntakeIOComp(CANSparkMax intakeMotor) {
         this.intakeMotor = intakeMotor;
-        this.intakeEncoder = intakeEncoder;
 
         intakeMotor.setSmartCurrentLimit((int) INTAKE_CURRENT_LIMIT);
         intakeMotor.enableVoltageCompensation(12);
-        intakeMotor.setInverted(false);
     }
 
     public void updateInputs(IntakeIOInputs inputs) {
-        inputs.intakeFeedRadPerSec = intakeEncoder.getVelocity();
+        inputs.intakeFeedRadPerSec = intakeMotor.getEncoder().getVelocity();
         inputs.intakeAppliedVoltage = intakeMotor.getAppliedOutput() * 12;
         inputs.intakeCurrentDrawAmps = intakeMotor.getOutputCurrent();
     }
@@ -50,12 +44,10 @@ public class IntakeIOComp implements IntakeIO {
     @EqualsAndHashCode(callSuper = true)
     public static class HardwareConfig extends IntakeConfig.HardwareConfig {
         private NeoConfig motor;
-        private CanCoderConfig encoder;
 
         public IntakeIO createIO() {
             return new IntakeIOComp(
-                motor.create(),
-                encoder.create()
+                motor.create()
             );
         }
     }

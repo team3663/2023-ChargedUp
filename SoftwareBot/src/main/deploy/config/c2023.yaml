@@ -20,15 +20,12 @@ arm:
     wristEncoder:
       id: 6
       inverted: true
-      offset: 0 degrees
+      offset: -130 degrees
 
 intake:
   hardware: !<Comp>
-    intakeMotor:
-      id: 45 ## TODO: Get the right ID
-      inverted: false
-    intakeEncoder:
-      id: 46 ## TODO: Get the right ID
+    motor:
+      id: 20
       inverted: false
 
 drivetrain:
