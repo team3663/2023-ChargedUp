@@ -20,14 +20,6 @@ public final class Constants {
         public static final int RED_LED_ID = 0;
         public static final int GREEN_LED_ID = 1;
         public static final int BLUE_LED_ID = 2;
-
-        public static final int ARM_SHOULDER_MOTOR = 1;
-        public static final int ARM_ELBOW_MOTOR = 2;
-        public static final int ARM_WRIST_MOTOR = 3;
-
-        public static final int ARM_SHOULDER_ENCODER = 4;
-        public static final int ARM_ELBOW_ENCODER = 5;
-        public static final int ARM_WRIST_ENCODER = 6;
     }
 
     public static class CameraPoses {
