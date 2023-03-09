@@ -1,5 +1,6 @@
-arm: { }
-intake: { }
+arm:
+  hardware: !<Sim> { }
+
 drivetrain:
   trackwidth: 24 inches
   wheelbase: 24 inches
@@ -18,4 +19,5 @@ drivetrain:
   frontRightModule: !<Sim> { }
   backLeftModule: !<Sim> { }
   backRightModule: !<Sim> { }
+  
 vision: { }
