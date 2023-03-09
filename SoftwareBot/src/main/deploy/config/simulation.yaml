@@ -1,6 +1,9 @@
 arm:
   hardware: !<Sim> { }
 
+intake:
+  hardware: !<Sim> { }
+
 drivetrain:
   trackwidth: 24 inches
   wheelbase: 24 inches

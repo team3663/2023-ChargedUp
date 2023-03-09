@@ -4,6 +4,10 @@
 
 package frc.robot.subsystems.intake;
 
+import frc.robot.utility.config.IntakeConfig;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 /** Add your docs here. */
 public class IntakeIOSim implements IntakeIO {
     public IntakeIOSim() {
@@ -13,5 +17,14 @@ public class IntakeIOSim implements IntakeIO {
     }
 
     public void setVoltage() {
+    }
+
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    public static class HardwareConfig extends IntakeConfig.HardwareConfig {
+
+        public IntakeIO createIO() {
+            return new IntakeIOSim();
+        }
     }
 }
