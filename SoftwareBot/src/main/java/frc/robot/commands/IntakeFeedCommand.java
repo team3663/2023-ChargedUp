@@ -14,9 +14,9 @@ public class IntakeFeedCommand extends CommandBase {
     private double volts;
 
     /** Creates a new IntakeFeedCommand. */
-    public IntakeFeedCommand(IntakeSubsystem intake, double volts) {
+    public IntakeFeedCommand(IntakeSubsystem intake, double percentOutput) {
         this.intake = intake;
-        this.volts = volts;
+        volts = percentOutput * 12;
 
         addRequirements(intake);
     }

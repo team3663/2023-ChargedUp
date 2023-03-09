@@ -54,7 +54,7 @@ public class ArmSubsystem extends SubsystemBase {
     private final MechanismRoot2d targetPositionRoot;
     private final MechanismLigament2d targetPositionLigament;
 
-    private final PIDController shoulderController = new PIDController(30.0, 0.0, 0.0);
+    private final PIDController shoulderController = new PIDController(10.0, 0.0, 0.0);
     private final PIDController elbowController = new PIDController(2.7, 0.0, 0.0);
     private final PIDController wristController = new PIDController(20.0, 0.0, 0.0);
 

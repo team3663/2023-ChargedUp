@@ -103,10 +103,10 @@ public class RobotContainer {
             () -> drivetrainSubsystem.resetPose(new Pose2d(drivetrainSubsystem.getPose().getX(), drivetrainSubsystem.getPose().getY(), new Rotation2d()))
         ));
 
-        driverController.povLeft().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.STOWED));
+        driverController.povLeft().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SCORE_MED));
         driverController.povUp().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SCORE_HI));
-        driverController.povRight().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SCORE_MED));
-        driverController.povDown().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SCORE_FLOOR));
+        driverController.povRight().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SCORE_FLOOR));
+        driverController.povDown().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.STOWED));
 
         driverController.a().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SUBSTATION_PICKUP));
         driverController.b().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.FLOOR_PICKUP));
@@ -115,8 +115,8 @@ public class RobotContainer {
 
         operatorController.a().onTrue(driveCircleCommand);
 
-        driverController.leftTrigger().onTrue(new IntakeFeedCommand(intakeSubsystem, 10));
-        driverController.rightTrigger().onTrue(new IntakeFeedCommand(intakeSubsystem, -10));
+        driverController.leftTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, .8));
+        driverController.rightTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, -.8));
     }
 
     private void setupAutoChooser() {
