@@ -5,44 +5,50 @@
 package frc.robot.subsystems.intake;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxRelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import frc.robot.utility.config.IntakeConfig;
+import frc.robot.utility.config.NeoConfig;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /** Add your docs here. */
 public class IntakeIOComp implements IntakeIO {
-
-    // Converts RPM into rad/sec. This is a potential source of problems
-    private final double ENCODER_VELOCITY_COEFFICIENT = 2 * Math.PI / 60;
 
     private final double INTAKE_CURRENT_LIMIT = 40;
 
     private final CANSparkMax intakeMotor;
 
-    private final RelativeEncoder intakeEncoder;
-
-    public IntakeIOComp(int intakeMotorId, int intakeEncoderId) {
-        this(intakeMotorId, intakeEncoderId, "rio");
+    public IntakeIOComp(int intakeMotorId) {
+        this(new CANSparkMax(intakeMotorId, MotorType.kBrushless));
     }
 
-    public IntakeIOComp(int intakeMotorId, int intakeEncoderId, String canBusName) {
-        intakeMotor = new CANSparkMax(intakeMotorId, MotorType.kBrushed);
-        intakeEncoder = intakeMotor.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 45);
+    public IntakeIOComp(CANSparkMax intakeMotor) {
+        this.intakeMotor = intakeMotor;
 
         intakeMotor.setSmartCurrentLimit((int) INTAKE_CURRENT_LIMIT);
         intakeMotor.enableVoltageCompensation(12);
-        intakeMotor.setInverted(false);
-
-        intakeEncoder.setVelocityConversionFactor(ENCODER_VELOCITY_COEFFICIENT);
     }
 
     public void updateInputs(IntakeIOInputs inputs) {
-        inputs.intakeFeedRadPerSec = intakeEncoder.getVelocity();
+        inputs.intakeFeedRadPerSec = intakeMotor.getEncoder().getVelocity();
         inputs.intakeAppliedVoltage = intakeMotor.getAppliedOutput() * 12;
         inputs.intakeCurrentDrawAmps = intakeMotor.getOutputCurrent();
     }
 
     public void setVoltage(double volts) {
         intakeMotor.setVoltage(volts);
+    }
+
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    public static class HardwareConfig extends IntakeConfig.HardwareConfig {
+        private NeoConfig motor;
+
+        public IntakeIO createIO() {
+            return new IntakeIOComp(
+                motor.create()
+            );
+        }
     }
 }

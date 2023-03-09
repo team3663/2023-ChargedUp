@@ -18,6 +18,6 @@ public class ControllerHelper {
         if (slowmode.get()) {
             return value /= slowmodeValue;
         }
-        return Math.copySign(value * value * value, value);
+        return Math.copySign(value * value, value);
     }
 }

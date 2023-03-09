@@ -8,19 +8,24 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerPorts;
+import frc.robot.commands.AdjustArmPoseCommand;
 import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
-import frc.robot.commands.DriveCircleCommand;
+import frc.robot.commands.DefaultLedCommand;
+import frc.robot.commands.IntakeFeedCommand;
 import frc.robot.commands.SetArmPoseCommand;
 import frc.robot.photonvision.IPhotonVision;
+import frc.robot.subsystems.LedSubsystem;
 import frc.robot.subsystems.SubsystemFactory;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.arm.ArmPoseLibrary.ArmPoseID;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
+import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.utility.AutoCommandChooser;
 import frc.robot.utility.ControllerHelper;
 import frc.robot.utility.RobotIdentity;
@@ -37,17 +42,19 @@ import frc.robot.utility.GamePiece;
 public class RobotContainer {
 
     private final CommandXboxController driverController = new CommandXboxController(ControllerPorts.DRIVER);
+    private final CommandXboxController operatorController = new CommandXboxController(ControllerPorts.OPERATOR);
     private AutoCommandChooser autoChooser;
 
     // Subsystems       
     private DrivetrainSubsystem drivetrainSubsystem;
     private ArmSubsystem armSubsystem;
+    private LedSubsystem ledSubsystem;
+    private IntakeSubsystem intakeSubsystem;
 
     // Utilities
     private IPhotonVision photonvision;
 
     // Commands
-    private DriveCircleCommand driveCircleCommand;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -60,15 +67,18 @@ public class RobotContainer {
     }
 
     private void createSubsystems(RobotConfig config) {
-
-        // photonvision = config.getVision().create();
-        armSubsystem = config.getArm().createSubsystem();
-
+        
         RobotIdentity identity = RobotIdentity.getIdentity();
+
         photonvision = SubsystemFactory.createPhotonvision(identity);
+
+
+        armSubsystem = config.getArm().createSubsystem();
+        intakeSubsystem = config.getIntake().createSubsystem();
 
         drivetrainSubsystem = config.getDrivetrain().createSubsystem(photonvision);
         drivetrainSubsystem.setPhotonvision(photonvision);
+        ledSubsystem =  new LedSubsystem(Constants.DioIds.RED_LED_ID, Constants.DioIds.GREEN_LED_ID, Constants.DioIds.BLUE_LED_ID);
     }
 
     private void createCommands() {
@@ -83,10 +93,16 @@ public class RobotContainer {
                 () -> ControllerHelper.modifyAxis(-driverController.getRightX(), isSlowmode) * drivetrainSubsystem.getMaxAngularVelocityRadPerSec()
         ));
 
-        driveCircleCommand = new DriveCircleCommand(drivetrainSubsystem);
+        // Create the default command for the LED subsystem attach it.
+        DefaultLedCommand ledCommand = new DefaultLedCommand(ledSubsystem);
+        ledSubsystem.setDefaultCommand(ledCommand);
     }
 
     private void configureBindings() {
+
+        //
+        // Driver controller bindings
+        //
 
         // Button to reset the robot's pose to a default starting point.  Handy when running in the simulator and 
         // you accidently lose the robot outside the game field, should NOT be configured in the competition bot.
@@ -99,14 +115,29 @@ public class RobotContainer {
             () -> drivetrainSubsystem.resetPose(new Pose2d(drivetrainSubsystem.getPose().getX(), drivetrainSubsystem.getPose().getY(), new Rotation2d()))
         ));
 
-        driverController.a().whileTrue(driveCircleCommand);
-
+        // driverController.povUp().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SCORE_HI));
         driverController.povLeft().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.STOWED));
-        driverController.povRight().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SUBSTATION_PICKUP));
+        // driverController.povRight().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SCORE_MED));
         driverController.povDown().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SCORE_FLOOR));
         
+        driverController.a().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SUBSTATION_PICKUP));
+        driverController.b().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.FLOOR_PICKUP));
         driverController.x().onTrue(new InstantCommand(() -> GameModeUtil.set(GamePiece.CUBE)));
         driverController.y().onTrue(new InstantCommand(() -> GameModeUtil.set(GamePiece.CONE)));
+
+        //
+        // Operator controller bindings
+        //
+        
+        operatorController.povUp().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0.025, 0));
+        operatorController.povDown().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, -0.025, 0));   
+        operatorController.povLeft().onTrue(new AdjustArmPoseCommand(armSubsystem, -0.025, 0, 0));
+        operatorController.povRight().onTrue(new AdjustArmPoseCommand(armSubsystem, 0.025, 0, 0));
+        operatorController.leftBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(2)));
+        operatorController.rightBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(-2)));
+
+        driverController.leftTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> driverController.getLeftTriggerAxis()));
+        driverController.rightTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> -driverController.getRightTriggerAxis()));
     }
 
     private void setupAutoChooser() {
