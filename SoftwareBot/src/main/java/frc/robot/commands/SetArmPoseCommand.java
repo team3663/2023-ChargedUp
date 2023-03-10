@@ -24,7 +24,7 @@ public class SetArmPoseCommand extends CommandBase {
     @Override
     public void initialize() {
         targetPose = ArmPoseLibrary.get(poseID);
-        arm.setPose(targetPose);
+        arm.setTargetPose(targetPose);
     }
 
     @Override
@@ -34,8 +34,7 @@ public class SetArmPoseCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-
-        return arm.getPose().equals(targetPose);
+        return arm.getCurrentPose().equals(targetPose);
     }
 
      @Override
