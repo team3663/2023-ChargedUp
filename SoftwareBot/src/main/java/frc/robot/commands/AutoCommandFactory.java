@@ -52,19 +52,20 @@ public final class AutoCommandFactory {
     public static Command createBalanceAuto() {
         SequentialCommandGroup group = new SequentialCommandGroup();
 
-        // Ensure we are in the desired game piece mode
+        // Ensure we are in the game piece mode associated with the preloaded game piece.
         Command cmd = new SetGameModeCommand(GamePiece.CUBE);
         group.addCommands(cmd);
         
         // Position the arm to score the preloaded game piece
         cmd = new SetArmPoseCommand(arm, ArmPoseID.SCORE_HI);
-        group.addCommands(cmd);;
+        group.addCommands(cmd);
 
         // Eject the preloaded game piece
         cmd = new EjectPieceCommand(intake);
         group.addCommands(cmd);
 
-        // Move until we are just on the charging station
+        // Move until we are far enough on the charging station that the robot is tilted.
+        // TODO: Add path to move onto charging station
 
         // Balance on the charging station
         cmd = new AutoBalanceCommand(drivetrain);

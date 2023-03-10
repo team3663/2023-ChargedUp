@@ -11,12 +11,16 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 
 public class AutoBalanceCommand extends CommandBase {
-    private static final long LEVEL_TIME = 1000;
-    private static final double TILT_TOLERANCE = Units.degreesToRadians(2);
-    private static final double TARGET_TILT = 0.0;
+    private static final long LEVEL_TIME_MS = 1000;
+    private static final double TILT_TOLERANCE_RAD = Units.degreesToRadians(2);
+    private static final double TARGET_TILT_ANGLE_RAD = 0.0;
+
+    private static final double kP = 0;
+    private static final double kI = 0;
+    private static final double kD = 0; 
 
     private final DrivetrainSubsystem drivetrain;
-    private final PIDController controller = new PIDController(0.0, 0.0, 0.0);
+    private final PIDController controller;
     
     private long endTime;
     private boolean wasLevel = false;
@@ -24,6 +28,10 @@ public class AutoBalanceCommand extends CommandBase {
     /** Creates a new AutoBalanceCommand. */
     public AutoBalanceCommand(DrivetrainSubsystem drivetrain) {
         this.drivetrain = drivetrain;
+
+        controller = new PIDController(kP, kI, kD);
+        controller.setSetpoint(TARGET_TILT_ANGLE_RAD);
+
         addRequirements(drivetrain);
     }
 
@@ -36,13 +44,15 @@ public class AutoBalanceCommand extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        double vX = controller.calculate(drivetrain.getPitch(), TARGET_TILT);
+        double vX = controller.calculate(drivetrain.getPitch());
         double vY = 0;
         drivetrain.drive(new ChassisSpeeds(vX, vY, 0));
 
-        boolean levelNow = Math.abs(drivetrain.getPitch()) <= TILT_TOLERANCE;
+        // Determine if the robot is within our level threshold.
+        boolean levelNow = Math.abs(drivetrain.getPitch()) <= TILT_TOLERANCE_RAD;
+
         if (levelNow && !wasLevel) {
-            endTime = System.currentTimeMillis() + LEVEL_TIME;
+            endTime = System.currentTimeMillis() + LEVEL_TIME_MS;
             wasLevel = true;
         } else if (!levelNow) {
             wasLevel = false;
