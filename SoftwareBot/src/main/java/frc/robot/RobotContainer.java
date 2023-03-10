@@ -136,8 +136,8 @@ public class RobotContainer {
         operatorController.leftBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(2)));
         operatorController.rightBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(-2)));
 
-        driverController.leftTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> driverController.getLeftTriggerAxis()));
-        driverController.rightTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> -driverController.getRightTriggerAxis()));
+        driverController.leftTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> 0.25));
+        driverController.rightTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> -0.25));
     }
 
     private void setupAutoChooser() {

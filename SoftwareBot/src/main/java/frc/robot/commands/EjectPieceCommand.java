@@ -4,33 +4,31 @@
 
 package frc.robot.commands;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 
-
-public class IntakeFeedCommand extends CommandBase {
+public class EjectPieceCommand extends CommandBase {
     private final IntakeSubsystem intake;
-    private final Supplier<Double> percentOutput;
+    private long startTime;
+    private final long EJECT_DURATION_MS = 500;
+    private final double EJECT_POWER = -0.5;
 
-    /** Creates a new IntakeFeedCommand. */
-    public IntakeFeedCommand(IntakeSubsystem intake, Supplier<Double> percentOutput) {
+    public EjectPieceCommand(IntakeSubsystem intake) {
         this.intake = intake;
-        this.percentOutput = percentOutput;
-
         addRequirements(intake);
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        startTime = System.currentTimeMillis();
+        intake.setPower(0);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        intake.setPower(percentOutput.get());
+        intake.setPower(EJECT_POWER); // Positive to intake, negative to eject
     }
 
     // Called once the command ends or is interrupted.
@@ -42,6 +40,6 @@ public class IntakeFeedCommand extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return false;
+        return (System.currentTimeMillis() - startTime) > EJECT_DURATION_MS;
     }
 }

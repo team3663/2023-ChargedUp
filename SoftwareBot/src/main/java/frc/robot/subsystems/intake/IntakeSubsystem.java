@@ -7,10 +7,16 @@ package frc.robot.subsystems.intake;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.utility.GameModeUtil;
+import frc.robot.utility.GamePiece;
 
 public class IntakeSubsystem extends SubsystemBase {
+
+    private final double MAX_VOLTS = 12;
     private final IntakeIO io;
     private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
+
+    private double directionMultiplier;
 
     /** Creates a new IntakeSubsystem. */
     public IntakeSubsystem(IntakeIO io) {
@@ -20,10 +26,18 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         io.updateInputs(inputs);
+        directionMultiplier = GameModeUtil.get() == GamePiece.CONE ? 1 : -1;
+        
         Logger.getInstance().processInputs("Intake/inputs", inputs);
     }
 
-    public void setVoltage(double volts) {
+    /**
+     * Set the current power level for the intake motor
+     * 
+     * @param power [-1,1] Positive values intake pieces, negative values eject them
+     */
+    public void setPower(double power) {
+        double volts = power * MAX_VOLTS * directionMultiplier;
         io.setVoltage(volts);
     }
 
