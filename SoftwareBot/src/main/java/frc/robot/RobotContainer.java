@@ -125,6 +125,9 @@ public class RobotContainer {
         driverController.x().onTrue(new InstantCommand(() -> GameModeUtil.set(GamePiece.CUBE)));
         driverController.y().onTrue(new InstantCommand(() -> GameModeUtil.set(GamePiece.CONE)));
 
+        driverController.leftTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> 0.25));
+        driverController.rightTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> -0.25));
+        
         //
         // Operator controller bindings
         //
@@ -135,9 +138,6 @@ public class RobotContainer {
         operatorController.povRight().onTrue(new AdjustArmPoseCommand(armSubsystem, 0.025, 0, 0));
         operatorController.leftBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(2)));
         operatorController.rightBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(-2)));
-
-        driverController.leftTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> 0.25));
-        driverController.rightTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> -0.25));
     }
 
     private void setupAutoChooser() {
