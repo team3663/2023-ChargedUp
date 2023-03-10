@@ -8,8 +8,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.intake.IntakeSubsystem;
-import frc.robot.utility.GameModeUtil;
-import frc.robot.utility.GamePiece;
+
 
 public class IntakeFeedCommand extends CommandBase {
     private final IntakeSubsystem intake;
@@ -31,17 +30,13 @@ public class IntakeFeedCommand extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if (GameModeUtil.get() == GamePiece.CUBE) {
-            intake.setVoltage(percentOutput.get() * 12);
-        } else {
-            intake.setVoltage(percentOutput.get() * -12);
-        }
+        intake.setPower(percentOutput.get());
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        intake.setVoltage(0);
+        intake.setPower(0);
     }
 
     // Returns true when the command should end.
