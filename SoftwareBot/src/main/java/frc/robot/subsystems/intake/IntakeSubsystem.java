@@ -9,6 +9,9 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
+
+    private final double MAX_VOLTS = 12;
+
     private final IntakeIO io;
     private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
 
@@ -21,6 +24,11 @@ public class IntakeSubsystem extends SubsystemBase {
     public void periodic() {
         io.updateInputs(inputs);
         Logger.getInstance().processInputs("Intake/inputs", inputs);
+    }
+
+    public void setPower(double power) {
+        double volts = power * MAX_VOLTS;
+        setVoltage(volts);
     }
 
     public void setVoltage(double volts) {
