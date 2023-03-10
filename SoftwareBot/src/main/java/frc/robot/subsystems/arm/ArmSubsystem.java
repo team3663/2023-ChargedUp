@@ -116,11 +116,6 @@ public class ArmSubsystem extends SubsystemBase {
         double shoulderVoltage = shoulderController.calculate(inputs.shoulderAngleRad, targetShoulderAngle);
         double elbowVoltage = elbowController.calculate(inputs.elbowAngleRad, targetElbowAngle) * elbowGravityGain;
         double wristVoltage = wristController.calculate(inputs.wristAngleRad, targetWristAngle);
-
-        // TODO: Remove this
-        // shoulderVoltage = MathUtil.clamp(shoulderVoltage, -2, 2);
-        // elbowVoltage = MathUtil.clamp(elbowVoltage, -2, 2);
-        // wristVoltage = MathUtil.clamp(wristVoltage, -2, 2);
         
         io.setShoulderVoltage(applyJointLimits(shoulderVoltage, inputs.shoulderAngleRad, SHOULDER_MIN_ANGLE_RAD, SHOULDER_MAX_ANGLE_RAD));
         io.setElbowVoltage(applyJointLimits(elbowVoltage, inputs.elbowAngleRad, ELBOW_MIN_ANGLE_RAD, ELBOW_MAX_ANGLE_RAD));
@@ -178,14 +173,18 @@ public class ArmSubsystem extends SubsystemBase {
         return voltage;
     }
 
-    public void setPose(Pose2d targetPose) {
+    public void setTargetPose(Pose2d targetPose) {
         this.targetPose = targetPose;
 
         // Calculate desired target state from the new target pose.
         targetState = kinematics.inverse(targetPose);
     }
 
-    public Pose2d getPose() {
+    public Pose2d getTargetPose() {
         return targetPose;
+    }
+
+    public Pose2d getCurrentPose() {
+        return kinematics.forward(new ArmState(inputs.shoulderAngleRad, inputs.elbowAngleRad, inputs.wristAngleRad));
     }
 }

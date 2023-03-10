@@ -28,9 +28,9 @@ public class AdjustArmPoseCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        Pose2d currentPose = arm.getPose();
+        Pose2d currentPose = arm.getTargetPose();
         targetPose = currentPose.transformBy(transform);
-        arm.setPose(targetPose);
+        arm.setTargetPose(targetPose);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class AdjustArmPoseCommand extends CommandBase {
     @Override
     public boolean isFinished() {
 
-        return arm.getPose().equals(targetPose);
+        return arm.getTargetPose().equals(targetPose);
     }
 
      @Override
