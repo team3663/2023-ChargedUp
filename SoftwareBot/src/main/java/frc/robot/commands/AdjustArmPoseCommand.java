@@ -41,7 +41,7 @@ public class AdjustArmPoseCommand extends CommandBase {
     @Override
     public boolean isFinished() {
 
-        return arm.getTargetPose().equals(targetPose);
+        return arm.getCurrentPose().equals(targetPose);
     }
 
      @Override
