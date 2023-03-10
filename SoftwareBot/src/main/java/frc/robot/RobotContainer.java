@@ -147,7 +147,11 @@ public class RobotContainer {
         autoChooser.registerDefaultCreator("Do Nothing", () -> AutoCommandFactory.createNullAuto());
         autoChooser.registerCreator("Place Only", () -> AutoCommandFactory.createPlaceOnlyAuto());
         autoChooser.registerCreator("Balance", () -> AutoCommandFactory.createBalanceAuto());
-        autoChooser.registerCreator("Test", () -> AutoCommandFactory.createTestAuto());
+
+        // Test auto commands that we only register with the chooser if we are not running in competition
+        if (!Constants.COMPETITION_MODE) {
+            autoChooser.registerCreator("Test", () -> AutoCommandFactory.createTestAuto());
+        }
 
         // Setup the chooser in shuffleboard
         autoChooser.setup("Driver", 0, 0, 2, 1);
