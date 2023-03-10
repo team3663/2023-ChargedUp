@@ -8,9 +8,12 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.arm.ArmPoseLibrary.ArmPoseID;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
+import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.utility.GamePiece;
 
 public final class AutoCommandFactory {
     private static final PIDConstants AUTO_TRANSLATION_PID_CONSTANTS = new PIDConstants(2.5, 0.0, 0.0);
@@ -21,8 +24,15 @@ public final class AutoCommandFactory {
     private static HashMap<String, Command> eventMap = new HashMap<>();
     private static SwerveAutoBuilder builder;
 
-    public static void init(DrivetrainSubsystem drivetrain, ArmSubsystem arm) {
-        eventMap.put("ArmOut", new SetArmPoseCommand(arm, ArmPoseID.SUBSTATION_PICKUP));
+    private static DrivetrainSubsystem drivetrain;
+    private static ArmSubsystem arm;
+    private static IntakeSubsystem intake;
+
+    public static void init(DrivetrainSubsystem drivetrain, ArmSubsystem arm, IntakeSubsystem intake) {
+
+        AutoCommandFactory.drivetrain = drivetrain;
+        AutoCommandFactory.arm = arm;
+        AutoCommandFactory.intake = intake;
 
         builder = new SwerveAutoBuilder(
                 () -> drivetrain.getPose(),
@@ -39,16 +49,32 @@ public final class AutoCommandFactory {
         return null;
     }
 
-    public static Command createTestAuto() {
-        return builder.fullAuto(PathPlanner.loadPath("TestPath", pathConstraints));
-    }
-    
-    public static Command createCommonsTestAuto() {
-        return builder.fullAuto(PathPlanner.loadPath("CommonsTestPath", pathConstraints));
+    public static Command createBalanceAuto() {
+        SequentialCommandGroup group = new SequentialCommandGroup();
+
+        // Ensure we are in the desired game piece mode
+        Command cmd = new SetGameModeCommand(GamePiece.CUBE);
+        group.addCommands(cmd);
+        
+        // Position the arm to score the preloaded game piece
+        cmd = new SetArmPoseCommand(arm, ArmPoseID.SCORE_HI);
+        group.addCommands(cmd);;
+
+        // Eject the preloaded game piece
+        cmd = new EjectPieceCommand(intake);
+        group.addCommands(cmd);
+
+        // Move until we are just on the charging station
+
+        // Balance on the charging station
+        cmd = new AutoBalanceCommand(drivetrain);
+        group.addCommands(cmd);
+
+        return group;
     }
 
-    public static Command createArmTestAuto() {
-        return builder.fullAuto(PathPlanner.loadPath("ArmTestPath", pathConstraints));
+    public static Command createTestAuto() {
+        return builder.fullAuto(PathPlanner.loadPath("TestPath", pathConstraints));
     }
 
     // Default constructor that just throws an exception if you attempt to create an
