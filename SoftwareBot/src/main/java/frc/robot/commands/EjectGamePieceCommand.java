@@ -7,13 +7,13 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 
-public class EjectPieceCommand extends CommandBase {
+public class EjectGamePieceCommand extends CommandBase {
     private final IntakeSubsystem intake;
     private long startTime;
     private final long EJECT_DURATION_MS = 500;
     private final double EJECT_POWER = -0.5;
 
-    public EjectPieceCommand(IntakeSubsystem intake) {
+    public EjectGamePieceCommand(IntakeSubsystem intake) {
         this.intake = intake;
         addRequirements(intake);
     }

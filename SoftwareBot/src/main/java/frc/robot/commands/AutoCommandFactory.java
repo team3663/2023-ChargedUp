@@ -45,11 +45,18 @@ public final class AutoCommandFactory {
                 drivetrain);
     }
 
+    /**
+     * Autonomous command that just sits there and does nothing.
+     */
     public static Command createNullAuto() {
         return null;
     }
 
-    public static Command createBalanceAuto() {
+    /**
+     * Autonomous command that just places our preloaded game piece and nothing else.
+     */
+    public static SequentialCommandGroup createPlaceOnlyAuto() {
+
         SequentialCommandGroup group = new SequentialCommandGroup();
 
         // Ensure we are in the game piece mode associated with the preloaded game piece.
@@ -61,14 +68,30 @@ public final class AutoCommandFactory {
         group.addCommands(cmd);
 
         // Eject the preloaded game piece
-        cmd = new EjectPieceCommand(intake);
+        cmd = new EjectGamePieceCommand(intake);
         group.addCommands(cmd);
+
+        // Return the arm to the stowed position
+        cmd = new SetArmPoseCommand(arm, ArmPoseID.STOWED);
+        group.addCommands(cmd);
+
+        return group;
+    }
+
+    /**
+     * Autonomous command that places our preloaded game piece and then balances on 
+     * the charging station.
+     */
+    public static SequentialCommandGroup createBalanceAuto() {
+
+        // We start with the PlaceOnly auto command and add to it.
+        SequentialCommandGroup group = createPlaceOnlyAuto();
 
         // Move until we are far enough on the charging station that the robot is tilted.
         // TODO: Add path to move onto charging station
 
         // Balance on the charging station
-        cmd = new AutoBalanceCommand(drivetrain);
+        Command cmd = new AutoBalanceCommand(drivetrain);
         group.addCommands(cmd);
 
         return group;
