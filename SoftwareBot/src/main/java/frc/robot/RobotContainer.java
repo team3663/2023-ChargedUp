@@ -131,6 +131,8 @@ public class RobotContainer {
         //
         // Operator controller bindings
         //
+
+        operatorController.y().onTrue(new InstantCommand(() -> armSubsystem.logTargetPose()));
         
         operatorController.povUp().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0.025, 0));
         operatorController.povDown().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, -0.025, 0));   

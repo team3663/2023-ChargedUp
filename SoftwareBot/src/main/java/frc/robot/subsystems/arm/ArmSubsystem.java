@@ -184,6 +184,13 @@ public class ArmSubsystem extends SubsystemBase {
         return targetPose;
     }
 
+    /**
+     * Dump the target pose out to the RioLog for reference
+     */
+    public void logTargetPose() {
+        System.out.printf("===== Target Arm Pose: (%.3f, %.3f, %.3f)\n", targetPose.getX(), targetPose.getY(), targetPose.getRotation().getDegrees());
+    }
+
     public Pose2d getCurrentPose() {
         return kinematics.forward(new ArmState(inputs.shoulderAngleRad, inputs.elbowAngleRad, inputs.wristAngleRad));
     }
