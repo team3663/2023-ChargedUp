@@ -30,7 +30,6 @@ public final class Constants {
             new Rotation3d(0, 0, Math.PI / 2)
         );
 
-        // TODO: Verify camera poses
         private static final double cx = Units.inchesToMeters(4.5);
         private static final double cy = Units.inchesToMeters(8.5);
         private static final double cz = Units.inchesToMeters(25.5);
