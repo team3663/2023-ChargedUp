@@ -16,11 +16,11 @@ arm:
       offset: 158.2 degrees
     wristMotor:
       id: 3
-      inverted: true
+      inverted: false
     wristEncoder:
       id: 6
       inverted: true
-      offset: -130 degrees
+      offset: -13 degrees
 
 intake:
   hardware: !<Comp>

@@ -32,13 +32,14 @@ public class ArmPoseLibrary {
         cubePoses.put(ArmPoseID.SCORE_MED, new Pose2d());
         cubePoses.put(ArmPoseID.SCORE_HI, new Pose2d());
 
-        conePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(0.51, 0.81, Rotation2d.fromDegrees(0.0)));
+        conePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(0.625, 1.052, Rotation2d.fromDegrees(-28.0)));
         conePoses.put(ArmPoseID.SCORE_FLOOR, new Pose2d(0.5, 0.3, Rotation2d.fromDegrees(0.0)));
         conePoses.put(ArmPoseID.SCORE_MED, new Pose2d());
         conePoses.put(ArmPoseID.SCORE_HI, new Pose2d());
 
         genericPoses.put(ArmPoseID.STOWED, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(90.0)));
-        genericPoses.put(ArmPoseID.FLOOR_PICKUP, new Pose2d(0.5, 0.5, Rotation2d.fromDegrees(90.0)));
+        genericPoses.put(ArmPoseID.FLOOR_PICKUP, new Pose2d(0.5, 0.5, Rotation2d.fromDegrees(0.0)));
+
     }
 
     public static Pose2d get(ArmPoseID poseID) {

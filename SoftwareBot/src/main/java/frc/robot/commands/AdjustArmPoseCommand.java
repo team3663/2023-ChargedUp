@@ -40,11 +40,11 @@ public class AdjustArmPoseCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-
-        return arm.getCurrentPose().equals(targetPose);
+        return arm.atTargetPose();
     }
 
      @Override
     public void end(boolean interrupted) {
+        System.out.println("AdjustArmCommand ended; interrupted = " + interrupted);
     }   
 }

@@ -1,8 +1,9 @@
 package frc.robot.subsystems.arm;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -22,7 +23,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     // angle constraints for each joint
     private static final double SHOULDER_MIN_ANGLE_RAD = Units.degreesToRadians(91);
-    private static final double SHOULDER_MAX_ANGLE_RAD = Units.degreesToRadians(155);
+    private static final double SHOULDER_MAX_ANGLE_RAD = Units.degreesToRadians(156.5);
     private static final double ELBOW_MIN_ANGLE_RAD = Units.degreesToRadians(-173);
     private static final double ELBOW_MAX_ANGLE_RAD = Units.degreesToRadians(-3);
     private static final double WRIST_MIN_ANGLE_RAD = Units.degreesToRadians(-90);
@@ -33,7 +34,7 @@ public class ArmSubsystem extends SubsystemBase {
     private static final double WRIST_SAFETY_ANGLE_RAD = Units.degreesToRadians(45);
 
     // private static final double ELBOW_VELOCITY_CONSTANT = 1.6;
-    private static final double ELBOW_GRAVITY_GAIN_COEFFICIENT = 0.25;
+    private static final double ELBOW_GRAVITY_GAIN_COEFFICIENT = 0.5;
 
     private final ArmIO io;
     private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
@@ -65,9 +66,12 @@ public class ArmSubsystem extends SubsystemBase {
     private final Color8Bit validStateColor = new Color8Bit(255, 255, 255);
     private final Color8Bit invalidStateColor = new Color8Bit(255, 0, 0);
 
-    private final PIDController shoulderController = new PIDController(10.0, 0.0, 0.0);
-    private final PIDController elbowController = new PIDController(2.7, 0.0, 0.0);
-    private final PIDController wristController = new PIDController(1.0, 0.0, 0.0);
+    private final ProfiledPIDController shoulderController = new ProfiledPIDController(10.0, 0.0, 0.0,
+        new TrapezoidProfile.Constraints(Units.degreesToRadians(100.0), Units.degreesToRadians(200.0)));
+    private final ProfiledPIDController elbowController = new ProfiledPIDController(3.0, 0.0, 0.0,
+        new TrapezoidProfile.Constraints(Units.degreesToRadians(100.0), Units.degreesToRadians(200.0)));
+    private final ProfiledPIDController wristController = new ProfiledPIDController(10.0, 0.0, 0.0,
+        new TrapezoidProfile.Constraints(Units.degreesToRadians(200.0), Units.degreesToRadians(400.0)));
 
     public ArmSubsystem(ArmIO io) {
         this.io = io;
@@ -99,7 +103,7 @@ public class ArmSubsystem extends SubsystemBase {
         // Calculate a gravity gain value that we use to scale output of the elbow controller based on the angle of the forearm
         // This helps to compensate for the change in moment of the forearm as its angle changes relative to the floor by increasing
         // the applied voltage for the elbow joint the closer to horizontal it is.
-        double elbowGravityGain = 1 + Math.abs(Math.cos(inputs.shoulderAngleRad + inputs.elbowAngleRad)) * ELBOW_GRAVITY_GAIN_COEFFICIENT;
+        double elbowGravityGain = Math.cos(inputs.shoulderAngleRad + inputs.elbowAngleRad) * ELBOW_GRAVITY_GAIN_COEFFICIENT;
         Logger.getInstance().recordOutput("Arm/ElbowGravityGain", elbowGravityGain);
 
         double targetWristAngle = targetState.wristAngleRad;
@@ -114,7 +118,7 @@ public class ArmSubsystem extends SubsystemBase {
         }
 
         double shoulderVoltage = shoulderController.calculate(inputs.shoulderAngleRad, targetShoulderAngle);
-        double elbowVoltage = elbowController.calculate(inputs.elbowAngleRad, targetElbowAngle) * elbowGravityGain;
+        double elbowVoltage = elbowController.calculate(inputs.elbowAngleRad, targetElbowAngle) + elbowGravityGain;
         double wristVoltage = wristController.calculate(inputs.wristAngleRad, targetWristAngle);
         
         io.setShoulderVoltage(applyJointLimits(shoulderVoltage, inputs.shoulderAngleRad, SHOULDER_MIN_ANGLE_RAD, SHOULDER_MAX_ANGLE_RAD));
@@ -182,6 +186,20 @@ public class ArmSubsystem extends SubsystemBase {
 
     public Pose2d getTargetPose() {
         return targetPose;
+    }
+
+    public boolean atTargetPose() {
+        double angleTolerance = Units.degreesToRadians(20);
+
+        if (Math.abs(inputs.shoulderAngleRad - targetState.shoulderAngleRad) > angleTolerance) {
+            return false;
+        } else if (Math.abs(inputs.elbowAngleRad - targetState.elbowAngleRad) > angleTolerance) {
+            return false;
+        } else if (Math.abs(inputs.wristAngleRad - targetState.wristAngleRad) > angleTolerance) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**

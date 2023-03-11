@@ -28,16 +28,15 @@ public class SetArmPoseCommand extends CommandBase {
     }
 
     @Override
-    public void execute() {
-
-    }
+    public void execute() {}
 
     @Override
     public boolean isFinished() {
-        return arm.getCurrentPose().equals(targetPose);
+        return arm.atTargetPose();
     }
 
      @Override
     public void end(boolean interrupted) {
+        System.out.println("SetArmPoseCommand ended; interrupted = " + interrupted);
     }   
 }
