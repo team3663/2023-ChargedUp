@@ -4,46 +4,31 @@
 
 package frc.robot.commands;
 
-import java.util.function.Supplier;
-
-import com.revrobotics.CANSparkMax.IdleMode;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 
+public class LockWheelsCommand extends CommandBase {
+    private final DrivetrainSubsystem drivetrain;
 
-public class IntakeFeedCommand extends CommandBase {
-    private final IntakeSubsystem intake;
-    private final Supplier<Double> percentOutput;
-
-    /** Creates a new IntakeFeedCommand. */
-    public IntakeFeedCommand(IntakeSubsystem intake, Supplier<Double> percentOutput) {
-        this.intake = intake;
-        this.percentOutput = percentOutput;
-
-        addRequirements(intake);
+    /** Creates a new LockWheelsCommand. */
+    public LockWheelsCommand(DrivetrainSubsystem drivetrain) {
+        this.drivetrain = drivetrain;
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        drivetrain.braceWheels();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        intake.setPower(percentOutput.get());
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        intake.setPower(0);
-        if (percentOutput.get() > 0) {
-            intake.setIdleMode(IdleMode.kBrake);
-        } else {
-            intake.setIdleMode(IdleMode.kCoast);
-        }
     }
 
     // Returns true when the command should end.

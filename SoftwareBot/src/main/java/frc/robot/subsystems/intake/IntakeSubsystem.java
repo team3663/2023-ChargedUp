@@ -6,6 +6,8 @@ package frc.robot.subsystems.intake;
 
 import org.littletonrobotics.junction.Logger;
 
+import com.revrobotics.CANSparkMax.IdleMode;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utility.GameModeUtil;
 import frc.robot.utility.GamePiece;
@@ -39,6 +41,10 @@ public class IntakeSubsystem extends SubsystemBase {
     public void setPower(double power) {
         double volts = power * MAX_VOLTS * directionMultiplier;
         io.setVoltage(volts);
+    }
+
+    public void setIdleMode(IdleMode mode) {
+        io.setIdleMode(mode);
     }
 
     public double getFeedRate() {

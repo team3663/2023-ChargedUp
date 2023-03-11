@@ -19,6 +19,9 @@ public class IntakeIOSim implements IntakeIO {
     public void setVoltage() {
     }
 
+    public void setIdleMode() {
+    }
+
     @Data
     @EqualsAndHashCode(callSuper = true)
     public static class HardwareConfig extends IntakeConfig.HardwareConfig {

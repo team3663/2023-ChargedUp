@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.*;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.photonvision.IPhotonVision;
 import frc.robot.sim.SimModelData;
@@ -136,6 +137,22 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public void drive(ChassisSpeeds chassisSpeeds) {
         this.targetChassisVelocity = chassisSpeeds;
+    }
+
+    // Command to "lock" the wheels to a rotation position for better stability after balancing
+    public void braceWheels() {
+        SwerveModuleState[] lockedModuleStates = {
+            new SwerveModuleState(0.0, new Rotation2d(Units.degreesToRadians(-45))),
+            new SwerveModuleState(0.0, new Rotation2d(Units.degreesToRadians(45))),
+            new SwerveModuleState(0.0, new Rotation2d(Units.degreesToRadians(45))),
+            new SwerveModuleState(0.0, new Rotation2d(Units.degreesToRadians(-45)))
+        };
+        SwerveModuleState[] optimizedLockedModuleStates = new SwerveModuleState[swerveModules.length];
+        for (int i = 0; i < swerveModules.length; ++i) {
+            // Optimize the module state for the current module position
+            optimizedLockedModuleStates[i] = SwerveModuleState.optimize(lockedModuleStates[i], modulePositions[i].angle);
+            swerveModules[i].setTargetState(optimizedLockedModuleStates[i]);
+        }
     }
 
     // This should be injected via the contructor but we need it temporarily while we finish the config work.

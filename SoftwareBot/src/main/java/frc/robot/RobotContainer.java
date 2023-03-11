@@ -18,6 +18,7 @@ import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DefaultLedCommand;
 import frc.robot.commands.IntakeFeedCommand;
+import frc.robot.commands.LockWheelsCommand;
 import frc.robot.commands.SetArmPoseCommand;
 import frc.robot.photonvision.IPhotonVision;
 import frc.robot.subsystems.LedSubsystem;
@@ -124,6 +125,8 @@ public class RobotContainer {
         driverController.b().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.FLOOR_PICKUP));
         driverController.x().onTrue(new InstantCommand(() -> GameModeUtil.set(GamePiece.CUBE)));
         driverController.y().onTrue(new InstantCommand(() -> GameModeUtil.set(GamePiece.CONE)));
+
+        driverController.leftBumper().onTrue(new LockWheelsCommand(drivetrainSubsystem));
 
         driverController.leftTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> 0.25));
         driverController.rightTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> -0.25));

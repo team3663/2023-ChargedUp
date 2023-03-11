@@ -6,6 +6,8 @@ package frc.robot.subsystems.intake;
 
 import org.littletonrobotics.junction.AutoLog;
 
+import com.revrobotics.CANSparkMax.IdleMode;
+
 /** Add your docs here. */
 public interface IntakeIO {
     @AutoLog
@@ -19,5 +21,8 @@ public interface IntakeIO {
     }
     
     default void setVoltage(double volts) {
+    }
+
+    default void setIdleMode(IdleMode mode) {
     }
 }

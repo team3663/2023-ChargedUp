@@ -39,7 +39,6 @@ public class ArmPoseLibrary {
 
         genericPoses.put(ArmPoseID.STOWED, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(90.0)));
         genericPoses.put(ArmPoseID.FLOOR_PICKUP, new Pose2d(0.5, 0.5, Rotation2d.fromDegrees(0.0)));
-
     }
 
     public static Pose2d get(ArmPoseID poseID) {

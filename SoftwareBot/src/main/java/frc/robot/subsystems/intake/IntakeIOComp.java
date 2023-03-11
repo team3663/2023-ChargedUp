@@ -5,6 +5,7 @@
 package frc.robot.subsystems.intake;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import frc.robot.utility.config.IntakeConfig;
@@ -38,6 +39,10 @@ public class IntakeIOComp implements IntakeIO {
 
     public void setVoltage(double volts) {
         intakeMotor.setVoltage(volts);
+    }
+
+    public void setIdleMode(IdleMode mode) {
+        intakeMotor.setIdleMode(mode);
     }
 
     @Data
