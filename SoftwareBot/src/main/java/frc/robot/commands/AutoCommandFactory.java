@@ -105,6 +105,6 @@ public final class AutoCommandFactory {
     // Default constructor that just throws an exception if you attempt to create an
     // instace of this class.
     private AutoCommandFactory() {
-        throw new UnsupportedOperationException("This is a static class, you cannont instantiate it.");
+        throw new UnsupportedOperationException("This is a static class, you cannot instantiate it.");
     }
 }
