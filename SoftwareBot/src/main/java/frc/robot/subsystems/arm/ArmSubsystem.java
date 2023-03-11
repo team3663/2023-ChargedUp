@@ -23,11 +23,11 @@ public class ArmSubsystem extends SubsystemBase {
 
     // angle constraints for each joint
     private static final double SHOULDER_MIN_ANGLE_RAD = Units.degreesToRadians(91);
-    private static final double SHOULDER_MAX_ANGLE_RAD = Units.degreesToRadians(156.5);
+    private static final double SHOULDER_MAX_ANGLE_RAD = Units.degreesToRadians(157.0);
     private static final double ELBOW_MIN_ANGLE_RAD = Units.degreesToRadians(-173);
     private static final double ELBOW_MAX_ANGLE_RAD = Units.degreesToRadians(-3);
     private static final double WRIST_MIN_ANGLE_RAD = Units.degreesToRadians(-90);
-    private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(135);
+    private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(127);
 
     // While the elbow is inside the danger zone, the wrist must stay within its safety zone to prevent damage.
     private static final double ELBOW_DANGER_ZONE_RAD = Units.degreesToRadians(-130);
@@ -205,8 +205,9 @@ public class ArmSubsystem extends SubsystemBase {
     /**
      * Dump the target pose out to the RioLog for reference
      */
-    public void logTargetPose() {
+    public void logPose() {
         System.out.printf("===== Target Arm Pose: (%.3f, %.3f, %.3f)\n", targetPose.getX(), targetPose.getY(), targetPose.getRotation().getDegrees());
+        System.out.printf("===== Current Arm Pose: (%.3f, %.3f, %.3f)\n", getCurrentPose().getX(), getCurrentPose().getY(), getCurrentPose().getRotation().getDegrees());
     }
 
     public Pose2d getCurrentPose() {

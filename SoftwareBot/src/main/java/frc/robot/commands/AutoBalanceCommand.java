@@ -15,9 +15,9 @@ public class AutoBalanceCommand extends CommandBase {
     private static final double TILT_TOLERANCE_RAD = Units.degreesToRadians(2);
     private static final double TARGET_TILT_ANGLE_RAD = 0.0;
 
-    private static final double kP = 0;
-    private static final double kI = 0;
-    private static final double kD = 0; 
+    private static final double kP = 1.7;
+    private static final double kI = 0.0;
+    private static final double kD = 0.0;
 
     private final DrivetrainSubsystem drivetrain;
     private final PIDController controller;
@@ -62,7 +62,7 @@ public class AutoBalanceCommand extends CommandBase {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        if (!interrupted) drivetrain.braceWheels();
+        if (!interrupted) drivetrain.drive(new ChassisSpeeds(0.0, 0.0, 0.0001));
     }
 
     // Returns true when the command should end.
