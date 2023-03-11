@@ -28,7 +28,7 @@ public class ArmPoseLibrary {
 
     static {
         // Low Substation
-        cubePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(0.625, 1.052, Rotation2d.fromDegrees(108.0)));
+        cubePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(-0.1, 0.49, Rotation2d.fromDegrees(121.0)));
         // High substation
         // cubePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(0.181, 0.860, Rotation2d.fromDegrees(58.3)));
         cubePoses.put(ArmPoseID.SCORE_FLOOR, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(65.0)));
@@ -36,7 +36,7 @@ public class ArmPoseLibrary {
         cubePoses.put(ArmPoseID.SCORE_HI, new Pose2d(0.107, 0.846, Rotation2d.fromDegrees(120.0)));
 
         // Low substation
-        conePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(-26.7)));
+        conePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(90.0)));
         // High substation
         // conePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(0.224, 1.306, Rotation2d.fromDegrees(-26.7)));
         conePoses.put(ArmPoseID.SCORE_FLOOR, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(85.0)));

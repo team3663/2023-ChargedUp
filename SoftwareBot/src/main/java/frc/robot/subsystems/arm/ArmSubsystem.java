@@ -23,7 +23,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     // angle constraints for each joint
     private static final double SHOULDER_MIN_ANGLE_RAD = Units.degreesToRadians(91);
-    private static final double SHOULDER_MAX_ANGLE_RAD = Units.degreesToRadians(157.0);
+    private static final double SHOULDER_MAX_ANGLE_RAD = Units.degreesToRadians(157.5);
     private static final double ELBOW_MIN_ANGLE_RAD = Units.degreesToRadians(-173);
     private static final double ELBOW_MAX_ANGLE_RAD = Units.degreesToRadians(-3);
     private static final double WRIST_MIN_ANGLE_RAD = Units.degreesToRadians(-90);
@@ -79,6 +79,8 @@ public class ArmSubsystem extends SubsystemBase {
         // Create arm kinematics and use it to calculate initial target state
         this.kinematics = new ArmKinematics(arm, forearm, hand);
         targetState = kinematics.inverse(targetPose);
+
+        elbowController.setTolerance(ARM_LENGTH_METERS);
 
         // Create the mechanism object with a 4M x 3M canvas
         this.mechanism = new Mechanism2d(4, 3);

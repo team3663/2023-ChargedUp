@@ -65,7 +65,7 @@ drivetrain:
     steerEncoder:
       id: 10
       canBus: 3663
-      offset: -261.8 degrees
+      offset: 96.6 degrees
 
   # Back left
   backLeftModule: !<SdsMk4>
