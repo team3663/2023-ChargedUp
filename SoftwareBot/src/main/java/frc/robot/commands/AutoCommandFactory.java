@@ -19,7 +19,7 @@ public final class AutoCommandFactory {
     private static final PIDConstants AUTO_TRANSLATION_PID_CONSTANTS = new PIDConstants(2.5, 0.0, 0.0);
     private static final PIDConstants AUTO_ROTATION_PID_CONSTANTS = new PIDConstants(2.0, 0.0, 0.0);
 
-    private static PathConstraints pathConstraints = new PathConstraints(1.0, 1.0);
+    private static PathConstraints pathConstraints = new PathConstraints(4.0, 3.0);
 
     private static HashMap<String, Command> eventMap = new HashMap<>();
     private static SwerveAutoBuilder builder;
@@ -33,6 +33,9 @@ public final class AutoCommandFactory {
         AutoCommandFactory.drivetrain = drivetrain;
         AutoCommandFactory.arm = arm;
         AutoCommandFactory.intake = intake;
+
+        eventMap.put("floorPickup", new SetArmPoseCommand(arm, ArmPoseID.FLOOR_PICKUP));
+        eventMap.put("intake", new SlurpGamePieceCommand(intake));
 
         builder = new SwerveAutoBuilder(
                 () -> drivetrain.getPose(),
@@ -78,6 +81,29 @@ public final class AutoCommandFactory {
         return group;
     }
 
+    public static SequentialCommandGroup createPlaceMidAuto() {
+
+        SequentialCommandGroup group = new SequentialCommandGroup();
+
+        // Ensure we are in the game piece mode associated with the preloaded game piece.
+        Command cmd = new SetGameModeCommand(GamePiece.CUBE);
+        group.addCommands(cmd);
+        
+        // Position the arm to score the preloaded game piece
+        cmd = new SetArmPoseCommand(arm, ArmPoseID.SCORE_MED);
+        group.addCommands(cmd);
+
+        // Eject the preloaded game piece
+        cmd = new EjectGamePieceCommand(intake);
+        group.addCommands(cmd);
+
+        // Return the arm to the stowed position
+        cmd = new SetArmPoseCommand(arm, ArmPoseID.STOWED);
+        group.addCommands(cmd);
+
+        return group;
+    }
+
     /**
      * Autonomous command that places our preloaded game piece and then balances on 
      * the charging station.
@@ -88,7 +114,7 @@ public final class AutoCommandFactory {
         SequentialCommandGroup group = createPlaceOnlyAuto();
 
         // Move until we are far enough on the charging station that the robot is tilted.
-        Command cmd = builder.fullAuto(PathPlanner.loadPath("ChargeStationPath", pathConstraints));
+        Command cmd = builder.fullAuto(PathPlanner.loadPath("ChargeStation", pathConstraints));
         group.addCommands(cmd);
 
         // Balance on the charging station
@@ -98,8 +124,38 @@ public final class AutoCommandFactory {
         return group;
     }
 
+    public static SequentialCommandGroup createLowSideAuto() {
+
+        // We start with the PlaceOnly auto and add to it
+        SequentialCommandGroup group = createPlaceOnlyAuto();
+
+        Command cmd = builder.fullAuto(PathPlanner.loadPath("LowSide", pathConstraints));
+        group.addCommands(cmd);
+
+        return group;
+    }
+
+    public static SequentialCommandGroup createHighSideAuto() {
+
+        SequentialCommandGroup group = createPlaceOnlyAuto();
+
+        Command cmd = builder.fullAuto(PathPlanner.loadPath("HighSide", pathConstraints));
+        group.addCommands(cmd);
+
+        // cmd = new SetArmPoseCommand(arm, ArmPoseID.STOWED);
+        // group.addCommands(cmd);
+
+        // cmd = builder.fullAuto(PathPlanner.loadPath("HighSideReturn", pathConstraints));
+        // group.addCommands(cmd);
+
+        // cmd = createPlaceMidAuto();
+        // group.addCommands(cmd);
+
+        return group;
+    }
+
     public static Command createTestAuto() {
-        return builder.fullAuto(PathPlanner.loadPath("TestPath", pathConstraints));
+        return builder.fullAuto(PathPlanner.loadPath("EventTester", pathConstraints));
     }
 
     // Default constructor that just throws an exception if you attempt to create an

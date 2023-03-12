@@ -13,14 +13,14 @@ arm:
     elbowEncoder:
       id: 5
       inverted: true
-      offset: 158.2 degrees
+      offset: 155.2 degrees
     wristMotor:
       id: 3
       inverted: false
     wristEncoder:
       id: 6
       inverted: true
-      offset: -13 degrees
+      offset: -3 degrees
 
 intake:
   hardware: !<Comp>
