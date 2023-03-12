@@ -33,7 +33,7 @@ public class ArmPoseLibrary {
         // cubePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(0.181, 0.860, Rotation2d.fromDegrees(58.3)));
         cubePoses.put(ArmPoseID.SCORE_FLOOR, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(65.0)));
         cubePoses.put(ArmPoseID.SCORE_MED, new Pose2d(-0.1, 0.49, Rotation2d.fromDegrees(121.0)));
-        cubePoses.put(ArmPoseID.SCORE_HI, new Pose2d(0.107, 0.846, Rotation2d.fromDegrees(120.0)));
+        cubePoses.put(ArmPoseID.SCORE_HI, new Pose2d(0.631, 0.936, Rotation2d.fromDegrees(120.0)));
 
         // Low substation
         conePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(90.0)));
@@ -41,12 +41,7 @@ public class ArmPoseLibrary {
         // conePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(0.224, 1.306, Rotation2d.fromDegrees(-26.7)));
         conePoses.put(ArmPoseID.SCORE_FLOOR, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(85.0)));
         conePoses.put(ArmPoseID.SCORE_MED, new Pose2d(0.130, 1.063, Rotation2d.fromDegrees(-18)));
-        // Good
         conePoses.put(ArmPoseID.SCORE_HI, new Pose2d(0.247, 1.376, Rotation2d.fromDegrees(0)));
-        // Bad
-        // conePoses.put(ArmPoseID.SCORE_HI, new Pose2d(0.395, 1.286, Rotation2d.fromDegrees(0)));
-        // Worse
-        // conePoses.put(ArmPoseID.SCORE_HI, new Pose2d(0.079, 1.274, Rotation2d.fromDegrees(13)));
 
         genericPoses.put(ArmPoseID.STOWED, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(114.0)));
         genericPoses.put(ArmPoseID.FLOOR_PICKUP, new Pose2d(0.5, 0.5, Rotation2d.fromDegrees(0.0)));

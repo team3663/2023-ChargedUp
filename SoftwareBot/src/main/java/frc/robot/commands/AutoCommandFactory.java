@@ -88,7 +88,7 @@ public final class AutoCommandFactory {
         SequentialCommandGroup group = createPlaceOnlyAuto();
 
         // Move until we are far enough on the charging station that the robot is tilted.
-        Command cmd = builder.fullAuto(PathPlanner.loadPath("ChargeStationAuto", pathConstraints));
+        Command cmd = builder.fullAuto(PathPlanner.loadPath("ChargeStationPath", pathConstraints));
         group.addCommands(cmd);
 
         // Balance on the charging station

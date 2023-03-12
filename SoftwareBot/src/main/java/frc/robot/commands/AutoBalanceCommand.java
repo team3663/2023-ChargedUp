@@ -11,11 +11,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 
 public class AutoBalanceCommand extends CommandBase {
-    private static final long LEVEL_TIME_MS = 1000;
+    private static final long LEVEL_TIME_MS = 500;
     private static final double TILT_TOLERANCE_RAD = Units.degreesToRadians(2);
     private static final double TARGET_TILT_ANGLE_RAD = 0.0;
 
-    private static final double kP = 1.7;
+    private static final double kP = 2.0;
     private static final double kI = 0.0;
     private static final double kD = 0.0;
 

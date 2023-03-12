@@ -11,7 +11,7 @@ public class EjectGamePieceCommand extends CommandBase {
     private final IntakeSubsystem intake;
     private long startTime;
     private final long EJECT_DURATION_MS = 500;
-    private final double EJECT_POWER = -0.5;
+    private final double EJECT_POWER = -1.0;
 
     public EjectGamePieceCommand(IntakeSubsystem intake) {
         this.intake = intake;
