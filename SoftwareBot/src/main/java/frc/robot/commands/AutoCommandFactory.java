@@ -66,6 +66,10 @@ public final class AutoCommandFactory {
         Command cmd = new SetGameModeCommand(GamePiece.CUBE);
         group.addCommands(cmd);
         
+
+        // Move to intermediate pose to avoid damaging the arm
+        cmd = new SetArmPoseCommand(arm, ArmPoseID.HI_INTERMEDIATE);
+
         // Position the arm to score the preloaded game piece
         cmd = new SetArmPoseCommand(arm, ArmPoseID.SCORE_HI);
         group.addCommands(cmd);
