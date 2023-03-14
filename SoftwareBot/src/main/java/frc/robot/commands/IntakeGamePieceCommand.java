@@ -7,14 +7,14 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 
-public class SlurpGamePieceCommand extends CommandBase {
+public class IntakeGamePieceCommand extends CommandBase {
     private final IntakeSubsystem intake;
     private long startTime;
     private final long EJECT_DURATION_MS = 500;
     private final double SLURP_POWER = 1.0;
 
     /** Creates a new SlurpGamePieceCommand. */
-    public SlurpGamePieceCommand(IntakeSubsystem intake) {
+    public IntakeGamePieceCommand(IntakeSubsystem intake) {
         this.intake = intake;
 
         addRequirements(intake);

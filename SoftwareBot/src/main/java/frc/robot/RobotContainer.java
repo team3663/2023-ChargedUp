@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerPorts;
 import frc.robot.commands.AdjustArmPoseCommand;
-import frc.robot.commands.AutoBalanceCommand;
 import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DefaultLedCommand;
@@ -43,7 +42,9 @@ import frc.robot.utility.GamePiece;
 public class RobotContainer {
 
     private final CommandXboxController driverController = new CommandXboxController(ControllerPorts.DRIVER);
+    @SuppressWarnings ("unused") 
     private final CommandXboxController operatorController = new CommandXboxController(ControllerPorts.OPERATOR);
+    private final CommandXboxController testController = new CommandXboxController(ControllerPorts.TEST);
     private AutoCommandChooser autoChooser;
 
     // Subsystems       
@@ -133,16 +134,20 @@ public class RobotContainer {
         // Operator controller bindings
         //
 
-        operatorController.y().onTrue(new InstantCommand(() -> armSubsystem.logPose()));
-        
-        operatorController.povUp().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0.025, 0));
-        operatorController.povDown().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, -0.025, 0));   
-        operatorController.povLeft().onTrue(new AdjustArmPoseCommand(armSubsystem, -0.025, 0, 0));
-        operatorController.povRight().onTrue(new AdjustArmPoseCommand(armSubsystem, 0.025, 0, 0));
-        operatorController.leftBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(2)));
-        operatorController.rightBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(-2)));
 
-        operatorController.leftTrigger().onTrue(new AutoBalanceCommand(drivetrainSubsystem));
+
+        //
+        // Test controller bindings
+        //
+
+        testController.y().onTrue(new InstantCommand(() -> armSubsystem.logPose()));
+        
+        testController.povUp().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0.025, 0));
+        testController.povDown().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, -0.025, 0));   
+        testController.povLeft().onTrue(new AdjustArmPoseCommand(armSubsystem, -0.025, 0, 0));
+        testController.povRight().onTrue(new AdjustArmPoseCommand(armSubsystem, 0.025, 0, 0));
+        testController.leftBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(2)));
+        testController.rightBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(-2)));
     }
 
     private void setupAutoChooser() {
@@ -153,7 +158,8 @@ public class RobotContainer {
         autoChooser.registerCreator("Place Only", () -> AutoCommandFactory.createPlaceOnlyAuto());
         autoChooser.registerCreator("Balance", () -> AutoCommandFactory.createBalanceAuto());
         autoChooser.registerCreator("Lowside", () -> AutoCommandFactory.createLowSideAuto());
-        autoChooser.registerCreator("Highside", () -> AutoCommandFactory.createHighSideAuto());
+        autoChooser.registerCreator("Highside 1", () -> AutoCommandFactory.createHighSide1Auto());
+        autoChooser.registerCreator("Highside 2", () -> AutoCommandFactory.createHighSide2Auto());
 
         // Test auto commands that we only register with the chooser if we are not running in competition
         if (!Constants.COMPETITION_MODE) {
