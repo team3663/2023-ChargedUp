@@ -24,18 +24,18 @@
     },
     {
       "anchorPoint": {
-        "x": 3.3635090757726016,
-        "y": 4.897238264227418
+        "x": 3.684380341733657,
+        "y": 4.694203983002561
       },
       "prevControl": {
-        "x": 2.3635090757726016,
-        "y": 4.897238264227418
+        "x": 2.684380341733657,
+        "y": 4.694203983002561
       },
       "nextControl": {
-        "x": 4.363509075772604,
-        "y": 4.897238264227418
+        "x": 4.684380341733662,
+        "y": 4.694203983002561
       },
-      "holonomicAngle": 180.0,
+      "holonomicAngle": 0.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -49,22 +49,22 @@
     },
     {
       "anchorPoint": {
-        "x": 5.930993214299598,
-        "y": 4.5
+        "x": 6.076618909994577,
+        "y": 4.603930829483281
       },
       "prevControl": {
-        "x": 5.311661381894671,
-        "y": 4.8376415236263846
+        "x": 5.408780585142787,
+        "y": 4.603930829483281
       },
       "nextControl": {
-        "x": 6.026085219430227,
-        "y": 4.448158631904453
+        "x": 6.437711524071697,
+        "y": 4.603930829483281
       },
       "holonomicAngle": 0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
         "names": [],
         "executionBehavior": "parallel",
@@ -74,15 +74,15 @@
     },
     {
       "anchorPoint": {
-        "x": 7.5760849030594875,
-        "y": 4.5
+        "x": 7.674453727285833,
+        "y": 4.6
       },
       "prevControl": {
-        "x": 6.986509368025521,
-        "y": 4.5
+        "x": 7.084878192251867,
+        "y": 4.6
       },
       "nextControl": null,
-      "holonomicAngle": 0,
+      "holonomicAngle": 0.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -95,21 +95,5 @@
       }
     }
   ],
-  "maxVelocity": 1.0,
-  "maxAcceleration": null,
-  "isReversed": null,
-  "markers": [
-    {
-      "position": 0.75,
-      "names": [
-        "floorPickup"
-      ]
-    },
-    {
-      "position": 2.15,
-      "names": [
-        "intake"
-      ]
-    }
-  ]
+  "markers": []
 }
