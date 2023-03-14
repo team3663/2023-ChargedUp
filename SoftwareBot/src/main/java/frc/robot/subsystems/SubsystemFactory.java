@@ -27,7 +27,6 @@ public final class SubsystemFactory {
                 );
                 break;
 
-                // TODO: Re-implement this once the cameras are on
             // case ROBOT_2023:
                     // photon = new PhotonVisionUtil(
                     //     new PhotonCamera[] {

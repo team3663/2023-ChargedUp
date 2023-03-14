@@ -42,6 +42,7 @@ import frc.robot.utility.GamePiece;
 public class RobotContainer {
 
     private final CommandXboxController driverController = new CommandXboxController(ControllerPorts.DRIVER);
+    @SuppressWarnings ("unused") 
     private final CommandXboxController operatorController = new CommandXboxController(ControllerPorts.OPERATOR);
     private final CommandXboxController testController = new CommandXboxController(ControllerPorts.TEST);
     private AutoCommandChooser autoChooser;
