@@ -2,9 +2,11 @@
 package frc.robot.commands;
 
 import java.util.HashMap;
+import java.util.List;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,7 +21,8 @@ public final class AutoCommandFactory {
     private static final PIDConstants AUTO_TRANSLATION_PID_CONSTANTS = new PIDConstants(2.5, 0.0, 0.0);
     private static final PIDConstants AUTO_ROTATION_PID_CONSTANTS = new PIDConstants(2.0, 0.0, 0.0);
 
-    private static PathConstraints pathConstraints = new PathConstraints(4.0, 3.0);
+    private static PathConstraints normalConstraints = new PathConstraints(4.0, 3.0);
+    private static PathConstraints intakeConstraints = new PathConstraints(0.5, 0.5);
 
     private static HashMap<String, Command> eventMap = new HashMap<>();
     private static SwerveAutoBuilder builder;
@@ -35,7 +38,7 @@ public final class AutoCommandFactory {
         AutoCommandFactory.intake = intake;
 
         eventMap.put("floorPickup", new SetArmPoseCommand(arm, ArmPoseID.FLOOR_PICKUP));
-        eventMap.put("intake", new SlurpGamePieceCommand(intake));
+        eventMap.put("intake", new IntakeGamePieceCommand(intake));
 
         builder = new SwerveAutoBuilder(
                 () -> drivetrain.getPose(),
@@ -85,29 +88,6 @@ public final class AutoCommandFactory {
         return group;
     }
 
-    public static SequentialCommandGroup createPlaceMidAuto() {
-
-        SequentialCommandGroup group = new SequentialCommandGroup();
-
-        // Ensure we are in the game piece mode associated with the preloaded game piece.
-        Command cmd = new SetGameModeCommand(GamePiece.CUBE);
-        group.addCommands(cmd);
-        
-        // Position the arm to score the preloaded game piece
-        cmd = new SetArmPoseCommand(arm, ArmPoseID.SCORE_MED);
-        group.addCommands(cmd);
-
-        // Eject the preloaded game piece
-        cmd = new EjectGamePieceCommand(intake);
-        group.addCommands(cmd);
-
-        // Return the arm to the stowed position
-        cmd = new SetArmPoseCommand(arm, ArmPoseID.STOWED);
-        group.addCommands(cmd);
-
-        return group;
-    }
-
     /**
      * Autonomous command that places our preloaded game piece and then balances on 
      * the charging station.
@@ -118,7 +98,7 @@ public final class AutoCommandFactory {
         SequentialCommandGroup group = createPlaceOnlyAuto();
 
         // Move until we are far enough on the charging station that the robot is tilted.
-        Command cmd = builder.fullAuto(PathPlanner.loadPath("ChargeStation", pathConstraints));
+        Command cmd = builder.fullAuto(PathPlanner.loadPath("ChargeStation", normalConstraints));
         group.addCommands(cmd);
 
         // Balance on the charging station
@@ -133,33 +113,35 @@ public final class AutoCommandFactory {
         // We start with the PlaceOnly auto and add to it
         SequentialCommandGroup group = createPlaceOnlyAuto();
 
-        Command cmd = builder.fullAuto(PathPlanner.loadPath("LowSide", pathConstraints));
+        Command cmd = builder.fullAuto(PathPlanner.loadPath("LowSide", normalConstraints));
         group.addCommands(cmd);
 
         return group;
     }
 
-    public static SequentialCommandGroup createHighSideAuto() {
+    public static SequentialCommandGroup createHighSide1Auto() {
 
         SequentialCommandGroup group = createPlaceOnlyAuto();
 
-        Command cmd = builder.fullAuto(PathPlanner.loadPath("HighSide", pathConstraints));
+        Command cmd = builder.fullAuto(PathPlanner.loadPath("HighSide1", normalConstraints));
         group.addCommands(cmd);
 
-        // cmd = new SetArmPoseCommand(arm, ArmPoseID.STOWED);
-        // group.addCommands(cmd);
+        return group;
+    }
 
-        // cmd = builder.fullAuto(PathPlanner.loadPath("HighSideReturn", pathConstraints));
-        // group.addCommands(cmd);
+    public static SequentialCommandGroup createHighSide2Auto() {
 
-        // cmd = createPlaceMidAuto();
-        // group.addCommands(cmd);
+        SequentialCommandGroup group = createPlaceOnlyAuto();
+
+        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("HighSide2", normalConstraints, intakeConstraints);
+        Command cmd = builder.fullAuto(pathGroup);
+        group.addCommands(cmd);
 
         return group;
     }
 
     public static Command createTestAuto() {
-        return builder.fullAuto(PathPlanner.loadPath("EventTester", pathConstraints));
+        return builder.fullAuto(PathPlanner.loadPath("EventTester", normalConstraints));
     }
 
     // Default constructor that just throws an exception if you attempt to create an

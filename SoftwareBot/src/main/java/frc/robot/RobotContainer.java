@@ -18,6 +18,7 @@ import frc.robot.commands.AutoBalanceCommand;
 import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DefaultLedCommand;
+import frc.robot.commands.DriveForwardCommand;
 import frc.robot.commands.IntakeFeedCommand;
 import frc.robot.commands.SetArmPoseCommand;
 import frc.robot.photonvision.IPhotonVision;
@@ -133,7 +134,10 @@ public class RobotContainer {
         // Operator controller bindings
         //
 
+        operatorController.a().onTrue(new DriveForwardCommand(drivetrainSubsystem, 0.5, 1000));
         operatorController.y().onTrue(new InstantCommand(() -> armSubsystem.logPose()));
+
+        operatorController.leftTrigger().onTrue(new AutoBalanceCommand(drivetrainSubsystem));
         
         operatorController.povUp().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0.025, 0));
         operatorController.povDown().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, -0.025, 0));   
@@ -142,7 +146,7 @@ public class RobotContainer {
         operatorController.leftBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(2)));
         operatorController.rightBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(-2)));
 
-        operatorController.leftTrigger().onTrue(new AutoBalanceCommand(drivetrainSubsystem));
+ 
     }
 
     private void setupAutoChooser() {
@@ -153,7 +157,8 @@ public class RobotContainer {
         autoChooser.registerCreator("Place Only", () -> AutoCommandFactory.createPlaceOnlyAuto());
         autoChooser.registerCreator("Balance", () -> AutoCommandFactory.createBalanceAuto());
         autoChooser.registerCreator("Lowside", () -> AutoCommandFactory.createLowSideAuto());
-        autoChooser.registerCreator("Highside", () -> AutoCommandFactory.createHighSideAuto());
+        autoChooser.registerCreator("Highside 1", () -> AutoCommandFactory.createHighSide1Auto());
+        autoChooser.registerCreator("Highside 2", () -> AutoCommandFactory.createHighSide2Auto());
 
         // Test auto commands that we only register with the chooser if we are not running in competition
         if (!Constants.COMPETITION_MODE) {
