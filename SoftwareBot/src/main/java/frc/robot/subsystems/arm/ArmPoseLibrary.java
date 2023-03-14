@@ -28,11 +28,11 @@ public class ArmPoseLibrary {
     }
 
     static {
-        cubePoses.put(ArmPoseID.FLOOR_PICKUP, new Pose2d(0.103, 0.132, Rotation2d.fromDegrees(15.0)));
+        cubePoses.put(ArmPoseID.FLOOR_PICKUP, new Pose2d(0.103, 0.132, Rotation2d.fromDegrees(11.0)));
         // Low Substation
         // cubePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(-0.1, 0.49, Rotation2d.fromDegrees(121.0)));
         // High substation
-        cubePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(0.181, 0.860, Rotation2d.fromDegrees(58.3)));
+        cubePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(0.136, 0.913, Rotation2d.fromDegrees(57.2)));
         cubePoses.put(ArmPoseID.SCORE_FLOOR, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(65.0)));
         cubePoses.put(ArmPoseID.SCORE_MED, new Pose2d(-0.1, 0.49, Rotation2d.fromDegrees(121.0)));
         cubePoses.put(ArmPoseID.HI_INTERMEDIATE, new Pose2d(-0.01, 0.936, Rotation2d.fromDegrees(0)));
@@ -42,7 +42,7 @@ public class ArmPoseLibrary {
         // Low substation
         // conePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(0.041, 0.149, Rotation2d.fromDegrees(54.6)));
         // High substation
-        conePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(0.224, 1.306, Rotation2d.fromDegrees(-26.7)));
+        conePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(0.296, 1.358, Rotation2d.fromDegrees(-47.3)));
         conePoses.put(ArmPoseID.SCORE_FLOOR, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(85.0)));
         conePoses.put(ArmPoseID.SCORE_MED, new Pose2d(0.276, 1.170, Rotation2d.fromDegrees(-28)));
         conePoses.put(ArmPoseID.HI_INTERMEDIATE, new Pose2d(-0.01, 1.376, Rotation2d.fromDegrees(0)));
