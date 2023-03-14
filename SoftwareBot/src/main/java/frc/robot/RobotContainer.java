@@ -14,11 +14,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerPorts;
 import frc.robot.commands.AdjustArmPoseCommand;
-import frc.robot.commands.AutoBalanceCommand;
 import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DefaultLedCommand;
-import frc.robot.commands.DriveForwardCommand;
 import frc.robot.commands.IntakeFeedCommand;
 import frc.robot.commands.SetArmPoseCommand;
 import frc.robot.photonvision.IPhotonVision;
@@ -45,6 +43,7 @@ public class RobotContainer {
 
     private final CommandXboxController driverController = new CommandXboxController(ControllerPorts.DRIVER);
     private final CommandXboxController operatorController = new CommandXboxController(ControllerPorts.OPERATOR);
+    private final CommandXboxController testController = new CommandXboxController(ControllerPorts.TEST);
     private AutoCommandChooser autoChooser;
 
     // Subsystems       
@@ -134,19 +133,20 @@ public class RobotContainer {
         // Operator controller bindings
         //
 
-        operatorController.a().onTrue(new DriveForwardCommand(drivetrainSubsystem, 0.5, 1000));
-        operatorController.y().onTrue(new InstantCommand(() -> armSubsystem.logPose()));
 
-        operatorController.leftTrigger().onTrue(new AutoBalanceCommand(drivetrainSubsystem));
+
+        //
+        // Test controller bindings
+        //
+
+        testController.y().onTrue(new InstantCommand(() -> armSubsystem.logPose()));
         
-        operatorController.povUp().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0.025, 0));
-        operatorController.povDown().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, -0.025, 0));   
-        operatorController.povLeft().onTrue(new AdjustArmPoseCommand(armSubsystem, -0.025, 0, 0));
-        operatorController.povRight().onTrue(new AdjustArmPoseCommand(armSubsystem, 0.025, 0, 0));
-        operatorController.leftBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(2)));
-        operatorController.rightBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(-2)));
-
- 
+        testController.povUp().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0.025, 0));
+        testController.povDown().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, -0.025, 0));   
+        testController.povLeft().onTrue(new AdjustArmPoseCommand(armSubsystem, -0.025, 0, 0));
+        testController.povRight().onTrue(new AdjustArmPoseCommand(armSubsystem, 0.025, 0, 0));
+        testController.leftBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(2)));
+        testController.rightBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(-2)));
     }
 
     private void setupAutoChooser() {
