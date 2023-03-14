@@ -22,6 +22,7 @@ public class ArmPoseLibrary {
         FLOOR_PICKUP,
         SCORE_FLOOR,
         SCORE_MED,
+        HI_INTERMEDIATE,
         SCORE_HI,
         STOWED;
     }
@@ -29,20 +30,22 @@ public class ArmPoseLibrary {
     static {
         cubePoses.put(ArmPoseID.FLOOR_PICKUP, new Pose2d(0.103, 0.132, Rotation2d.fromDegrees(15.0)));
         // Low Substation
-        cubePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(-0.1, 0.49, Rotation2d.fromDegrees(121.0)));
+        // cubePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(-0.1, 0.49, Rotation2d.fromDegrees(121.0)));
         // High substation
-        // cubePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(0.181, 0.860, Rotation2d.fromDegrees(58.3)));
+        cubePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(0.181, 0.860, Rotation2d.fromDegrees(58.3)));
         cubePoses.put(ArmPoseID.SCORE_FLOOR, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(65.0)));
         cubePoses.put(ArmPoseID.SCORE_MED, new Pose2d(-0.1, 0.49, Rotation2d.fromDegrees(121.0)));
+        cubePoses.put(ArmPoseID.HI_INTERMEDIATE, new Pose2d(-0.01, 0.936, Rotation2d.fromDegrees(0)));
         cubePoses.put(ArmPoseID.SCORE_HI, new Pose2d(0.631, 0.936, Rotation2d.fromDegrees(120.0)));
 
         conePoses.put(ArmPoseID.FLOOR_PICKUP, new Pose2d(0.5, 0.5, Rotation2d.fromDegrees(0.0)));
         // Low substation
-        conePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(0.041, 0.149, Rotation2d.fromDegrees(54.6)));
+        // conePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(0.041, 0.149, Rotation2d.fromDegrees(54.6)));
         // High substation
-        // conePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(0.224, 1.306, Rotation2d.fromDegrees(-26.7)));
+        conePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(0.224, 1.306, Rotation2d.fromDegrees(-26.7)));
         conePoses.put(ArmPoseID.SCORE_FLOOR, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(85.0)));
         conePoses.put(ArmPoseID.SCORE_MED, new Pose2d(0.276, 1.170, Rotation2d.fromDegrees(-28)));
+        conePoses.put(ArmPoseID.HI_INTERMEDIATE, new Pose2d(-0.01, 1.376, Rotation2d.fromDegrees(0)));
         conePoses.put(ArmPoseID.SCORE_HI, new Pose2d(0.247, 1.376, Rotation2d.fromDegrees(0)));
 
         genericPoses.put(ArmPoseID.STOWED, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(114.0)));
