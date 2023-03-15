@@ -1,6 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems.arm;
 
@@ -18,7 +15,8 @@ public class ArmPoseLibrary {
     private static HashMap<ArmPoseID, Pose2d> genericPoses = new HashMap<ArmPoseID, Pose2d>();
 
     public static enum ArmPoseID {
-        SUBSTATION_PICKUP,
+        DOUBLE_STATION_PICKUP,
+        SINGLE_STATION_PICKUP,
         FLOOR_PICKUP,
         SCORE_FLOOR,
         SCORE_MED,
@@ -28,26 +26,25 @@ public class ArmPoseLibrary {
     }
 
     static {
+        // Poses for cube handling
         cubePoses.put(ArmPoseID.FLOOR_PICKUP, new Pose2d(0.103, 0.132, Rotation2d.fromDegrees(11.0)));
-        // Low Substation
-        // cubePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(-0.1, 0.49, Rotation2d.fromDegrees(121.0)));
-        // High substation
-        cubePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(0.136, 0.913, Rotation2d.fromDegrees(57.2)));
+        cubePoses.put(ArmPoseID.SINGLE_STATION_PICKUP, new Pose2d(-0.1, 0.49, Rotation2d.fromDegrees(121.0)));
+        cubePoses.put(ArmPoseID.DOUBLE_STATION_PICKUP, new Pose2d(0.136, 0.913, Rotation2d.fromDegrees(57.2)));
         cubePoses.put(ArmPoseID.SCORE_FLOOR, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(65.0)));
-        cubePoses.put(ArmPoseID.SCORE_MED, new Pose2d(-0.1, 0.49, Rotation2d.fromDegrees(121.0)));
-        cubePoses.put(ArmPoseID.HI_INTERMEDIATE, new Pose2d(-0.01, 0.936, Rotation2d.fromDegrees(0)));
+        cubePoses.put(ArmPoseID.SCORE_MED, new Pose2d(0.0, 0.49, Rotation2d.fromDegrees(121.0)));
         cubePoses.put(ArmPoseID.SCORE_HI, new Pose2d(0.631, 0.936, Rotation2d.fromDegrees(120.0)));
+        cubePoses.put(ArmPoseID.HI_INTERMEDIATE, new Pose2d(-0.01, 0.936, Rotation2d.fromDegrees(0)));
 
+        // Poses for cone handling
         conePoses.put(ArmPoseID.FLOOR_PICKUP, new Pose2d(0.5, 0.5, Rotation2d.fromDegrees(0.0)));
-        // Low substation
-        // conePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(0.041, 0.149, Rotation2d.fromDegrees(54.6)));
-        // High substation
-        conePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(0.05, 1.358, Rotation2d.fromDegrees(-15.3)));
+        conePoses.put(ArmPoseID.SINGLE_STATION_PICKUP, new Pose2d(0.041, 0.149, Rotation2d.fromDegrees(54.6)));
+        conePoses.put(ArmPoseID.DOUBLE_STATION_PICKUP, new Pose2d(0.05, 1.358, Rotation2d.fromDegrees(-15.3)));
         conePoses.put(ArmPoseID.SCORE_FLOOR, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(85.0)));
         conePoses.put(ArmPoseID.SCORE_MED, new Pose2d(0.276, 1.170, Rotation2d.fromDegrees(-28)));
         conePoses.put(ArmPoseID.HI_INTERMEDIATE, new Pose2d(-0.01, 1.376, Rotation2d.fromDegrees(0)));
         conePoses.put(ArmPoseID.SCORE_HI, new Pose2d(0.247, 1.376, Rotation2d.fromDegrees(0)));
 
+        // Generic poses that are the same for either cubes or cones
         genericPoses.put(ArmPoseID.STOWED, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(105.0)));
     }
 
