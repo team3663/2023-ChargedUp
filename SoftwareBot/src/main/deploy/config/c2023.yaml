@@ -20,7 +20,7 @@ arm:
     wristEncoder:
       id: 6
       inverted: true
-      offset: -3 degrees
+      offset: -9 degrees
 
 intake:
   hardware: !<Comp>
