@@ -190,6 +190,11 @@ public class ArmSubsystem extends SubsystemBase {
         return targetPose;
     }
 
+    public boolean isValidPose(Pose2d pose) {
+        ArmState state = kinematics.inverse(pose);
+        return state.valid;
+    }
+
     public boolean atTargetPose() {
         double angleTolerance = Units.degreesToRadians(20);
 

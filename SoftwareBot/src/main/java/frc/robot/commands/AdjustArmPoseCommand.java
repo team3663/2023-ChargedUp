@@ -2,8 +2,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.arm.*;
 
@@ -11,26 +9,32 @@ import frc.robot.subsystems.arm.*;
 public class AdjustArmPoseCommand extends CommandBase {
 
     private final ArmSubsystem arm;
-    private final Transform2d transform;
-    private Pose2d targetPose;
+    private final double deltaXMeters;
+    private final double deltaYMeters;
+    private final double deltaZRad;
+
+    
 
 
     public AdjustArmPoseCommand(ArmSubsystem arm, double deltaXMeters, double deltaYMeters, double deltaZRad) {
 
         this.arm = arm;
 
-        Translation2d translation = new Translation2d(deltaXMeters, deltaYMeters);
-        Rotation2d rotation = new Rotation2d(deltaZRad);
-        transform = new Transform2d(translation, rotation);
+        this.deltaXMeters = deltaXMeters;
+        this.deltaYMeters = deltaYMeters;
+        this.deltaZRad = deltaZRad;
 
         addRequirements(arm);
     }
 
     @Override
     public void initialize() {
-        Pose2d currentPose = arm.getTargetPose();
-        targetPose = currentPose.transformBy(transform);
-        arm.setTargetPose(targetPose);
+        Pose2d currentPose = arm.getTargetPose();        
+        Pose2d newPose = new Pose2d(currentPose.getX() + deltaXMeters, currentPose.getY() + deltaYMeters, new Rotation2d(currentPose.getRotation().getRadians() + deltaZRad));
+
+        if (arm.isValidPose(newPose)) {
+            arm.setTargetPose(newPose);
+        }
     }
 
     @Override
