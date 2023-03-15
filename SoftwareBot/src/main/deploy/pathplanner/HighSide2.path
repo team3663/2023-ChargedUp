@@ -66,8 +66,10 @@
       "isLocked": false,
       "isStopPoint": true,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
+        "names": [
+          "intake"
+        ],
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
@@ -95,5 +97,12 @@
       }
     }
   ],
-  "markers": []
+  "markers": [
+    {
+      "position": 1.5,
+      "names": [
+        "floorPickup"
+      ]
+    }
+  ]
 }

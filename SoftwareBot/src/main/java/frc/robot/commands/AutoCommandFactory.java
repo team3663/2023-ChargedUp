@@ -22,7 +22,7 @@ public final class AutoCommandFactory {
     private static final PIDConstants AUTO_ROTATION_PID_CONSTANTS = new PIDConstants(2.0, 0.0, 0.0);
 
     private static PathConstraints normalConstraints = new PathConstraints(4.0, 3.0);
-    private static PathConstraints intakeConstraints = new PathConstraints(0.5, 0.5);
+    private static PathConstraints intakeConstraints = new PathConstraints(0.5, 2.0);
 
     private static HashMap<String, Command> eventMap = new HashMap<>();
     private static SwerveAutoBuilder builder;
@@ -38,7 +38,7 @@ public final class AutoCommandFactory {
         AutoCommandFactory.intake = intake;
 
         eventMap.put("floorPickup", new SetArmPoseCommand(arm, ArmPoseID.FLOOR_PICKUP));
-        eventMap.put("intake", new IntakeGamePieceCommand(intake));
+        eventMap.put("intake", new IntakeGamePieceCommand(intake, 1000));
 
         builder = new SwerveAutoBuilder(
                 () -> drivetrain.getPose(),
