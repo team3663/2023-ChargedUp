@@ -42,7 +42,7 @@ public class ArmPoseLibrary {
         // Low substation
         // conePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(0.041, 0.149, Rotation2d.fromDegrees(54.6)));
         // High substation
-        conePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(0.296, 1.358, Rotation2d.fromDegrees(-47.3)));
+        conePoses.put(ArmPoseID.SUBSTATION_PICKUP, new Pose2d(0.05, 1.358, Rotation2d.fromDegrees(-15.3)));
         conePoses.put(ArmPoseID.SCORE_FLOOR, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(85.0)));
         conePoses.put(ArmPoseID.SCORE_MED, new Pose2d(0.276, 1.170, Rotation2d.fromDegrees(-28)));
         conePoses.put(ArmPoseID.HI_INTERMEDIATE, new Pose2d(-0.01, 1.376, Rotation2d.fromDegrees(0)));
