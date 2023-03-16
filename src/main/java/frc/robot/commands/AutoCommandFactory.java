@@ -68,13 +68,9 @@ public final class AutoCommandFactory {
         // Ensure we are in the game piece mode associated with the preloaded game piece.
         Command cmd = new SetGameModeCommand(GamePiece.CUBE);
         group.addCommands(cmd);
-        
-
-        // Move to intermediate pose to avoid damaging the arm
-        cmd = new SetArmPoseCommand(arm, ArmPoseID.HI_INTERMEDIATE);
 
         // Position the arm to score the preloaded game piece
-        cmd = new SetArmPoseCommand(arm, ArmPoseID.SCORE_HI);
+        cmd = new SequenceArmPosesCommand(arm, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_HI);
         group.addCommands(cmd);
 
         // Eject the preloaded game piece

@@ -14,6 +14,7 @@ import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DefaultLedCommand;
 import frc.robot.commands.IntakeFeedCommand;
+import frc.robot.commands.SequenceArmPosesCommand;
 import frc.robot.commands.SetArmPoseCommand;
 import frc.robot.photonvision.IPhotonVision;
 import frc.robot.subsystems.LedSubsystem;
@@ -113,11 +114,11 @@ public class RobotContainer {
             () -> drivetrainSubsystem.resetPose(new Pose2d(drivetrainSubsystem.getPose().getX(), drivetrainSubsystem.getPose().getY(), new Rotation2d()))
         ));
 
-        driverController.povUp().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SCORE_HI));
         driverController.povLeft().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.DOUBLE_STATION_PICKUP));
-        driverController.povRight().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SCORE_MED));
-        driverController.povDown().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SCORE_FLOOR));
-        
+        driverController.povDown().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SCORE_LOW));
+        driverController.povRight().onTrue(new SequenceArmPosesCommand(armSubsystem, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_MED));   
+        driverController.povUp().onTrue(new SequenceArmPosesCommand(armSubsystem, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_HI));
+
         driverController.a().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.FLOOR_PICKUP));
         driverController.b().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.STOWED));
         driverController.x().onTrue(new InstantCommand(() -> GameModeUtil.set(GamePiece.CUBE)));
@@ -135,6 +136,9 @@ public class RobotContainer {
         //
         // Test controller bindings
         //
+
+        testController.a().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.INTERMEDIATE));
+        testController.b().onTrue(new SequenceArmPosesCommand(armSubsystem, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_HI));
 
         testController.y().onTrue(new InstantCommand(() -> armSubsystem.logPose()));
         
