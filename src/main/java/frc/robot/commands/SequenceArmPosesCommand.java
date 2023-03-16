@@ -30,6 +30,7 @@ public class SequenceArmPosesCommand extends CommandBase {
     index = 0;
     done = false;
 
+    // Start arm moving towards first pose in list
     Pose2d pose = ArmPoseLibrary.get(poses[index]);
     arm.setTargetPose(pose);
   }
@@ -39,10 +40,15 @@ public class SequenceArmPosesCommand extends CommandBase {
 
     if (arm.atTargetPose())
     {
+      // Have we reached the end of the pose list?
       if (++index < poses.length) {
+
+        // If not, get next pose in list and make it the new target pose
         Pose2d pose = ArmPoseLibrary.get(poses[index]);
         arm.setTargetPose(pose); 
+
       } else {
+        // If so, set flag to say the command can complete
         done = true;
       }
     }
