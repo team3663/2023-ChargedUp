@@ -42,7 +42,7 @@ public class ArmSubsystem extends SubsystemBase {
     private Mechanism2d mechanism;
 
     // Initial target pose, this should always be our stowed position.
-    private Pose2d targetPose = ArmPoseLibrary.get(ArmPoseID.STOWED);
+    private Pose2d targetPose = ArmPoseLibrary.get(ArmPoseID.INITIAL);
 
     // Arms current target state
     ArmState targetState;
