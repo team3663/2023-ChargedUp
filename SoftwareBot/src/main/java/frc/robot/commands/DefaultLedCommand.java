@@ -9,7 +9,7 @@ import frc.robot.utility.GamePiece;
 public class DefaultLedCommand extends CommandBase {
 
     private final Color8Bit cubeColor = new Color8Bit(170, 0, 255);
-    private final Color8Bit coneColor = new Color8Bit(255, 234, 0);
+    private final Color8Bit coneColor = new Color8Bit(255, 150, 0);
     private final Color8Bit blackColor = new Color8Bit(0, 0, 0);
 
     LedSubsystem subsystem;
