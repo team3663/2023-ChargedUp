@@ -1,7 +1,5 @@
 package frc.robot;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -14,6 +12,7 @@ import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DefaultLedCommand;
 import frc.robot.commands.IntakeFeedCommand;
+import frc.robot.commands.ScaleJoystickCommand;
 import frc.robot.commands.SetArmPoseCommand;
 import frc.robot.photonvision.IPhotonVision;
 import frc.robot.subsystems.LedSubsystem;
@@ -38,6 +37,8 @@ import frc.robot.utility.GamePiece;
 public class RobotContainer {
 
     private final CommandXboxController driverController = new CommandXboxController(ControllerPorts.DRIVER);
+    private final ControllerHelper driverHelper = new ControllerHelper();
+
     @SuppressWarnings ("unused") 
     private final CommandXboxController operatorController = new CommandXboxController(ControllerPorts.OPERATOR);
     private final CommandXboxController testController = new CommandXboxController(ControllerPorts.TEST);
@@ -84,11 +85,10 @@ public class RobotContainer {
         AutoCommandFactory.init(drivetrainSubsystem, armSubsystem, intakeSubsystem);
 
         // Create the default drive command and attach it to the drivetrain subsystem.
-        Supplier<Boolean> isSlowmode = () -> driverController.rightBumper().getAsBoolean();
         drivetrainSubsystem.setDefaultCommand(new DefaultDrivetrainCommand(drivetrainSubsystem,
-                () -> ControllerHelper.modifyAxis(-driverController.getLeftY(), isSlowmode) * drivetrainSubsystem.getMaxTranslationalVelocityMetersPerSecond(),
-                () -> ControllerHelper.modifyAxis(-driverController.getLeftX(), isSlowmode) * drivetrainSubsystem.getMaxTranslationalVelocityMetersPerSecond(),
-                () -> ControllerHelper.modifyAxis(-driverController.getRightX(), isSlowmode) * drivetrainSubsystem.getMaxAngularVelocityRadPerSec()
+                () -> driverHelper.modifyAxis(-driverController.getLeftY()) * drivetrainSubsystem.getMaxTranslationalVelocityMetersPerSecond(),
+                () -> driverHelper.modifyAxis(-driverController.getLeftX()) * drivetrainSubsystem.getMaxTranslationalVelocityMetersPerSecond(),
+                () -> driverHelper.modifyAxis(-driverController.getRightX()) * drivetrainSubsystem.getMaxAngularVelocityRadPerSec()
         ));
 
         // Create the default command for the LED subsystem attach it.
@@ -125,6 +125,10 @@ public class RobotContainer {
 
         driverController.leftTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> 0.5));
         driverController.rightTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> -1.0));
+
+        // Slow-mode and Slower-mode
+        driverController.leftBumper().whileTrue(new ScaleJoystickCommand(driverHelper, 0.25));
+        driverController.rightBumper().whileTrue(new ScaleJoystickCommand(driverHelper, 0.5));
         
         //
         // Operator controller bindings
