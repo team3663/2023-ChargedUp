@@ -92,7 +92,7 @@ public final class AutoCommandFactory {
      * Autonomous command that places our preloaded game piece and then balances on 
      * the charging station.
      */
-    public static SequentialCommandGroup createBalanceAuto() {
+    public static SequentialCommandGroup createMidBalanceAuto() {
 
         // We start with the PlaceOnly auto command and add to it.
         SequentialCommandGroup group = createPlaceOnlyAuto();
@@ -108,7 +108,7 @@ public final class AutoCommandFactory {
         return group;
     }
 
-    public static SequentialCommandGroup createLowSideAuto() {
+    public static SequentialCommandGroup createBumpSideAuto() {
 
         // We start with the PlaceOnly auto and add to it
         SequentialCommandGroup group = createPlaceOnlyAuto();
@@ -119,7 +119,7 @@ public final class AutoCommandFactory {
         return group;
     }
 
-    public static SequentialCommandGroup createHighSide1Auto() {
+    public static SequentialCommandGroup createNoBumpSide1Auto() {
 
         SequentialCommandGroup group = createPlaceOnlyAuto();
 
@@ -129,7 +129,7 @@ public final class AutoCommandFactory {
         return group;
     }
 
-    public static SequentialCommandGroup createHighSide2Auto() {
+    public static SequentialCommandGroup createNoBumpSide2Auto() {
 
         SequentialCommandGroup group = createPlaceOnlyAuto();
 

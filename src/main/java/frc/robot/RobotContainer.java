@@ -152,10 +152,10 @@ public class RobotContainer {
         // Register all the supported auto commands
         autoChooser.registerDefaultCreator("Do Nothing", () -> AutoCommandFactory.createTestAuto());
         autoChooser.registerCreator("Place Only", () -> AutoCommandFactory.createPlaceOnlyAuto());
-        autoChooser.registerCreator("Balance", () -> AutoCommandFactory.createBalanceAuto());
-        autoChooser.registerCreator("Lowside", () -> AutoCommandFactory.createLowSideAuto());
-        autoChooser.registerCreator("Highside 1", () -> AutoCommandFactory.createHighSide1Auto());
-        autoChooser.registerCreator("Highside 2", () -> AutoCommandFactory.createHighSide2Auto());
+        autoChooser.registerCreator("Mid Place-Balance", () -> AutoCommandFactory.createMidBalanceAuto());
+        autoChooser.registerCreator("BumpSide Place-Move", () -> AutoCommandFactory.createBumpSideAuto());
+        autoChooser.registerCreator("NoBumpSide Place-Move", () -> AutoCommandFactory.createNoBumpSide1Auto());
+        autoChooser.registerCreator("NoBumpSide Place-Move-Place", () -> AutoCommandFactory.createNoBumpSide2Auto());
 
         // Test auto commands that we only register with the chooser if we are not running in competition
         if (!Constants.COMPETITION_MODE) {
@@ -163,7 +163,7 @@ public class RobotContainer {
         }
 
         // Setup the chooser in shuffleboard
-        autoChooser.setup("Driver", 0, 0, 2, 1);
+        autoChooser.setup("Driver", 0, 0, 3, 1);
     }
 
     /**
