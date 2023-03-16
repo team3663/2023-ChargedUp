@@ -31,8 +31,8 @@ public class ArmPoseLibrary {
         cubePoses.put(ArmPoseID.SINGLE_STATION_PICKUP, new Pose2d(-0.1, 0.49, Rotation2d.fromDegrees(121.0)));
         cubePoses.put(ArmPoseID.DOUBLE_STATION_PICKUP, new Pose2d(0.136, 0.913, Rotation2d.fromDegrees(57.2)));
         cubePoses.put(ArmPoseID.SCORE_FLOOR, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(65.0)));
-        cubePoses.put(ArmPoseID.SCORE_MED, new Pose2d(0.0, 0.49, Rotation2d.fromDegrees(121.0)));
-        cubePoses.put(ArmPoseID.SCORE_HI, new Pose2d(0.631, 0.936, Rotation2d.fromDegrees(120.0)));
+        cubePoses.put(ArmPoseID.SCORE_MED, new Pose2d(0.225, 0.665, Rotation2d.fromDegrees(77.000)));
+        cubePoses.put(ArmPoseID.SCORE_HI, new Pose2d(0.631, 0.936, Rotation2d.fromDegrees(72.0)));
         cubePoses.put(ArmPoseID.HI_INTERMEDIATE, new Pose2d(-0.01, 0.936, Rotation2d.fromDegrees(0)));
 
         // Poses for cone handling
