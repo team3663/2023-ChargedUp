@@ -28,7 +28,7 @@ public class ArmPoseLibrary {
 
     static {
         // Poses for cube handling
-        cubePoses.put(ArmPoseID.FLOOR_PICKUP, new Pose2d(0.103, 0.132, Rotation2d.fromDegrees(11.0)));
+        cubePoses.put(ArmPoseID.FLOOR_PICKUP, new Pose2d(0.178, 0.132, Rotation2d.fromDegrees(15.0)));
         cubePoses.put(ArmPoseID.SINGLE_STATION_PICKUP, new Pose2d(-0.1, 0.49, Rotation2d.fromDegrees(121.0)));
         cubePoses.put(ArmPoseID.DOUBLE_STATION_PICKUP, new Pose2d(0.136, 0.913, Rotation2d.fromDegrees(57.2)));
         cubePoses.put(ArmPoseID.SCORE_LOW, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(65.0)));
@@ -39,9 +39,9 @@ public class ArmPoseLibrary {
         conePoses.put(ArmPoseID.FLOOR_PICKUP, new Pose2d(0.5, 0.5, Rotation2d.fromDegrees(0.0)));
         conePoses.put(ArmPoseID.SINGLE_STATION_PICKUP, new Pose2d(0.041, 0.149, Rotation2d.fromDegrees(54.6)));
         conePoses.put(ArmPoseID.DOUBLE_STATION_PICKUP, new Pose2d(0.05, 1.358, Rotation2d.fromDegrees(-15.3)));
-        conePoses.put(ArmPoseID.SCORE_LOW, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(85.0)));
-        conePoses.put(ArmPoseID.SCORE_MED, new Pose2d(0.276, 1.170, Rotation2d.fromDegrees(-28)));
-        conePoses.put(ArmPoseID.SCORE_HI, new Pose2d(0.247, 1.376, Rotation2d.fromDegrees(0)));
+        conePoses.put(ArmPoseID.SCORE_LOW, new Pose2d(0.178, 0.132, Rotation2d.fromDegrees(15.0)));
+        conePoses.put(ArmPoseID.SCORE_MED, new Pose2d(0.276, 1.220, Rotation2d.fromDegrees(-20)));
+        conePoses.put(ArmPoseID.SCORE_HI, new Pose2d(0.447, 1.176, Rotation2d.fromDegrees(18.0)));
 
         // Generic poses that are the same for either cubes or cones
         genericPoses.put(ArmPoseID.STOWED, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(105.0)));

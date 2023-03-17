@@ -114,7 +114,7 @@ public class RobotContainer {
             () -> drivetrainSubsystem.resetPose(new Pose2d(drivetrainSubsystem.getPose().getX(), drivetrainSubsystem.getPose().getY(), new Rotation2d()))
         ));
 
-        driverController.povLeft().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.DOUBLE_STATION_PICKUP));
+        driverController.povLeft().onTrue(new SequenceArmPosesCommand(armSubsystem, ArmPoseID.INTERMEDIATE, ArmPoseID.DOUBLE_STATION_PICKUP));
         driverController.povDown().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SCORE_LOW));
         driverController.povRight().onTrue(new SequenceArmPosesCommand(armSubsystem, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_MED));   
         driverController.povUp().onTrue(new SequenceArmPosesCommand(armSubsystem, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_HI));
@@ -128,22 +128,29 @@ public class RobotContainer {
         driverController.rightTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> -1.0));
 
         // Slow-mode and Slower-mode
-        driverController.leftBumper().whileTrue(new ScaleJoystickCommand(driverHelper, 0.25));
+        driverController.leftBumper().whileTrue(new ScaleJoystickCommand(driverHelper, 0.75));
         driverController.rightBumper().whileTrue(new ScaleJoystickCommand(driverHelper, 0.5));
         
         //
         // Operator controller bindings
         //
 
+        operatorController.a().onTrue(new InstantCommand(() -> armSubsystem.logPose()));
+        operatorController.x().onTrue(new InstantCommand(() -> GameModeUtil.set(GamePiece.CUBE)));
+        operatorController.y().onTrue(new InstantCommand(() -> GameModeUtil.set(GamePiece.CONE)));
 
-
+        operatorController.povUp().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0.025, 0));
+        operatorController.povDown().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, -0.025, 0));   
+        operatorController.povLeft().onTrue(new AdjustArmPoseCommand(armSubsystem, -0.025, 0, 0));
+        operatorController.povRight().onTrue(new AdjustArmPoseCommand(armSubsystem, 0.025, 0, 0));
+        operatorController.leftBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(2)));
+        operatorController.rightBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(-2)));
+       
         //
         // Test controller bindings
         //
 
-        testController.a().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.INTERMEDIATE));
-        testController.b().onTrue(new SequenceArmPosesCommand(armSubsystem, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_HI));
-
+/*         testController.a().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.INTERMEDIATE));
         testController.y().onTrue(new InstantCommand(() -> armSubsystem.logPose()));
         
         testController.povUp().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0.025, 0));
@@ -151,7 +158,7 @@ public class RobotContainer {
         testController.povLeft().onTrue(new AdjustArmPoseCommand(armSubsystem, -0.025, 0, 0));
         testController.povRight().onTrue(new AdjustArmPoseCommand(armSubsystem, 0.025, 0, 0));
         testController.leftBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(2)));
-        testController.rightBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(-2)));
+        testController.rightBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(-2))); */
     }
 
     private void setupAutoChooser() {
@@ -163,7 +170,7 @@ public class RobotContainer {
         autoChooser.registerCreator("Mid Place-Balance", () -> AutoCommandFactory.createMidBalanceAuto());
         autoChooser.registerCreator("BumpSide Place-Move", () -> AutoCommandFactory.createBumpSideAuto());
         autoChooser.registerCreator("NoBumpSide Place-Move", () -> AutoCommandFactory.createNoBumpSide1Auto());
-        autoChooser.registerCreator("NoBumpSide Place-Move-Place", () -> AutoCommandFactory.createNoBumpSide2Auto());
+        //autoChooser.registerCreator("NoBumpSide Place-Move-Place", () -> AutoCommandFactory.createNoBumpSide2Auto());
 
         // Test auto commands that we only register with the chooser if we are not running in competition
         if (!Constants.COMPETITION_MODE) {
