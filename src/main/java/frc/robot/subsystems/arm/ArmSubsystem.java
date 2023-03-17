@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.arm.ArmPoseLibrary.ArmPoseID;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -42,10 +41,13 @@ public class ArmSubsystem extends SubsystemBase {
     private Mechanism2d mechanism;
 
     // Initial target pose, keeps us inside frame perimeter at start of match
-    private Pose2d targetPose = ArmPoseLibrary.get(ArmPoseID.INITIAL);
+    private Pose2d targetPose = null;
 
     // Arms current target state
-    ArmState targetState;
+    private ArmState targetState;
+
+    // Arm is disabled initially until we are sent our first pose.
+    private boolean enabled = false;
 
     private double[] logBuffer = new double[3];
 
@@ -78,7 +80,6 @@ public class ArmSubsystem extends SubsystemBase {
 
         // Create arm kinematics and use it to calculate initial target state
         this.kinematics = new ArmKinematics(arm, forearm, hand);
-        targetState = kinematics.inverse(targetPose);
 
         elbowController.setTolerance(ARM_LENGTH_METERS);
 
@@ -101,6 +102,11 @@ public class ArmSubsystem extends SubsystemBase {
     public void periodic() {
         io.updateInputs(inputs);
         Logger.getInstance().processInputs("Arm/Inputs", inputs);
+
+        // Until we have been enabled we bail out here and don't attempt any processing.
+        if (!enabled) {
+            return;
+        }
 
         // Calculate a gravity gain value that we use to scale output of the elbow controller based on the angle of the forearm
         // This helps to compensate for the change in moment of the forearm as its angle changes relative to the floor by increasing
@@ -181,6 +187,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void setTargetPose(Pose2d targetPose) {
         this.targetPose = targetPose;
+        enabled = true;
 
         // Calculate desired target state from the new target pose.
         targetState = kinematics.inverse(targetPose);
@@ -213,8 +220,14 @@ public class ArmSubsystem extends SubsystemBase {
      * Dump the target pose out to the RioLog for reference
      */
     public void logPose() {
-        System.out.printf("===== Target Arm Pose: (%.3f, %.3f, %.3f)\n", targetPose.getX(), targetPose.getY(), targetPose.getRotation().getDegrees());
-        System.out.printf("===== Current Arm Pose: (%.3f, %.3f, %.3f)\n", getCurrentPose().getX(), getCurrentPose().getY(), getCurrentPose().getRotation().getDegrees());
+
+        // Target pose is null until arm is enabled
+        if (targetPose != null) {
+            System.out.printf("===== Target Arm Pose: (%.3f, %.3f, %.3f)\n", targetPose.getX(), targetPose.getY(), targetPose.getRotation().getDegrees());
+        }
+
+        Pose2d currentPose = getCurrentPose();
+        System.out.printf("===== Current Arm Pose: (%.3f, %.3f, %.3f)\n", currentPose.getX(), currentPose.getY(), currentPose.getRotation().getDegrees());
     }
 
     public Pose2d getCurrentPose() {
