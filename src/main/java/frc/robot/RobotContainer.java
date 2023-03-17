@@ -10,6 +10,7 @@ import frc.robot.Constants.ControllerPorts;
 import frc.robot.commands.AdjustArmPoseCommand;
 import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
+import frc.robot.commands.DefaultIntakeCommand;
 import frc.robot.commands.DefaultLedCommand;
 import frc.robot.commands.IntakeFeedCommand;
 import frc.robot.commands.ScaleJoystickCommand;
@@ -91,6 +92,10 @@ public class RobotContainer {
                 () -> driverHelper.modifyAxis(-driverController.getLeftX()) * drivetrainSubsystem.getMaxTranslationalVelocityMetersPerSecond(),
                 () -> driverHelper.modifyAxis(-driverController.getRightX()) * drivetrainSubsystem.getMaxAngularVelocityRadPerSec()
         ));
+
+        // Create default command for intake and attach it.
+        DefaultIntakeCommand intakeCommand = new DefaultIntakeCommand(intakeSubsystem);
+        intakeSubsystem.setDefaultCommand(intakeCommand);
 
         // Create the default command for the LED subsystem attach it.
         DefaultLedCommand ledCommand = new DefaultLedCommand(ledSubsystem);
