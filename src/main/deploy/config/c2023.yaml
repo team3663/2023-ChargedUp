@@ -91,6 +91,6 @@ drivetrain:
     steerEncoder:
       id: 12
       canBus: 3663
-      offset: -94.9 degrees
+      offset: -95.0 degrees
 
 vision: { }

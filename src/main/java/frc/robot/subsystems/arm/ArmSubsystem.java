@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.arm.ArmPoseLibrary.ArmPoseID;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -26,7 +27,7 @@ public class ArmSubsystem extends SubsystemBase {
     private static final double ELBOW_MIN_ANGLE_RAD = Units.degreesToRadians(-173);
     private static final double ELBOW_MAX_ANGLE_RAD = Units.degreesToRadians(-3);
     private static final double WRIST_MIN_ANGLE_RAD = Units.degreesToRadians(-116);
-    private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(120);
+    private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(117);
 
     // While the elbow is inside the danger zone, the wrist must stay within its safety zone to prevent damage.
     private static final double ELBOW_DANGER_ZONE_RAD = Units.degreesToRadians(-130);
@@ -41,7 +42,7 @@ public class ArmSubsystem extends SubsystemBase {
     private Mechanism2d mechanism;
 
     // Initial target pose, keeps us inside frame perimeter at start of match
-    private Pose2d targetPose = null;
+    private Pose2d targetPose = ArmPoseLibrary.get(ArmPoseID.RELEASE);
 
     // Arms current target state
     private ArmState targetState;
@@ -80,6 +81,7 @@ public class ArmSubsystem extends SubsystemBase {
 
         // Create arm kinematics and use it to calculate initial target state
         this.kinematics = new ArmKinematics(arm, forearm, hand);
+        targetState = kinematics.inverse(targetPose);
 
         elbowController.setTolerance(ARM_LENGTH_METERS);
 
@@ -103,11 +105,6 @@ public class ArmSubsystem extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.getInstance().processInputs("Arm/Inputs", inputs);
 
-        // Until we have been enabled we bail out here and don't attempt any processing.
-        if (!enabled) {
-            return;
-        }
-
         // Calculate a gravity gain value that we use to scale output of the elbow controller based on the angle of the forearm
         // This helps to compensate for the change in moment of the forearm as its angle changes relative to the floor by increasing
         // the applied voltage for the elbow joint the closer to horizontal it is.
@@ -129,9 +126,15 @@ public class ArmSubsystem extends SubsystemBase {
         double elbowVoltage = elbowController.calculate(inputs.elbowAngleRad, targetElbowAngle) + elbowGravityGain;
         double wristVoltage = wristController.calculate(inputs.wristAngleRad, targetWristAngle);
         
-        io.setShoulderVoltage(applyJointLimits(shoulderVoltage, inputs.shoulderAngleRad, SHOULDER_MIN_ANGLE_RAD, SHOULDER_MAX_ANGLE_RAD));
-        io.setElbowVoltage(applyJointLimits(elbowVoltage, inputs.elbowAngleRad, ELBOW_MIN_ANGLE_RAD, ELBOW_MAX_ANGLE_RAD));
-        io.setWristVoltage(applyJointLimits(wristVoltage, inputs.wristAngleRad, WRIST_MIN_ANGLE_RAD, WRIST_MAX_ANGLE_RAD));   
+        if (enabled) {
+            io.setShoulderVoltage(applyJointLimits(shoulderVoltage, inputs.shoulderAngleRad, SHOULDER_MIN_ANGLE_RAD, SHOULDER_MAX_ANGLE_RAD));
+            io.setElbowVoltage(applyJointLimits(elbowVoltage, inputs.elbowAngleRad, ELBOW_MIN_ANGLE_RAD, ELBOW_MAX_ANGLE_RAD));
+            io.setWristVoltage(applyJointLimits(wristVoltage, inputs.wristAngleRad, WRIST_MIN_ANGLE_RAD, WRIST_MAX_ANGLE_RAD));   
+        } else {
+            io.setShoulderVoltage(0.0);
+            io.setElbowVoltage(0.0);
+            io.setWristVoltage(0.0);
+        }
 
         // Log current joint voltages
         logBuffer[0] = inputs.shoulderAppliedVoltage;
