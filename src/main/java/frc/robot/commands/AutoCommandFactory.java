@@ -11,6 +11,7 @@ import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.arm.ArmPoseLibrary.ArmPoseID;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
@@ -85,6 +86,10 @@ public final class AutoCommandFactory {
 
         // Position the arm to score the preloaded game piece
         cmd = new SequenceArmPosesCommand(arm, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_MED);
+        group.addCommands(cmd);
+
+        // Wait for the arm to stabilize
+        cmd = new WaitCommand(2);
         group.addCommands(cmd);
 
         // Eject the preloaded game piece
