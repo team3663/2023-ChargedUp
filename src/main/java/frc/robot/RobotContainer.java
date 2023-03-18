@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerPorts;
 import frc.robot.commands.AdjustArmPoseCommand;
+import frc.robot.commands.AutoBalanceCommand;
 import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DefaultIntakeCommand;
@@ -144,6 +145,7 @@ public class RobotContainer {
         //
 
         operatorController.a().onTrue(new InstantCommand(() -> armSubsystem.logPose()));
+        operatorController.b().onTrue(new AutoBalanceCommand(drivetrainSubsystem));
         operatorController.x().onTrue(new InstantCommand(() -> GameModeUtil.set(GamePiece.CUBE)));
         operatorController.y().onTrue(new InstantCommand(() -> GameModeUtil.set(GamePiece.CONE)));
 

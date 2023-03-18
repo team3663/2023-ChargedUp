@@ -84,7 +84,7 @@ public final class AutoCommandFactory {
         group.addCommands(cmd);
 
         // Position the arm to score the preloaded game piece
-        cmd = new SequenceArmPosesCommand(arm, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_HI);
+        cmd = new SequenceArmPosesCommand(arm, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_MED);
         group.addCommands(cmd);
 
         // Eject the preloaded game piece
