@@ -135,6 +135,9 @@ public class RobotContainer {
         // Slow-mode and Slower-mode
         driverController.leftBumper().whileTrue(new ScaleJoystickCommand(driverHelper, 0.75));
         driverController.rightBumper().whileTrue(new ScaleJoystickCommand(driverHelper, 0.5));
+
+        // Snap to cardinal direction on right stick click
+        //driverController.rightStick().onTrue(new AlignCardinalDirectionCommand(drivetrainSubsystem));
         
         //
         // Operator controller bindings
