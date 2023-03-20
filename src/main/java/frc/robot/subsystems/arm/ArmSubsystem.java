@@ -27,7 +27,7 @@ public class ArmSubsystem extends SubsystemBase {
     private static final double ELBOW_MIN_ANGLE_RAD = Units.degreesToRadians(-173);
     private static final double ELBOW_MAX_ANGLE_RAD = Units.degreesToRadians(-3);
     private static final double WRIST_MIN_ANGLE_RAD = Units.degreesToRadians(-116);
-    private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(120);
+    private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(117);
 
     // While the elbow is inside the danger zone, the wrist must stay within its safety zone to prevent damage.
     private static final double ELBOW_DANGER_ZONE_RAD = Units.degreesToRadians(-130);
@@ -42,10 +42,13 @@ public class ArmSubsystem extends SubsystemBase {
     private Mechanism2d mechanism;
 
     // Initial target pose, keeps us inside frame perimeter at start of match
-    private Pose2d targetPose = ArmPoseLibrary.get(ArmPoseID.INITIAL);
+    private Pose2d targetPose = ArmPoseLibrary.get(ArmPoseID.RELEASE);
 
     // Arms current target state
-    ArmState targetState;
+    private ArmState targetState;
+
+    // Arm is disabled initially until we are sent our first pose.
+    private boolean enabled = false;
 
     private double[] logBuffer = new double[3];
 
@@ -123,9 +126,15 @@ public class ArmSubsystem extends SubsystemBase {
         double elbowVoltage = elbowController.calculate(inputs.elbowAngleRad, targetElbowAngle) + elbowGravityGain;
         double wristVoltage = wristController.calculate(inputs.wristAngleRad, targetWristAngle);
         
-        io.setShoulderVoltage(applyJointLimits(shoulderVoltage, inputs.shoulderAngleRad, SHOULDER_MIN_ANGLE_RAD, SHOULDER_MAX_ANGLE_RAD));
-        io.setElbowVoltage(applyJointLimits(elbowVoltage, inputs.elbowAngleRad, ELBOW_MIN_ANGLE_RAD, ELBOW_MAX_ANGLE_RAD));
-        io.setWristVoltage(applyJointLimits(wristVoltage, inputs.wristAngleRad, WRIST_MIN_ANGLE_RAD, WRIST_MAX_ANGLE_RAD));   
+        if (enabled) {
+            io.setShoulderVoltage(applyJointLimits(shoulderVoltage, inputs.shoulderAngleRad, SHOULDER_MIN_ANGLE_RAD, SHOULDER_MAX_ANGLE_RAD));
+            io.setElbowVoltage(applyJointLimits(elbowVoltage, inputs.elbowAngleRad, ELBOW_MIN_ANGLE_RAD, ELBOW_MAX_ANGLE_RAD));
+            io.setWristVoltage(applyJointLimits(wristVoltage, inputs.wristAngleRad, WRIST_MIN_ANGLE_RAD, WRIST_MAX_ANGLE_RAD));   
+        } else {
+            io.setShoulderVoltage(0.0);
+            io.setElbowVoltage(0.0);
+            io.setWristVoltage(0.0);
+        }
 
         // Log current joint voltages
         logBuffer[0] = inputs.shoulderAppliedVoltage;
@@ -181,6 +190,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void setTargetPose(Pose2d targetPose) {
         this.targetPose = targetPose;
+        enabled = true;
 
         // Calculate desired target state from the new target pose.
         targetState = kinematics.inverse(targetPose);
@@ -213,8 +223,14 @@ public class ArmSubsystem extends SubsystemBase {
      * Dump the target pose out to the RioLog for reference
      */
     public void logPose() {
-        System.out.printf("===== Target Arm Pose: (%.3f, %.3f, %.3f)\n", targetPose.getX(), targetPose.getY(), targetPose.getRotation().getDegrees());
-        System.out.printf("===== Current Arm Pose: (%.3f, %.3f, %.3f)\n", getCurrentPose().getX(), getCurrentPose().getY(), getCurrentPose().getRotation().getDegrees());
+
+        // Target pose is null until arm is enabled
+        if (targetPose != null) {
+            System.out.printf("===== Target Arm Pose: (%.3f, %.3f, %.3f)\n", targetPose.getX(), targetPose.getY(), targetPose.getRotation().getDegrees());
+        }
+
+        Pose2d currentPose = getCurrentPose();
+        System.out.printf("===== Current Arm Pose: (%.3f, %.3f, %.3f)\n", currentPose.getX(), currentPose.getY(), currentPose.getRotation().getDegrees());
     }
 
     public Pose2d getCurrentPose() {

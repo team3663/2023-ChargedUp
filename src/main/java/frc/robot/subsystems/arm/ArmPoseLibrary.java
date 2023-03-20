@@ -23,7 +23,7 @@ public class ArmPoseLibrary {
         SCORE_HI,
         INTERMEDIATE,
         STOWED,
-        INITIAL;
+        RELEASE;
     }
 
     static {
@@ -41,11 +41,11 @@ public class ArmPoseLibrary {
         conePoses.put(ArmPoseID.DOUBLE_STATION_PICKUP, new Pose2d(0.05, 1.358, Rotation2d.fromDegrees(-15.3)));
         conePoses.put(ArmPoseID.SCORE_LOW, new Pose2d(0.178, 0.132, Rotation2d.fromDegrees(15.0)));
         conePoses.put(ArmPoseID.SCORE_MED, new Pose2d(0.276, 1.220, Rotation2d.fromDegrees(-20)));
-        conePoses.put(ArmPoseID.SCORE_HI, new Pose2d(0.447, 1.176, Rotation2d.fromDegrees(18.0)));
+        conePoses.put(ArmPoseID.SCORE_HI, new Pose2d(0.322, 1.351, Rotation2d.fromDegrees(20.0)));
 
         // Generic poses that are the same for either cubes or cones
         genericPoses.put(ArmPoseID.STOWED, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(105.0)));
-        genericPoses.put(ArmPoseID.INITIAL, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(105.0)));
+        genericPoses.put(ArmPoseID.RELEASE, new Pose2d(-0.28, 0.87, Rotation2d.fromDegrees(105.0)));
         genericPoses.put(ArmPoseID.INTERMEDIATE, new Pose2d(0.1, 1.0, Rotation2d.fromDegrees(105.0)));
     }
 

@@ -11,6 +11,7 @@ import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.arm.ArmPoseLibrary.ArmPoseID;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
@@ -52,10 +53,20 @@ public final class AutoCommandFactory {
     }
 
     /**
-     * Autonomous command that just sits there and does nothing.
+     * Autonomous command that just sits there and does nothing (except unpark the arm)
      */
-    public static Command createNullAuto() {
-        return null;
+    public static SequentialCommandGroup createNullAuto() {
+        SequentialCommandGroup group = new SequentialCommandGroup();
+
+        // Raise the arm from its resting position to release the kick-stand
+        Command cmd = new SetArmPoseCommand(arm, ArmPoseID.RELEASE);
+        group.addCommands(cmd);
+
+        // Raise the arm from its resting position to release the kick-stand
+        cmd = new SetArmPoseCommand(arm, ArmPoseID.STOWED);
+        group.addCommands(cmd);
+
+        return group;
     }
 
     /**
@@ -65,12 +76,20 @@ public final class AutoCommandFactory {
 
         SequentialCommandGroup group = new SequentialCommandGroup();
 
-        // Ensure we are in the game piece mode associated with the preloaded game piece.
-        Command cmd = new SetGameModeCommand(GamePiece.CUBE);
+        // Raise the arm from its resting position to release the kick-stand
+        Command cmd = new SetArmPoseCommand(arm, ArmPoseID.RELEASE);
+        group.addCommands(cmd);       
+
+        // Ensure we are in the game piece mode associated with the preloaded game piece (always a cube)
+        cmd = new SetGameModeCommand(GamePiece.CUBE);
         group.addCommands(cmd);
 
         // Position the arm to score the preloaded game piece
-        cmd = new SequenceArmPosesCommand(arm, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_HI);
+        cmd = new SequenceArmPosesCommand(arm, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_MED);
+        group.addCommands(cmd);
+
+        // Wait for the arm to stabilize
+        cmd = new WaitCommand(2);
         group.addCommands(cmd);
 
         // Eject the preloaded game piece
