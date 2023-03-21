@@ -15,7 +15,7 @@ public class GameMode {
     }
 
     public static enum ScoringPosition {
-        HI,
+        HIGH,
         MED,
         LOW;
     }
@@ -27,7 +27,7 @@ public class GameMode {
     }
 
     private static GamePiece gamePiece = GamePiece.CUBE;
-    private static ScoringPosition scoringPosition = ScoringPosition.HI;
+    private static ScoringPosition scoringPosition = ScoringPosition.HIGH;
     private static PickupLocation pickupLocation = PickupLocation.FLOOR;
 
     public static GamePiece getGamePiece() {
