@@ -440,6 +440,18 @@
       "type": 3,
       "field": "/RealOutputs/Console",
       "title": "Console"
+    },
+    {
+      "type": 2,
+      "fields": [
+        "/DriverStation/AllianceStation",
+        "/DriverStation/Autonomous",
+        "/DriverStation/EventName",
+        "/DriverStation/Test",
+        "/DriverStation/FMSAttached",
+        "/DriverStation/MatchNumber"
+      ],
+      "title": "FMS Info"
     }
   ]
 }
