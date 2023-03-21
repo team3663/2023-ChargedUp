@@ -5,8 +5,8 @@ import java.util.HashMap;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import frc.robot.utility.GameModeUtil;
-import frc.robot.utility.GamePiece;
+import frc.robot.utility.GameMode;
+import frc.robot.utility.GameMode.GamePiece;
 
 /** Add your docs here. */
 public class ArmPoseLibrary {
@@ -41,7 +41,7 @@ public class ArmPoseLibrary {
         conePoses.put(ArmPoseID.DOUBLE_STATION_PICKUP, new Pose2d(0.05, 1.358, Rotation2d.fromDegrees(-15.3)));
         conePoses.put(ArmPoseID.SCORE_LOW, new Pose2d(0.178, 0.132, Rotation2d.fromDegrees(15.0)));
         conePoses.put(ArmPoseID.SCORE_MED, new Pose2d(0.276, 1.220, Rotation2d.fromDegrees(-20)));
-        conePoses.put(ArmPoseID.SCORE_HI, new Pose2d(0.322, 1.351, Rotation2d.fromDegrees(20.0)));
+        conePoses.put(ArmPoseID.SCORE_HI, new Pose2d(0.497,1.101 , Rotation2d.fromDegrees(48.0)));
 
         // Generic poses that are the same for either cubes or cones
         genericPoses.put(ArmPoseID.STOWED, new Pose2d(-0.01, 0.108, Rotation2d.fromDegrees(105.0)));
@@ -51,9 +51,9 @@ public class ArmPoseLibrary {
 
     public static Pose2d get(ArmPoseID poseID) {
         Pose2d pose;
-        if (GameModeUtil.get() == GamePiece.CUBE) {
+        if (GameMode.getGamePiece() == GamePiece.CUBE) {
             pose = cubePoses.get(poseID);
-        } else if (GameModeUtil.get() == GamePiece.CONE) {
+        } else if (GameMode.getGamePiece() == GamePiece.CONE) {
             pose = conePoses.get(poseID);
         } else {
             throw new IllegalArgumentException("Invalid Game Piece");

@@ -16,7 +16,7 @@ import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.arm.ArmPoseLibrary.ArmPoseID;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
-import frc.robot.utility.GamePiece;
+import frc.robot.utility.GameMode.GamePiece;
 
 public final class AutoCommandFactory {
     private static final PIDConstants AUTO_TRANSLATION_PID_CONSTANTS = new PIDConstants(2.5, 0.0, 0.0);
@@ -81,7 +81,7 @@ public final class AutoCommandFactory {
         group.addCommands(cmd);       
 
         // Ensure we are in the game piece mode associated with the preloaded game piece (always a cube)
-        cmd = new SetGameModeCommand(GamePiece.CUBE);
+        cmd = new SetGamePieceCommand(GamePiece.CUBE);
         group.addCommands(cmd);
 
         // Position the arm to score the preloaded game piece

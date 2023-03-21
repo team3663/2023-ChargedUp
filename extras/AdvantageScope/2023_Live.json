@@ -1,0 +1,445 @@
+{
+  "version": "2.2.2",
+  "layout": [
+    {
+      "type": 1,
+      "legends": {
+        "left": {
+          "lockedRange": null,
+          "unitConversion": {
+            "type": null,
+            "factor": 1
+          },
+          "fields": [
+            {
+              "key": "/AdvantageKit/Arm/Inputs/ElbowCurrentDrawAmps",
+              "color": "#e5b31b",
+              "show": true
+            },
+            {
+              "key": "/AdvantageKit/Arm/Inputs/ShoulderCurrentDrawAmps",
+              "color": "#2b66a2",
+              "show": true
+            },
+            {
+              "key": "/AdvantageKit/Arm/Inputs/WristCurrentDrawAmps",
+              "color": "#af2437",
+              "show": true
+            }
+          ]
+        },
+        "discrete": {
+          "fields": []
+        },
+        "right": {
+          "lockedRange": null,
+          "unitConversion": {
+            "type": null,
+            "factor": 1
+          },
+          "fields": [
+            {
+              "key": "/AdvantageKit/Arm/Inputs/ElbowAppliedVoltage",
+              "color": "#80588e",
+              "show": true
+            },
+            {
+              "key": "/AdvantageKit/Arm/Inputs/ShoulderAppliedVoltage",
+              "color": "#e48b32",
+              "show": true
+            },
+            {
+              "key": "/AdvantageKit/Arm/Inputs/WristAppliedVoltage",
+              "color": "#aacaee",
+              "show": true
+            }
+          ]
+        }
+      },
+      "title": "Arm Power"
+    },
+    {
+      "type": 1,
+      "legends": {
+        "left": {
+          "lockedRange": null,
+          "unitConversion": {
+            "type": "angle",
+            "factor": 1,
+            "from": "radians",
+            "to": "degrees"
+          },
+          "fields": [
+            {
+              "key": "/AdvantageKit/Arm/Inputs/ElbowAngleRad",
+              "color": "#80588e",
+              "show": true
+            },
+            {
+              "key": "/AdvantageKit/Arm/Inputs/ShoulderAngleRad",
+              "color": "#e48b32",
+              "show": true
+            },
+            {
+              "key": "/AdvantageKit/Arm/Inputs/WristAngleRad",
+              "color": "#aacaee",
+              "show": true
+            }
+          ]
+        },
+        "discrete": {
+          "fields": []
+        },
+        "right": {
+          "lockedRange": null,
+          "unitConversion": {
+            "type": "angle",
+            "factor": 1,
+            "from": "radians",
+            "to": "degrees"
+          },
+          "fields": [
+            {
+              "key": "/AdvantageKit/RealOutputs/Arm/CurrentPose/0",
+              "color": "#e5b31b",
+              "show": false
+            },
+            {
+              "key": "/AdvantageKit/RealOutputs/Arm/CurrentPose/1",
+              "color": "#2b66a2",
+              "show": false
+            },
+            {
+              "key": "/AdvantageKit/RealOutputs/Arm/CurrentPose/2",
+              "color": "#af2437",
+              "show": false
+            }
+          ]
+        }
+      },
+      "title": "Arm Angles"
+    },
+    {
+      "type": 1,
+      "legends": {
+        "left": {
+          "lockedRange": null,
+          "unitConversion": {
+            "type": "angle",
+            "factor": 1,
+            "from": "radians",
+            "to": "degrees"
+          },
+          "fields": [
+            {
+              "key": "/AdvantageKit/RealOutputs/Arm/CurrentPose/2",
+              "color": "#af2437",
+              "show": true
+            }
+          ]
+        },
+        "discrete": {
+          "fields": []
+        },
+        "right": {
+          "lockedRange": null,
+          "unitConversion": {
+            "type": null,
+            "factor": 1
+          },
+          "fields": [
+            {
+              "key": "/AdvantageKit/RealOutputs/Arm/CurrentPose/0",
+              "color": "#e5b31b",
+              "show": true
+            },
+            {
+              "key": "/AdvantageKit/RealOutputs/Arm/CurrentPose/1",
+              "color": "#2b66a2",
+              "show": true
+            }
+          ]
+        }
+      },
+      "title": "Curent Pose"
+    },
+    {
+      "type": 1,
+      "legends": {
+        "left": {
+          "lockedRange": null,
+          "unitConversion": {
+            "type": "angle",
+            "factor": 1,
+            "from": "radians",
+            "to": "degrees"
+          },
+          "fields": [
+            {
+              "key": "/AdvantageKit/RealOutputs/Arm/TargetPose/2",
+              "color": "#80588e",
+              "show": true
+            }
+          ]
+        },
+        "discrete": {
+          "fields": []
+        },
+        "right": {
+          "lockedRange": null,
+          "unitConversion": {
+            "type": null,
+            "factor": 1
+          },
+          "fields": [
+            {
+              "key": "/AdvantageKit/RealOutputs/Arm/TargetPose/0",
+              "color": "#e5b31b",
+              "show": true
+            },
+            {
+              "key": "/AdvantageKit/RealOutputs/Arm/TargetPose/1",
+              "color": "#2b66a2",
+              "show": true
+            }
+          ]
+        }
+      },
+      "title": "Target Pose"
+    },
+    {
+      "type": 1,
+      "legends": {
+        "left": {
+          "lockedRange": null,
+          "unitConversion": {
+            "type": "angle",
+            "factor": 1,
+            "from": "radians",
+            "to": "degrees"
+          },
+          "fields": [
+            {
+              "key": "/AdvantageKit/Drivetrain/BackRightModule/SteerAbsoluteAngleRad",
+              "color": "#e5b31b",
+              "show": true
+            },
+            {
+              "key": "/AdvantageKit/Drivetrain/BackLeftModule/SteerAbsoluteAngleRad",
+              "color": "#2b66a2",
+              "show": true
+            },
+            {
+              "key": "/AdvantageKit/Drivetrain/FrontLeftModule/SteerAbsoluteAngleRad",
+              "color": "#af2437",
+              "show": true
+            },
+            {
+              "key": "/AdvantageKit/Drivetrain/FrontRightModule/SteerAbsoluteAngleRad",
+              "color": "#80588e",
+              "show": true
+            }
+          ]
+        },
+        "discrete": {
+          "fields": []
+        },
+        "right": {
+          "lockedRange": null,
+          "unitConversion": {
+            "type": null,
+            "factor": 1
+          },
+          "fields": []
+        }
+      },
+      "title": "Modual States"
+    },
+    {
+      "type": 1,
+      "legends": {
+        "left": {
+          "lockedRange": null,
+          "unitConversion": {
+            "type": null,
+            "factor": 1
+          },
+          "fields": [
+            {
+              "key": "/AdvantageKit/Intake/inputs/IntakeCurrentDrawAmps",
+              "color": "#2b66a2",
+              "show": true
+            }
+          ]
+        },
+        "discrete": {
+          "fields": []
+        },
+        "right": {
+          "lockedRange": null,
+          "unitConversion": {
+            "type": null,
+            "factor": 1
+          },
+          "fields": [
+            {
+              "key": "/AdvantageKit/Intake/inputs/IntakeAppliedVoltage",
+              "color": "#e5b31b",
+              "show": true
+            }
+          ]
+        }
+      },
+      "title": "Intake"
+    },
+    {
+      "type": 1,
+      "legends": {
+        "left": {
+          "lockedRange": null,
+          "unitConversion": {
+            "type": "angle",
+            "factor": 1,
+            "from": "radians",
+            "to": "degrees"
+          },
+          "fields": [
+            {
+              "key": "/AdvantageKit/Drivetrain/Gyro/PitchRadians",
+              "color": "#e5b31b",
+              "show": true
+            },
+            {
+              "key": "/AdvantageKit/Drivetrain/Gyro/RollRadians",
+              "color": "#2b66a2",
+              "show": true
+            },
+            {
+              "key": "/AdvantageKit/Drivetrain/Gyro/YawRadians",
+              "color": "#af2437",
+              "show": true
+            }
+          ]
+        },
+        "discrete": {
+          "fields": []
+        },
+        "right": {
+          "lockedRange": null,
+          "unitConversion": {
+            "type": null,
+            "factor": 1
+          },
+          "fields": []
+        }
+      },
+      "title": "Gyro"
+    },
+    {
+      "type": 1,
+      "legends": {
+        "left": {
+          "lockedRange": null,
+          "unitConversion": {
+            "type": null,
+            "factor": 1
+          },
+          "fields": [
+            {
+              "key": "/AdvantageKit/PowerDistribution/Voltage",
+              "color": "#2b66a2",
+              "show": true
+            }
+          ]
+        },
+        "discrete": {
+          "fields": [
+            {
+              "key": "/AdvantageKit/PowerDistribution/Faults",
+              "color": "#e5b31b",
+              "show": true
+            },
+            {
+              "key": "/AdvantageKit/PowerDistribution/StickyFaults",
+              "color": "#80588e",
+              "show": true
+            }
+          ]
+        },
+        "right": {
+          "lockedRange": null,
+          "unitConversion": {
+            "type": null,
+            "factor": 1
+          },
+          "fields": [
+            {
+              "key": "/AdvantageKit/PowerDistribution/TotalCurrent",
+              "color": "#af2437",
+              "show": true
+            }
+          ]
+        }
+      },
+      "title": "Battery"
+    },
+    {
+      "type": 9,
+      "fields": [
+        "/AdvantageKit/RealOutputs/Drivetrain/DesiredModuleStates",
+        "/AdvantageKit/RealOutputs/Drivetrain/OptimizedModuleStates",
+        null
+      ],
+      "listFields": [],
+      "options": {
+        "maxSpeed": 4.5,
+        "rotationUnits": "radians",
+        "arrangement": "0,1,2,3",
+        "sizeLeftRight": 0.65,
+        "sizeFrontBack": 0.65,
+        "forwardDirection": "up"
+      },
+      "title": "Swerve"
+    },
+    {
+      "type": 10,
+      "fields": [
+        "/AdvantageKit/RealOutputs/Arm/Mechanism",
+        null,
+        null
+      ],
+      "listFields": [],
+      "options": {},
+      "title": "Arm"
+    },
+    {
+      "type": 5,
+      "fields": [],
+      "listFields": [
+        [
+          {
+            "type": "Robot",
+            "key": "/AdvantageKit/RealOutputs/Drivetrain/Pose",
+            "fieldTypeIndex": 0
+          }
+        ]
+      ],
+      "options": {
+        "game": "2023",
+        "unitDistance": "meters",
+        "unitRotation": "radians",
+        "origin": "right",
+        "size": 0.75,
+        "allianceBumpers": "auto",
+        "allianceOrigin": "auto",
+        "orientation": "blue left, red right"
+      },
+      "title": "Odometry"
+    },
+    {
+      "type": 3,
+      "field": "/AdvantageKit/RealOutputs/Console",
+      "title": "Console"
+    }
+  ]
+}

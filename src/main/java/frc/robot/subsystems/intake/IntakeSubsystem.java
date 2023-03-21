@@ -9,8 +9,8 @@ import org.littletonrobotics.junction.Logger;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.utility.GameModeUtil;
-import frc.robot.utility.GamePiece;
+import frc.robot.utility.GameMode;
+import frc.robot.utility.GameMode.GamePiece;
 
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -28,7 +28,7 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         io.updateInputs(inputs);
-        directionMultiplier = GameModeUtil.get() == GamePiece.CONE ? 1 : -1;
+        directionMultiplier = GameMode.getGamePiece() == GamePiece.CONE ? 1 : -1;
         
         Logger.getInstance().processInputs("Intake/inputs", inputs);
     }
