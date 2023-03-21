@@ -5,8 +5,8 @@ import java.util.HashMap;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import frc.robot.utility.GameModeUtil;
-import frc.robot.utility.GamePiece;
+import frc.robot.utility.GameMode;
+import frc.robot.utility.GameMode.GamePiece;
 
 /** Add your docs here. */
 public class ArmPoseLibrary {
@@ -51,9 +51,9 @@ public class ArmPoseLibrary {
 
     public static Pose2d get(ArmPoseID poseID) {
         Pose2d pose;
-        if (GameModeUtil.get() == GamePiece.CUBE) {
+        if (GameMode.getGamePiece() == GamePiece.CUBE) {
             pose = cubePoses.get(poseID);
-        } else if (GameModeUtil.get() == GamePiece.CONE) {
+        } else if (GameMode.getGamePiece() == GamePiece.CONE) {
             pose = conePoses.get(poseID);
         } else {
             throw new IllegalArgumentException("Invalid Game Piece");

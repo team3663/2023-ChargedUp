@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerPorts;
 import frc.robot.commands.AdjustArmPoseCommand;
-import frc.robot.commands.AutoBalanceCommand;
 import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DefaultIntakeCommand;
@@ -28,8 +27,8 @@ import frc.robot.utility.AutoCommandChooser;
 import frc.robot.utility.ControllerHelper;
 import frc.robot.utility.RobotIdentity;
 import frc.robot.utility.config.RobotConfig;
-import frc.robot.utility.GameModeUtil;
-import frc.robot.utility.GamePiece;
+import frc.robot.utility.GameMode;
+import frc.robot.utility.GameMode.GamePiece;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -40,11 +39,11 @@ import frc.robot.utility.GamePiece;
 public class RobotContainer {
 
     private final CommandXboxController driverController = new CommandXboxController(ControllerPorts.DRIVER);
-    private final ControllerHelper driverHelper = new ControllerHelper();
-
     private final CommandXboxController operatorController = new CommandXboxController(ControllerPorts.OPERATOR);
-     @SuppressWarnings ("unused") 
     private final CommandXboxController testController = new CommandXboxController(ControllerPorts.TEST);
+
+    private final ControllerHelper driverHelper = new ControllerHelper();
+    
     private AutoCommandChooser autoChooser;
 
     // Subsystems       
@@ -127,8 +126,8 @@ public class RobotContainer {
 
         driverController.a().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.FLOOR_PICKUP));
         driverController.b().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.STOWED));
-        driverController.x().onTrue(new InstantCommand(() -> GameModeUtil.set(GamePiece.CUBE)));
-        driverController.y().onTrue(new InstantCommand(() -> GameModeUtil.set(GamePiece.CONE)));
+        driverController.x().onTrue(new InstantCommand(() -> GameMode.setGamePiece(GamePiece.CUBE)));
+        driverController.y().onTrue(new InstantCommand(() -> GameMode.setGamePiece(GamePiece.CONE)));
 
         driverController.leftTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> 0.5));
         driverController.rightTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> -1.0));
@@ -144,31 +143,24 @@ public class RobotContainer {
         // Operator controller bindings
         //
 
-        operatorController.a().onTrue(new InstantCommand(() -> armSubsystem.logPose()));
-        operatorController.b().onTrue(new AutoBalanceCommand(drivetrainSubsystem));
-        operatorController.x().onTrue(new InstantCommand(() -> GameModeUtil.set(GamePiece.CUBE)));
-        operatorController.y().onTrue(new InstantCommand(() -> GameModeUtil.set(GamePiece.CONE)));
-
-        operatorController.povUp().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0.025, 0));
-        operatorController.povDown().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, -0.025, 0));   
-        operatorController.povLeft().onTrue(new AdjustArmPoseCommand(armSubsystem, -0.025, 0, 0));
-        operatorController.povRight().onTrue(new AdjustArmPoseCommand(armSubsystem, 0.025, 0, 0));
-        operatorController.leftBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(2)));
-        operatorController.rightBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(-2)));
+        operatorController.x().onTrue(new InstantCommand(() -> GameMode.setGamePiece(GamePiece.CUBE)));
+        operatorController.y().onTrue(new InstantCommand(() -> GameMode.setGamePiece(GamePiece.CONE)));
        
         //
         // Test controller bindings
         //
 
-/*         testController.a().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.INTERMEDIATE));
-        testController.y().onTrue(new InstantCommand(() -> armSubsystem.logPose()));
-        
-        testController.povUp().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0.025, 0));
-        testController.povDown().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, -0.025, 0));   
-        testController.povLeft().onTrue(new AdjustArmPoseCommand(armSubsystem, -0.025, 0, 0));
-        testController.povRight().onTrue(new AdjustArmPoseCommand(armSubsystem, 0.025, 0, 0));
-        testController.leftBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(2)));
-        testController.rightBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(-2))); */
+        if (testController.getHID().isConnected())
+        {
+            testController.a().onTrue(new InstantCommand(() -> armSubsystem.logPose()));
+            
+            testController.povUp().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0.025, 0));
+            testController.povDown().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, -0.025, 0));   
+            testController.povLeft().onTrue(new AdjustArmPoseCommand(armSubsystem, -0.025, 0, 0));
+            testController.povRight().onTrue(new AdjustArmPoseCommand(armSubsystem, 0.025, 0, 0));
+            testController.leftBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(2)));
+            testController.rightBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(-2)));
+        }
     }
 
     private void setupAutoChooser() {

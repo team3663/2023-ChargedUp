@@ -3,8 +3,8 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.LedSubsystem;
-import frc.robot.utility.GameModeUtil;
-import frc.robot.utility.GamePiece;
+import frc.robot.utility.GameMode;
+import frc.robot.utility.GameMode.GamePiece;
 
 public class DefaultLedCommand extends CommandBase {
 
@@ -27,7 +27,7 @@ public class DefaultLedCommand extends CommandBase {
     @Override
     public void execute() {
 
-        GamePiece current = GameModeUtil.get();
+        GamePiece current = GameMode.getGamePiece();
 
         if (current == GamePiece.CONE) {
             subsystem.setColor(coneColor);
