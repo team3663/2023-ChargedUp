@@ -43,6 +43,7 @@ public class LedSubsystem extends SubsystemBase {
     public void periodic() {
         if (this.getCurrentCommand() == null) {
             setColor(colores[thruRambow]);
+            thruRambow++;
         }
 
         long[] RGB = {curentColor.red, curentColor.green, curentColor.blue};
