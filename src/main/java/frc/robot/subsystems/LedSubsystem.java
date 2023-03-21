@@ -20,7 +20,7 @@ public class LedSubsystem extends SubsystemBase {
     private DigitalOutput blue;
     private Color8Bit curentColor;
 
-    private Color8Bit[] colores;
+    private Color8Bit[] colors;
     private int thruRambow;
 
     public LedSubsystem(int redChannel, int greenChannel, int blueChannel) {
@@ -36,17 +36,17 @@ public class LedSubsystem extends SubsystemBase {
         blue.enablePWM(0);
 
         createColores();
-    
+
     }
 
     @Override
     public void periodic() {
         if (this.getCurrentCommand() == null) {
-            setColor(colores[thruRambow]);
-            thruRambow++;
+            setColor(colors[thruRambow]);
+            thruRambow = ++thruRambow % colors.length;
         }
 
-        long[] RGB = {curentColor.red, curentColor.green, curentColor.blue};
+        long[] RGB = { curentColor.red, curentColor.green, curentColor.blue };
 
         Logger.getInstance().recordOutput("LED/RGBvalues", RGB);
     }
@@ -61,23 +61,23 @@ public class LedSubsystem extends SubsystemBase {
     }
 
     private void createColores() {
-        List<Color8Bit> colors = new ArrayList<Color8Bit>();
+        List<Color8Bit> colorList = new ArrayList<Color8Bit>();
 
         for (int r = 0; r < 100; r++)
-            colors.add(new Color8Bit(r * 255 / step, 255, 0));
+            colorList.add(new Color8Bit(r * 255 / step, 255, 0));
         for (int g = 100; g > 0; g--)
-            colors.add(new Color8Bit(255, g * 255 / step, 0));
+            colorList.add(new Color8Bit(255, g * 255 / step, 0));
         for (int b = 0; b < 100; b++)
-            colors.add(new Color8Bit(255, 0, b * 255 / step));
+            colorList.add(new Color8Bit(255, 0, b * 255 / step));
         for (int r = 100; r > 0; r--)
-            colors.add(new Color8Bit(r * 255 / step, 0, 255));
+            colorList.add(new Color8Bit(r * 255 / step, 0, 255));
         for (int g = 0; g < 100; g++)
-            colors.add(new Color8Bit(0, g * 255 / step, 255));
+            colorList.add(new Color8Bit(0, g * 255 / step, 255));
         for (int b = 100; b > 0; b--)
-            colors.add(new Color8Bit(0, 255, b * 255 / step));
-        colors.add(new Color8Bit(0, 255, 0));
-
-        colores = colors.toArray(new Color8Bit[colors.size()]);
+            colorList.add(new Color8Bit(0, 255, b * 255 / step));
+            
+        colorList.add(new Color8Bit(0, 255, 0));
+        colors = colorList.toArray(new Color8Bit[colorList.size()]);
     }
 
 }
