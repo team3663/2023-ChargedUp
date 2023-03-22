@@ -172,6 +172,9 @@ public final class AutoCommandFactory {
         Command cmd = builder.fullAuto(pathGroup);
         group.addCommands(cmd);
 
+        // cmd = builder.fullAuto(PathPlanner.loadPath("HighSide2Return", normalConstraints));
+        // group.addCommands(cmd);
+
         return group;
     }
 
