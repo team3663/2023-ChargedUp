@@ -123,6 +123,26 @@ public final class AutoCommandFactory {
         return group;
     }
 
+    /**
+     * Autonomous command that places our preloaded game piece, drives over 
+     * the charging station (out of the community) then balance on the charge station.
+     */
+    public static SequentialCommandGroup createMidMobilityBalanceAuto() {
+
+        // We start with the PlaceOnly auto command and add to it.
+        SequentialCommandGroup group = createPlaceOnlyAuto();
+
+        // Move over the charging station, out of the community, then reverse back on the charge station.
+        Command cmd = builder.fullAuto(PathPlanner.loadPath("OverChargeStation", normalConstraints));
+        group.addCommands(cmd);
+
+        // Balance on the charging station
+        cmd = new AutoBalanceCommand(drivetrain);
+        group.addCommands(cmd);
+
+        return group;
+    }
+
     public static SequentialCommandGroup createBumpSideAuto() {
 
         // We start with the PlaceOnly auto and add to it
