@@ -16,6 +16,8 @@ import frc.robot.commands.IntakeFeedCommand;
 import frc.robot.commands.ScaleJoystickCommand;
 import frc.robot.commands.SequenceArmPosesCommand;
 import frc.robot.commands.SetArmPoseCommand;
+import frc.robot.commands.SetGamePieceCommand;
+import frc.robot.commands.SetScoringPositionCommand;
 import frc.robot.photonvision.IPhotonVision;
 import frc.robot.subsystems.LedSubsystem;
 import frc.robot.subsystems.SubsystemFactory;
@@ -27,8 +29,8 @@ import frc.robot.utility.AutoCommandChooser;
 import frc.robot.utility.ControllerHelper;
 import frc.robot.utility.RobotIdentity;
 import frc.robot.utility.config.RobotConfig;
-import frc.robot.utility.GameMode;
 import frc.robot.utility.GameMode.GamePiece;
+import frc.robot.utility.GameMode.ScoringPosition;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -126,8 +128,8 @@ public class RobotContainer {
 
         driverController.a().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.FLOOR_PICKUP));
         driverController.b().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.STOWED));
-        driverController.x().onTrue(new InstantCommand(() -> GameMode.setGamePiece(GamePiece.CUBE)));
-        driverController.y().onTrue(new InstantCommand(() -> GameMode.setGamePiece(GamePiece.CONE)));
+        driverController.x().onTrue(new SetGamePieceCommand(GamePiece.CUBE));
+        driverController.y().onTrue(new SetGamePieceCommand(GamePiece.CONE));
 
         driverController.leftTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> 0.5));
         driverController.rightTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> -1.0));
@@ -143,8 +145,14 @@ public class RobotContainer {
         // Operator controller bindings
         //
 
-        operatorController.x().onTrue(new InstantCommand(() -> GameMode.setGamePiece(GamePiece.CUBE)));
-        operatorController.y().onTrue(new InstantCommand(() -> GameMode.setGamePiece(GamePiece.CONE)));
+        // Set the current game piece we are handling
+        operatorController.x().onTrue(new SetGamePieceCommand(GamePiece.CUBE));
+        operatorController.y().onTrue(new SetGamePieceCommand(GamePiece.CONE));
+
+        // Set the target scoring position
+        operatorController.povUp().onTrue(new SetScoringPositionCommand(ScoringPosition.HIGH));
+        operatorController.povRight().onTrue(new SetScoringPositionCommand(ScoringPosition.MED));       
+        operatorController.povDown().onTrue(new SetScoringPositionCommand(ScoringPosition.LOW));   
        
         //
         // Test controller bindings
