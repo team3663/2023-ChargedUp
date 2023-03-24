@@ -40,6 +40,7 @@ public final class AutoCommandFactory {
 
         eventMap.put("floorPickup", new SetArmPoseCommand(arm, ArmPoseID.FLOOR_PICKUP));
         eventMap.put("intake", new IntakeGamePieceCommand(intake, 1000));
+        eventMap.put("stowArm", new SetArmPoseCommand(arm, ArmPoseID.STOWED));
 
         builder = new SwerveAutoBuilder(
                 () -> drivetrain.getPose(),
@@ -166,14 +167,58 @@ public final class AutoCommandFactory {
 
     public static SequentialCommandGroup createNoBumpSide2Auto() {
 
-        SequentialCommandGroup group = createPlaceOnlyAuto();
+        SequentialCommandGroup group = new SequentialCommandGroup();
 
-        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("HighSide2", normalConstraints, intakeConstraints);
-        Command cmd = builder.fullAuto(pathGroup);
+        // Raise the arm from its resting position to release the kick-stand
+        Command cmd = new SetArmPoseCommand(arm, ArmPoseID.RELEASE);
+        group.addCommands(cmd);       
+
+        // Ensure we are in the game piece mode associated with the preloaded game piece
+        cmd = new SetGamePieceCommand(GamePiece.CONE);
         group.addCommands(cmd);
 
-        // cmd = builder.fullAuto(PathPlanner.loadPath("HighSide2Return", normalConstraints));
-        // group.addCommands(cmd);
+        // Position the arm to score the preloaded game piece
+        cmd = new SequenceArmPosesCommand(arm, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_MED);
+        group.addCommands(cmd);
+
+        // Wait for the arm to stabilize
+        cmd = new WaitCommand(2);
+        group.addCommands(cmd);
+
+        // Eject the preloaded game piece
+        cmd = new EjectGamePieceCommand(intake);
+        group.addCommands(cmd);
+
+        // Return the arm to the stowed position
+        cmd = new SetArmPoseCommand(arm, ArmPoseID.STOWED);
+        group.addCommands(cmd);
+
+        cmd = new SetGamePieceCommand(GamePiece.CUBE);
+        group.addCommands(cmd);
+
+        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("HighSide2", normalConstraints, intakeConstraints);
+        cmd = builder.fullAuto(pathGroup);
+        group.addCommands(cmd);
+
+        // Return to community
+        cmd = builder.fullAuto(PathPlanner.loadPath("HighSide2Return", normalConstraints));
+        group.addCommands(cmd);
+
+        // Position the arm to score the game piece
+        cmd = new SequenceArmPosesCommand(arm, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_MED);
+        group.addCommands(cmd);
+
+        // Wait for the arm to stabilize
+        cmd = new WaitCommand(2);
+        group.addCommands(cmd);
+
+        // Eject the preloaded game piece
+        cmd = new EjectGamePieceCommand(intake);
+        group.addCommands(cmd);
+
+        // Return the arm to the stowed position
+        cmd = new SetArmPoseCommand(arm, ArmPoseID.STOWED);
+        group.addCommands(cmd);
 
         return group;
     }
