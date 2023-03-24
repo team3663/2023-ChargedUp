@@ -151,7 +151,7 @@ public class RobotContainer {
 
         // Set the target scoring position
         operatorController.povUp().onTrue(new SetScoringPositionCommand(ScoringPosition.HIGH));
-        operatorController.povRight().onTrue(new SetScoringPositionCommand(ScoringPosition.MED));       
+        operatorController.povRight().onTrue(new SetScoringPositionCommand(ScoringPosition.MIDDLE));       
         operatorController.povDown().onTrue(new SetScoringPositionCommand(ScoringPosition.LOW));   
        
         //
