@@ -24,6 +24,7 @@ public final class AutoCommandFactory {
 
     private static PathConstraints normalConstraints = new PathConstraints(4.0, 3.0);
     private static PathConstraints intakeConstraints = new PathConstraints(0.5, 2.0);
+    private static PathConstraints chargeStationConstraints = new PathConstraints(2.0, 1.5);
 
     private static HashMap<String, Command> eventMap = new HashMap<>();
     private static SwerveAutoBuilder builder;
@@ -134,7 +135,7 @@ public final class AutoCommandFactory {
         SequentialCommandGroup group = createPlaceOnlyAuto();
 
         // Move over the charging station, out of the community, then reverse back on the charge station.
-        Command cmd = builder.fullAuto(PathPlanner.loadPath("OverChargeStation", normalConstraints));
+        Command cmd = builder.fullAuto(PathPlanner.loadPath("OverChargeStation", chargeStationConstraints));
         group.addCommands(cmd);
 
         // Balance on the charging station
