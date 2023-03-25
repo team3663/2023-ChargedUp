@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerPorts;
 import frc.robot.commands.AdjustArmPoseCommand;
+import frc.robot.commands.AlignCardinalDirectionCommand;
 import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DefaultIntakeCommand;
@@ -136,6 +137,9 @@ public class RobotContainer {
         driverController.povUp().onTrue(new InstantCommand(() -> GameMode.setScoringPosition(ScoringPosition.HIGH)));
         driverController.povRight().onTrue(new InstantCommand(() -> GameMode.setScoringPosition(ScoringPosition.MIDDLE)));
         driverController.povDown().onTrue(new InstantCommand(() -> GameMode.setScoringPosition(ScoringPosition.LOW)));
+
+        // Snap to cardinal direction on right stick click
+        driverController.rightStick().onTrue(new AlignCardinalDirectionCommand(drivetrainSubsystem));
 
         //
         // Operator controller bindings
