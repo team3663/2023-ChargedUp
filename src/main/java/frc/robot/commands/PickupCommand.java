@@ -12,6 +12,8 @@ public class PickupCommand extends CommandBase {
     private final ArmSubsystem arm;
     private final IntakeSubsystem intake;
 
+    private boolean sequenced = false;
+
     public PickupCommand(ArmSubsystem arm, IntakeSubsystem intake) {
         this.arm = arm;
         this.intake = intake;
@@ -27,7 +29,8 @@ public class PickupCommand extends CommandBase {
                 arm.setTargetPose(ArmPoseLibrary.get(ArmPoseID.SINGLE_STATION_PICKUP));
                 break;
             case DOUBLE_STATION:
-                arm.setTargetPose(ArmPoseLibrary.get(ArmPoseID.DOUBLE_STATION_PICKUP));
+                arm.setTargetPose(ArmPoseLibrary.get(ArmPoseID.INTERMEDIATE));
+                sequenced = true;
                 break;
             default:
                 System.out.println("Error: Invalid scoring position");
@@ -37,6 +40,11 @@ public class PickupCommand extends CommandBase {
 
     @Override
     public void execute() {
+        if (sequenced) {
+            if (arm.atTargetPose()) {
+                arm.setTargetPose(ArmPoseLibrary.get(ArmPoseID.DOUBLE_STATION_PICKUP));
+            }
+        }
     }
 
     @Override

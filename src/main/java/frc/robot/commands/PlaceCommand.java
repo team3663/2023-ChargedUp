@@ -5,10 +5,13 @@ import frc.robot.subsystems.arm.ArmPoseLibrary;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.arm.ArmPoseLibrary.ArmPoseID;
 import frc.robot.utility.GameMode;
+import frc.robot.utility.GameMode.ScoringPosition;
 
 public class PlaceCommand extends CommandBase {
     
     private final ArmSubsystem arm;
+    
+    private boolean sequenced = false;
 
     public PlaceCommand(ArmSubsystem arm) {
         this.arm = arm;
@@ -21,10 +24,12 @@ public class PlaceCommand extends CommandBase {
                 arm.setTargetPose(ArmPoseLibrary.get(ArmPoseID.SCORE_LOW));
                 break;
             case MIDDLE:
-                arm.setTargetPose(ArmPoseLibrary.get(ArmPoseID.SCORE_MED));
+                arm.setTargetPose(ArmPoseLibrary.get(ArmPoseID.INTERMEDIATE));
+                sequenced = true;
                 break;
             case HIGH:
-                arm.setTargetPose(ArmPoseLibrary.get(ArmPoseID.SCORE_HI));
+                arm.setTargetPose(ArmPoseLibrary.get(ArmPoseID.INTERMEDIATE));
+                sequenced = true;
                 break;
             default:
                 System.out.println("Error: Invalid scoring position");
@@ -32,7 +37,17 @@ public class PlaceCommand extends CommandBase {
     }
 
     @Override
-    public void execute() {}
+    public void execute() {
+        if (sequenced) {
+            if (arm.atTargetPose()) {
+                if (GameMode.getScoringPosition() == ScoringPosition.HIGH) {
+                    arm.setTargetPose(ArmPoseLibrary.get(ArmPoseID.SCORE_HI));
+                } else {
+                    arm.setTargetPose(ArmPoseLibrary.get(ArmPoseID.SCORE_MED));
+                }
+            }
+        }
+    }
 
     @Override
     public void end(boolean interrupted) {
