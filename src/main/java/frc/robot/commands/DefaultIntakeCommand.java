@@ -7,7 +7,8 @@ import frc.robot.utility.GameMode.GamePiece;
 
 public class DefaultIntakeCommand extends CommandBase {
 
-  private static final double HOLD_POWER = 0.05;
+  private static final double CONE_HOLD_POWER = 0.05;
+  private static final double CUBE_HOLD_POWER = 0.05;
 
   private IntakeSubsystem intake;
 
@@ -26,7 +27,7 @@ public class DefaultIntakeCommand extends CommandBase {
     // If we are in cone mode then run the intake in at low power to help keep a cone
     // from falling out of the intake.
     GamePiece currentPiece = GameMode.getGamePiece();
-    intake.setPower(currentPiece == GamePiece.CONE ? HOLD_POWER : 0.0);
+    intake.setPower(currentPiece == GamePiece.CONE ? CONE_HOLD_POWER : CUBE_HOLD_POWER);
   }
 
   @Override
