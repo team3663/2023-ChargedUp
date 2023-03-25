@@ -97,14 +97,14 @@ public class GameMode {
         .withPosition(4, 0)
         .withSize(1, 1)
         .withWidget(BuiltInWidgets.kBooleanBox)
-        .withProperties(Map.of("Color when true", "#00FF00", "Color when false", "#FFFFFF"))
+        .withProperties(Map.of("Color when true", "#FF9600", "Color when false", "#FFFFFF"))
         .getEntry();
 
         cubeEntry = tab.add("Cube", gamePiece == GamePiece.CUBE)
         .withPosition(4, 1)
         .withSize(1, 1)
         .withWidget(BuiltInWidgets.kBooleanBox)
-        .withProperties(Map.of("Color when true", "#00FF00", "Color when false", "#FFFFFF"))
+        .withProperties(Map.of("Color when true", "#AA00FF", "Color when false", "#FFFFFF"))
         .getEntry();
 
 
