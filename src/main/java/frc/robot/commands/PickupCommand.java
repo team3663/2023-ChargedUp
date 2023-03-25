@@ -28,6 +28,7 @@ public class PickupCommand extends CommandBase {
                 break;
             case DOUBLE_STATION:
                 arm.setTargetPose(ArmPoseLibrary.get(ArmPoseID.DOUBLE_STATION_PICKUP));
+                break;
             default:
                 System.out.println("Error: Invalid scoring position");
         }
