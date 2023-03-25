@@ -13,6 +13,8 @@ import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DefaultIntakeCommand;
 import frc.robot.commands.DefaultLedCommand;
 import frc.robot.commands.IntakeFeedCommand;
+import frc.robot.commands.PickupCommand;
+import frc.robot.commands.PlaceCommand;
 import frc.robot.commands.ScaleJoystickCommand;
 import frc.robot.commands.SequenceArmPosesCommand;
 import frc.robot.commands.SetArmPoseCommand;
@@ -27,6 +29,7 @@ import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.utility.AutoCommandChooser;
 import frc.robot.utility.ControllerHelper;
+import frc.robot.utility.GameMode;
 import frc.robot.utility.RobotIdentity;
 import frc.robot.utility.config.RobotConfig;
 import frc.robot.utility.GameMode.GamePiece;
@@ -121,26 +124,20 @@ public class RobotContainer {
             () -> drivetrainSubsystem.resetPose(new Pose2d(drivetrainSubsystem.getPose().getX(), drivetrainSubsystem.getPose().getY(), new Rotation2d()))
         ));
 
-        driverController.povLeft().onTrue(new SequenceArmPosesCommand(armSubsystem, ArmPoseID.INTERMEDIATE, ArmPoseID.DOUBLE_STATION_PICKUP));
-        driverController.povDown().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SCORE_LOW));
-        driverController.povRight().onTrue(new SequenceArmPosesCommand(armSubsystem, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_MED));   
-        driverController.povUp().onTrue(new SequenceArmPosesCommand(armSubsystem, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_HI));
+        driverController.povUp().onTrue(new InstantCommand(() -> GameMode.setScoringPosition(ScoringPosition.HIGH)));
+        driverController.povRight().onTrue(new InstantCommand(() -> GameMode.setScoringPosition(ScoringPosition.MIDDLE)));
+        driverController.povDown().onTrue(new InstantCommand(() -> GameMode.setScoringPosition(ScoringPosition.LOW)));
 
-        driverController.a().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.FLOOR_PICKUP));
+        driverController.leftTrigger().onTrue(new PickupCommand(armSubsystem, intakeSubsystem));
+        driverController.rightTrigger().onTrue(new PlaceCommand(armSubsystem));
+
+        driverController.leftBumper().onTrue(new IntakeFeedCommand(intakeSubsystem, () -> 0.5));
+        driverController.rightBumper().onTrue(new ScaleJoystickCommand(driverHelper, 0.33));
+
         driverController.b().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.STOWED));
         driverController.x().onTrue(new SetGamePieceCommand(GamePiece.CUBE));
         driverController.y().onTrue(new SetGamePieceCommand(GamePiece.CONE));
 
-        driverController.leftTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> 0.5));
-        driverController.rightTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> -1.0));
-
-        // Slow-mode and Slower-mode
-        driverController.leftBumper().whileTrue(new ScaleJoystickCommand(driverHelper, 0.75));
-        driverController.rightBumper().whileTrue(new ScaleJoystickCommand(driverHelper, 0.5));
-
-        // Snap to cardinal direction on right stick click
-        //driverController.rightStick().onTrue(new AlignCardinalDirectionCommand(drivetrainSubsystem));
-        
         //
         // Operator controller bindings
         //
