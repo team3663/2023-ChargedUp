@@ -10,6 +10,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.arm.ArmSubsystem;
@@ -20,10 +21,10 @@ import frc.robot.utility.GameMode.GamePiece;
 
 public final class AutoCommandFactory {
     private static final PIDConstants AUTO_TRANSLATION_PID_CONSTANTS = new PIDConstants(2.5, 0.0, 0.0);
-    private static final PIDConstants AUTO_ROTATION_PID_CONSTANTS = new PIDConstants(2.0, 0.0, 0.0);
+    private static final PIDConstants AUTO_ROTATION_PID_CONSTANTS = new PIDConstants(7.0, 0.0, 0.25);
 
     private static PathConstraints normalConstraints = new PathConstraints(4.0, 3.0);
-    private static PathConstraints intakeConstraints = new PathConstraints(0.5, 2.0);
+    private static PathConstraints intakeConstraints = new PathConstraints(0.25, 2.0);
     private static PathConstraints chargeStationConstraints = new PathConstraints(2.0, 1.0);
 
     private static HashMap<String, Command> eventMap = new HashMap<>();
@@ -40,7 +41,6 @@ public final class AutoCommandFactory {
         AutoCommandFactory.intake = intake;
 
         eventMap.put("floorPickup", new SetArmPoseCommand(arm, ArmPoseID.FLOOR_PICKUP));
-        eventMap.put("intake", new IntakeGamePieceCommand(intake, 1000));
         eventMap.put("stowArm", new SetArmPoseCommand(arm, ArmPoseID.STOWED));
 
         builder = new SwerveAutoBuilder(
@@ -183,8 +183,8 @@ public final class AutoCommandFactory {
         group.addCommands(cmd);
 
         // Wait for the arm to stabilize
-        cmd = new WaitCommand(2);
-        group.addCommands(cmd);
+        // cmd = new WaitCommand(2);
+        // group.addCommands(cmd);
 
         // Eject the preloaded game piece
         cmd = new EjectGamePieceCommand(intake);
@@ -198,28 +198,30 @@ public final class AutoCommandFactory {
         group.addCommands(cmd);
 
         List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("HighSide2", normalConstraints, intakeConstraints);
-        cmd = builder.fullAuto(pathGroup);
+        cmd = builder.fullAuto(pathGroup.get(0));
         group.addCommands(cmd);
+        cmd = builder.fullAuto(pathGroup.get(1));
+        group.addCommands(new ParallelRaceGroup(cmd, new IntakeGamePieceCommand(intake, 4000)));
 
         // Return to community
-        cmd = builder.fullAuto(PathPlanner.loadPath("HighSide2Return", normalConstraints));
-        group.addCommands(cmd);
+        // cmd = builder.fullAuto(PathPlanner.loadPath("HighSide2Return", normalConstraints));
+        // group.addCommands(cmd);
 
-        // Position the arm to score the game piece
-        cmd = new SequenceArmPosesCommand(arm, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_MED);
-        group.addCommands(cmd);
+        // // Position the arm to score the game piece
+        // cmd = new SequenceArmPosesCommand(arm, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_MED);
+        // group.addCommands(cmd);
 
-        // Wait for the arm to stabilize
-        cmd = new WaitCommand(2);
-        group.addCommands(cmd);
+        // // Wait for the arm to stabilize
+        // cmd = new WaitCommand(2);
+        // group.addCommands(cmd);
 
-        // Eject the preloaded game piece
-        cmd = new EjectGamePieceCommand(intake);
-        group.addCommands(cmd);
+        // // Eject the preloaded game piece
+        // cmd = new EjectGamePieceCommand(intake);
+        // group.addCommands(cmd);
 
-        // Return the arm to the stowed position
-        cmd = new SetArmPoseCommand(arm, ArmPoseID.STOWED);
-        group.addCommands(cmd);
+        // // Return the arm to the stowed position
+        // cmd = new SetArmPoseCommand(arm, ArmPoseID.STOWED);
+        // group.addCommands(cmd);
 
         return group;
     }

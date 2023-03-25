@@ -9,10 +9,10 @@ import edu.wpi.first.math.util.Units;
 
 public class AlignCardinalDirectionCommand extends CommandBase {
 
-  private static final double POSITION_TOLERANCE_RADIANS = Units.degreesToRadians(2.0);
+  private static final double POSITION_TOLERANCE_RADIANS = Units.degreesToRadians(3.0);
 
   private final DrivetrainSubsystem drivetrain;
-  private PIDController pid = new PIDController(5, 0, 0);
+  private PIDController pid = new PIDController(7.0, 0.0, 0.25);
 
   public AlignCardinalDirectionCommand(DrivetrainSubsystem drivetrain) {
     this.drivetrain = drivetrain;
