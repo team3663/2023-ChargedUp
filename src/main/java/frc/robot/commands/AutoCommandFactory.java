@@ -24,7 +24,7 @@ public final class AutoCommandFactory {
 
     private static PathConstraints normalConstraints = new PathConstraints(4.0, 3.0);
     private static PathConstraints intakeConstraints = new PathConstraints(0.5, 2.0);
-    private static PathConstraints chargeStationConstraints = new PathConstraints(2.0, 1.5);
+    private static PathConstraints chargeStationConstraints = new PathConstraints(2.0, 1.0);
 
     private static HashMap<String, Command> eventMap = new HashMap<>();
     private static SwerveAutoBuilder builder;
@@ -91,8 +91,8 @@ public final class AutoCommandFactory {
         group.addCommands(cmd);
 
         // Wait for the arm to stabilize
-        cmd = new WaitCommand(2);
-        group.addCommands(cmd);
+        // cmd = new WaitCommand(2);
+        // group.addCommands(cmd);
 
         // Eject the preloaded game piece
         cmd = new EjectGamePieceCommand(intake);
@@ -115,7 +115,7 @@ public final class AutoCommandFactory {
         SequentialCommandGroup group = createPlaceOnlyAuto();
 
         // Move until we are far enough on the charging station that the robot is tilted.
-        Command cmd = builder.fullAuto(PathPlanner.loadPath("ChargeStation", normalConstraints));
+        Command cmd = builder.fullAuto(PathPlanner.loadPath("ChargeStation", chargeStationConstraints));
         group.addCommands(cmd);
 
         // Balance on the charging station
