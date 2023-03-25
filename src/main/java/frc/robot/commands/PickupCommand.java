@@ -21,6 +21,7 @@ public class PickupCommand extends CommandBase {
 
     @Override
     public void initialize() {
+        sequenced = false;
         switch (GameMode.getPickupLocation()) {
             case FLOOR:
                 arm.setTargetPose(ArmPoseLibrary.get(ArmPoseID.FLOOR_PICKUP));

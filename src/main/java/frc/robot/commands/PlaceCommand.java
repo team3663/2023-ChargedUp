@@ -19,6 +19,7 @@ public class PlaceCommand extends CommandBase {
 
     @Override
     public void initialize() {
+        sequenced = false;
         switch (GameMode.getScoringPosition()) {
             case LOW:
                 arm.setTargetPose(ArmPoseLibrary.get(ArmPoseID.SCORE_LOW));
