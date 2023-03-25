@@ -16,7 +16,6 @@ import frc.robot.commands.IntakeFeedCommand;
 import frc.robot.commands.PickupCommand;
 import frc.robot.commands.PlaceCommand;
 import frc.robot.commands.ScaleJoystickCommand;
-import frc.robot.commands.SequenceArmPosesCommand;
 import frc.robot.commands.SetArmPoseCommand;
 import frc.robot.commands.SetGamePieceCommand;
 import frc.robot.commands.SetScoringPositionCommand;
