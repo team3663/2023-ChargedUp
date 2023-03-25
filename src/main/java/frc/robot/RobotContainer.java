@@ -124,23 +124,27 @@ public class RobotContainer {
             () -> drivetrainSubsystem.resetPose(new Pose2d(drivetrainSubsystem.getPose().getX(), drivetrainSubsystem.getPose().getY(), new Rotation2d()))
         ));
 
-        driverController.povUp().onTrue(new InstantCommand(() -> GameMode.setScoringPosition(ScoringPosition.HIGH)));
-        driverController.povRight().onTrue(new InstantCommand(() -> GameMode.setScoringPosition(ScoringPosition.MIDDLE)));
-        driverController.povDown().onTrue(new InstantCommand(() -> GameMode.setScoringPosition(ScoringPosition.LOW)));
-
         driverController.leftTrigger().onTrue(new PickupCommand(armSubsystem, intakeSubsystem));
         driverController.rightTrigger().onTrue(new PlaceCommand(armSubsystem));
 
         driverController.leftBumper().onTrue(new IntakeFeedCommand(intakeSubsystem, () -> 0.5));
-        driverController.rightBumper().onTrue(new ScaleJoystickCommand(driverHelper, 0.33));
+        driverController.rightBumper().onTrue(new ScaleJoystickCommand(driverHelper, 0.5));
 
         driverController.b().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.STOWED));
         driverController.x().onTrue(new SetGamePieceCommand(GamePiece.CUBE));
         driverController.y().onTrue(new SetGamePieceCommand(GamePiece.CONE));
 
+        driverController.povUp().onTrue(new InstantCommand(() -> GameMode.setScoringPosition(ScoringPosition.HIGH)));
+        driverController.povRight().onTrue(new InstantCommand(() -> GameMode.setScoringPosition(ScoringPosition.MIDDLE)));
+        driverController.povDown().onTrue(new InstantCommand(() -> GameMode.setScoringPosition(ScoringPosition.LOW)));
+
         //
         // Operator controller bindings
         //
+
+        // Nudge intake angle up and down
+        operatorController.leftBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(2)));
+        operatorController.rightBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(-2)));
 
         // Set the current game piece we are handling
         operatorController.x().onTrue(new SetGamePieceCommand(GamePiece.CUBE));
