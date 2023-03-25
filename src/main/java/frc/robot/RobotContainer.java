@@ -123,8 +123,8 @@ public class RobotContainer {
             () -> drivetrainSubsystem.resetPose(new Pose2d(drivetrainSubsystem.getPose().getX(), drivetrainSubsystem.getPose().getY(), new Rotation2d()))
         ));
 
-        driverController.leftTrigger().onTrue(new PickupCommand(armSubsystem, intakeSubsystem));
-        driverController.rightTrigger().onTrue(new PlaceCommand(armSubsystem));
+        driverController.leftTrigger().whileTrue(new PickupCommand(armSubsystem, intakeSubsystem));
+        driverController.rightTrigger().whileTrue(new PlaceCommand(armSubsystem));
 
         driverController.leftBumper().onTrue(new IntakeFeedCommand(intakeSubsystem, () -> 0.5));
         driverController.rightBumper().onTrue(new ScaleJoystickCommand(driverHelper, 0.5));
