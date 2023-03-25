@@ -24,10 +24,10 @@ public class ArmSubsystem extends SubsystemBase {
     // angle constraints for each joint
     private static final double SHOULDER_MIN_ANGLE_RAD = Units.degreesToRadians(91);
     private static final double SHOULDER_MAX_ANGLE_RAD = Units.degreesToRadians(157.5);
-    private static final double ELBOW_MIN_ANGLE_RAD = Units.degreesToRadians(-169);
+    private static final double ELBOW_MIN_ANGLE_RAD = Units.degreesToRadians(-174.6);
     private static final double ELBOW_MAX_ANGLE_RAD = Units.degreesToRadians(-50);
     private static final double WRIST_MIN_ANGLE_RAD = Units.degreesToRadians(-116);
-    private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(128);
+    private static final double WRIST_MAX_ANGLE_RAD = Units.degreesToRadians(131);
 
     // While the elbow is inside the danger zone, the wrist must stay within its safety zone to prevent damage.
     private static final double ELBOW_DANGER_ZONE_RAD = Units.degreesToRadians(-130);
