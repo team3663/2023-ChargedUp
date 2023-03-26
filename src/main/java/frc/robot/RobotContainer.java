@@ -134,9 +134,9 @@ public class RobotContainer {
         driverController.x().onTrue(new SetGamePieceCommand(GamePiece.CUBE));
         driverController.y().onTrue(new SetGamePieceCommand(GamePiece.CONE));
 
-        driverController.povUp().onTrue(new InstantCommand(() -> GameMode.setScoringPosition(ScoringPosition.HIGH)));
-        driverController.povRight().onTrue(new InstantCommand(() -> GameMode.setScoringPosition(ScoringPosition.MIDDLE)));
-        driverController.povDown().onTrue(new InstantCommand(() -> GameMode.setScoringPosition(ScoringPosition.LOW)));
+        driverController.povUp().onTrue(new SetScoringPositionCommand(ScoringPosition.HIGH));
+        driverController.povRight().onTrue(new SetScoringPositionCommand(ScoringPosition.MIDDLE));       
+        driverController.povDown().onTrue(new SetScoringPositionCommand(ScoringPosition.LOW));  
 
         // Snap to cardinal direction on right stick click
         driverController.rightStick().onTrue(new AlignCardinalDirectionCommand(drivetrainSubsystem));
