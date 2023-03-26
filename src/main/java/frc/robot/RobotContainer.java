@@ -8,13 +8,15 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerPorts;
 import frc.robot.commands.AdjustArmPoseCommand;
+import frc.robot.commands.AlignCardinalDirectionCommand;
 import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.DefaultDrivetrainCommand;
 import frc.robot.commands.DefaultIntakeCommand;
 import frc.robot.commands.DefaultLedCommand;
 import frc.robot.commands.IntakeFeedCommand;
+import frc.robot.commands.PickupCommand;
+import frc.robot.commands.PlaceCommand;
 import frc.robot.commands.ScaleJoystickCommand;
-import frc.robot.commands.SequenceArmPosesCommand;
 import frc.robot.commands.SetArmPoseCommand;
 import frc.robot.commands.SetGamePieceCommand;
 import frc.robot.commands.SetScoringPositionCommand;
@@ -27,6 +29,7 @@ import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.utility.AutoCommandChooser;
 import frc.robot.utility.ControllerHelper;
+import frc.robot.utility.GameMode;
 import frc.robot.utility.RobotIdentity;
 import frc.robot.utility.config.RobotConfig;
 import frc.robot.utility.GameMode.GamePiece;
@@ -121,29 +124,30 @@ public class RobotContainer {
             () -> drivetrainSubsystem.resetPose(new Pose2d(drivetrainSubsystem.getPose().getX(), drivetrainSubsystem.getPose().getY(), new Rotation2d()))
         ));
 
-        driverController.povLeft().onTrue(new SequenceArmPosesCommand(armSubsystem, ArmPoseID.INTERMEDIATE, ArmPoseID.DOUBLE_STATION_PICKUP));
-        driverController.povDown().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.SCORE_LOW));
-        driverController.povRight().onTrue(new SequenceArmPosesCommand(armSubsystem, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_MED));   
-        driverController.povUp().onTrue(new SequenceArmPosesCommand(armSubsystem, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_HI));
+        driverController.leftTrigger().whileTrue(new PickupCommand(armSubsystem, intakeSubsystem));
+        driverController.rightTrigger().whileTrue(new PlaceCommand(armSubsystem));
 
-        driverController.a().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.FLOOR_PICKUP));
+        driverController.leftBumper().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> -0.5));
+        driverController.rightBumper().whileTrue(new ScaleJoystickCommand(driverHelper, 0.5));
+
         driverController.b().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.STOWED));
         driverController.x().onTrue(new SetGamePieceCommand(GamePiece.CUBE));
         driverController.y().onTrue(new SetGamePieceCommand(GamePiece.CONE));
 
-        driverController.leftTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> 0.5));
-        driverController.rightTrigger().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> -1.0));
-
-        // Slow-mode and Slower-mode
-        driverController.leftBumper().whileTrue(new ScaleJoystickCommand(driverHelper, 0.75));
-        driverController.rightBumper().whileTrue(new ScaleJoystickCommand(driverHelper, 0.5));
+        driverController.povUp().onTrue(new InstantCommand(() -> GameMode.setScoringPosition(ScoringPosition.HIGH)));
+        driverController.povRight().onTrue(new InstantCommand(() -> GameMode.setScoringPosition(ScoringPosition.MIDDLE)));
+        driverController.povDown().onTrue(new InstantCommand(() -> GameMode.setScoringPosition(ScoringPosition.LOW)));
 
         // Snap to cardinal direction on right stick click
-        //driverController.rightStick().onTrue(new AlignCardinalDirectionCommand(drivetrainSubsystem));
-        
+        driverController.rightStick().onTrue(new AlignCardinalDirectionCommand(drivetrainSubsystem));
+
         //
         // Operator controller bindings
         //
+
+        // Nudge intake angle up and down
+        operatorController.leftBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(2)));
+        operatorController.rightBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(-2)));
 
         // Set the current game piece we are handling
         operatorController.x().onTrue(new SetGamePieceCommand(GamePiece.CUBE));
