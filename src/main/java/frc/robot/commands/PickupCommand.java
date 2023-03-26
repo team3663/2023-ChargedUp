@@ -17,6 +17,8 @@ public class PickupCommand extends CommandBase {
     public PickupCommand(ArmSubsystem arm, IntakeSubsystem intake) {
         this.arm = arm;
         this.intake = intake;
+
+        addRequirements(arm, intake);
     }
 
     @Override
@@ -36,6 +38,7 @@ public class PickupCommand extends CommandBase {
             default:
                 System.out.println("Error: Invalid scoring position");
         }
+
         intake.setPower(1.0);
     }
 

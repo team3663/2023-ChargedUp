@@ -15,6 +15,8 @@ public class PlaceCommand extends CommandBase {
 
     public PlaceCommand(ArmSubsystem arm) {
         this.arm = arm;
+
+        addRequirements(arm);
     }
 
     @Override
