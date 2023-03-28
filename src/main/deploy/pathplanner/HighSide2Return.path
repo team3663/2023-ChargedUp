@@ -73,5 +73,12 @@
   "maxVelocity": 4.0,
   "maxAcceleration": null,
   "isReversed": null,
-  "markers": []
+  "markers": [
+    {
+      "position": 0.09696969696967506,
+      "names": [
+        "stowArm"
+      ]
+    }
+  ]
 }
