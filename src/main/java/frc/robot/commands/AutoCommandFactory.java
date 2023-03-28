@@ -22,8 +22,9 @@ public final class AutoCommandFactory {
     private static final PIDConstants AUTO_TRANSLATION_PID_CONSTANTS = new PIDConstants(2.5, 0.0, 0.0);
     private static final PIDConstants AUTO_ROTATION_PID_CONSTANTS = new PIDConstants(7.0, 0.0, 0.25);
 
-    private static PathConstraints normalConstraints = new PathConstraints(4.0, 3.0);
-    private static PathConstraints intakeConstraints = new PathConstraints(0.25, 2.0);
+    // TODO: reset this back to 4 and 3
+    private static PathConstraints normalConstraints = new PathConstraints(1.0, 1.0);
+    private static PathConstraints intakeConstraints = new PathConstraints(0.5, 3.0);
     private static PathConstraints chargeStationConstraints = new PathConstraints(2.0, 1.0);
 
     private static HashMap<String, Command> eventMap = new HashMap<>();
@@ -190,6 +191,7 @@ public final class AutoCommandFactory {
         group.addCommands(cmd);
 
         // Return the arm to the stowed position
+
         cmd = new SetArmPoseCommand(arm, ArmPoseID.STOWED);
         group.addCommands(cmd);
 
@@ -203,24 +205,24 @@ public final class AutoCommandFactory {
         group.addCommands(new ParallelRaceGroup(cmd, new IntakeGamePieceCommand(intake, 4000)));
 
         // Return to community
-        // cmd = builder.fullAuto(PathPlanner.loadPath("HighSide2Return", normalConstraints));
-        // group.addCommands(cmd);
+        cmd = builder.fullAuto(PathPlanner.loadPath("HighSide2Return", normalConstraints));
+        group.addCommands(cmd);
 
         // // Position the arm to score the game piece
-        // cmd = new SequenceArmPosesCommand(arm, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_MED);
-        // group.addCommands(cmd);
+        cmd = new SequenceArmPosesCommand(arm, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_MED);
+        group.addCommands(cmd);
 
         // // Wait for the arm to stabilize
         // cmd = new WaitCommand(2);
         // group.addCommands(cmd);
 
         // // Eject the preloaded game piece
-        // cmd = new EjectGamePieceCommand(intake);
-        // group.addCommands(cmd);
+        cmd = new EjectGamePieceCommand(intake);
+        group.addCommands(cmd);
 
         // // Return the arm to the stowed position
-        // cmd = new SetArmPoseCommand(arm, ArmPoseID.STOWED);
-        // group.addCommands(cmd);
+        cmd = new SetArmPoseCommand(arm, ArmPoseID.STOWED);
+        group.addCommands(cmd);
 
         return group;
     }
