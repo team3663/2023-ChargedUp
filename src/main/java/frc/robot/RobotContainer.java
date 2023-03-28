@@ -144,10 +144,6 @@ public class RobotContainer {
         // Operator controller bindings
         //
 
-        // Nudge intake angle up and down
-        operatorController.leftBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(2)));
-        operatorController.rightBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(-2)));
-
         // Set the current game piece we are handling
         operatorController.a().onTrue(new InstantCommand(() -> armSubsystem.logPose()));
         operatorController.x().onTrue(new SetGamePieceCommand(GamePiece.CUBE));
