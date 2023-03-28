@@ -29,7 +29,6 @@ import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.utility.AutoCommandChooser;
 import frc.robot.utility.ControllerHelper;
-import frc.robot.utility.GameMode;
 import frc.robot.utility.RobotIdentity;
 import frc.robot.utility.config.RobotConfig;
 import frc.robot.utility.GameMode.GamePiece;
@@ -150,13 +149,14 @@ public class RobotContainer {
         operatorController.rightBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(-2)));
 
         // Set the current game piece we are handling
+        operatorController.a().onTrue(new InstantCommand(() -> armSubsystem.logPose()));
         operatorController.x().onTrue(new SetGamePieceCommand(GamePiece.CUBE));
         operatorController.y().onTrue(new SetGamePieceCommand(GamePiece.CONE));
 
         // Set the target scoring position
         operatorController.povUp().onTrue(new SetScoringPositionCommand(ScoringPosition.HIGH));
         operatorController.povRight().onTrue(new SetScoringPositionCommand(ScoringPosition.MIDDLE));       
-        operatorController.povDown().onTrue(new SetScoringPositionCommand(ScoringPosition.LOW));   
+        operatorController.povDown().onTrue(new SetScoringPositionCommand(ScoringPosition.LOW));
        
         //
         // Test controller bindings

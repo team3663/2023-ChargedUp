@@ -226,7 +226,7 @@ public final class AutoCommandFactory {
     }
 
     public static Command createTestAuto() {
-        return builder.fullAuto(PathPlanner.loadPath("EventTester", normalConstraints));
+        return builder.fullAuto(PathPlanner.loadPath("TestPath", normalConstraints));
     }
 
     // Default constructor that just throws an exception if you attempt to create an

@@ -31,10 +31,9 @@ public class ArmSubsystem extends SubsystemBase {
 
     // While the elbow is inside the danger zone, the wrist must stay within its safety zone to prevent damage.
     private static final double ELBOW_DANGER_ZONE_RAD = Units.degreesToRadians(-130);
-    private static final double WRIST_SAFETY_ANGLE_RAD = Units.degreesToRadians(45);
+    private static final double WRIST_SAFETY_ANGLE_RAD = Units.degreesToRadians(31);
 
-    // private static final double ELBOW_VELOCITY_CONSTANT = 1.6;
-    private static final double ELBOW_GRAVITY_GAIN_COEFFICIENT = 0.5;
+    private static final double ELBOW_GRAVITY_GAIN_COEFFICIENT = 0.2;
 
     private final ArmIO io;
     private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
