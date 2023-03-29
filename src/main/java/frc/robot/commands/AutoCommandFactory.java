@@ -10,8 +10,10 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.arm.ArmPoseLibrary.ArmPoseID;
 import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
@@ -23,7 +25,7 @@ public final class AutoCommandFactory {
     private static final PIDConstants AUTO_ROTATION_PID_CONSTANTS = new PIDConstants(7.0, 0.0, 0.25);
 
     // TODO: reset this back to 4 and 3
-    private static PathConstraints normalConstraints = new PathConstraints(1.0, 1.0);
+    private static PathConstraints normalConstraints = new PathConstraints(4.0, 3.0);
     private static PathConstraints intakeConstraints = new PathConstraints(0.5, 3.0);
     private static PathConstraints chargeStationConstraints = new PathConstraints(2.0, 1.0);
 
@@ -183,7 +185,38 @@ public final class AutoCommandFactory {
         group.addCommands(cmd);
 
         // Wait for the arm to stabilize
-        // cmd = new WaitCommand(2);
+        cmd = new WaitCommand(0.5);
+        group.addCommands(cmd);
+
+        // Eject the preloaded game piece
+        cmd = new EjectGamePieceCommand(intake);
+        group.addCommands(cmd);
+
+        // Return the arm to the stowed position
+        cmd = new SetArmPoseCommand(arm, ArmPoseID.STOWED);
+        group.addCommands(cmd);
+
+        cmd = new SetGamePieceCommand(GamePiece.CUBE);
+        group.addCommands(cmd);
+
+        // Go to and pickup the cube
+        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("HighSide2", normalConstraints, intakeConstraints);
+        cmd = builder.fullAuto(pathGroup.get(0));
+        group.addCommands(cmd);
+        cmd = builder.fullAuto(pathGroup.get(1));
+        group.addCommands(new ParallelRaceGroup(cmd, new IntakeGamePieceCommand(intake, 4000)));
+        group.addCommands(new InstantCommand(() -> intake.setPower(0.1)));
+
+        // Return to community
+        cmd = builder.fullAuto(PathPlanner.loadPath("HighSide2Return", normalConstraints));
+        group.addCommands(cmd);
+
+        // Position the arm to score the game piece
+        cmd = new SequenceArmPosesCommand(arm, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_MED);
+        group.addCommands(cmd);
+
+        // Wait for the arm to stabilize
+        // cmd = new WaitCommand(0.5);
         // group.addCommands(cmd);
 
         // Eject the preloaded game piece
@@ -191,36 +224,6 @@ public final class AutoCommandFactory {
         group.addCommands(cmd);
 
         // Return the arm to the stowed position
-
-        cmd = new SetArmPoseCommand(arm, ArmPoseID.STOWED);
-        group.addCommands(cmd);
-
-        cmd = new SetGamePieceCommand(GamePiece.CUBE);
-        group.addCommands(cmd);
-
-        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("HighSide2", normalConstraints, intakeConstraints);
-        cmd = builder.fullAuto(pathGroup.get(0));
-        group.addCommands(cmd);
-        cmd = builder.fullAuto(pathGroup.get(1));
-        group.addCommands(new ParallelRaceGroup(cmd, new IntakeGamePieceCommand(intake, 4000)));
-
-        // Return to community
-        cmd = builder.fullAuto(PathPlanner.loadPath("HighSide2Return", normalConstraints));
-        group.addCommands(cmd);
-
-        // // Position the arm to score the game piece
-        cmd = new SequenceArmPosesCommand(arm, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_MED);
-        group.addCommands(cmd);
-
-        // // Wait for the arm to stabilize
-        // cmd = new WaitCommand(2);
-        // group.addCommands(cmd);
-
-        // // Eject the preloaded game piece
-        cmd = new EjectGamePieceCommand(intake);
-        group.addCommands(cmd);
-
-        // // Return the arm to the stowed position
         cmd = new SetArmPoseCommand(arm, ArmPoseID.STOWED);
         group.addCommands(cmd);
 
