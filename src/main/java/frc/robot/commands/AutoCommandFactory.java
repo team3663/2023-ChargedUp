@@ -172,9 +172,11 @@ public final class AutoCommandFactory {
 
         SequentialCommandGroup group = new SequentialCommandGroup();
 
+        Command cmd;
+
         // Raise the arm from its resting position to release the kick-stand
-        Command cmd = new SetArmPoseCommand(arm, ArmPoseID.RELEASE);
-        group.addCommands(cmd);       
+        // cmd = new SetArmPoseCommand(arm, ArmPoseID.RELEASE);
+        // group.addCommands(cmd);      
 
         // Ensure we are in the game piece mode associated with the preloaded game piece
         cmd = new SetGamePieceCommand(GamePiece.CONE);
