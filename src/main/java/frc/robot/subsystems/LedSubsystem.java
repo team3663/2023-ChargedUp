@@ -34,7 +34,7 @@ public class LedSubsystem extends SubsystemBase {
         blue = new DigitalOutput(blueChannel);
         blue.enablePWM(0);
 
-        createColores();
+        createColors();
 
     }
 
@@ -59,7 +59,7 @@ public class LedSubsystem extends SubsystemBase {
         blue.updateDutyCycle((double) color.blue / 255.0);
     }
 
-    private void createColores() {
+    private void createColors() {
         List<Color8Bit> colorList = new ArrayList<Color8Bit>();
 
         for (int r = 0; r < 100; r++)
