@@ -90,7 +90,7 @@ public final class AutoCommandFactory {
         group.addCommands(cmd);
 
         // Position the arm to score the preloaded game piece
-        cmd = new SequenceArmPosesCommand(arm, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_MED);
+        cmd = new SequenceArmPosesCommand(arm, ArmPoseID.PLACE_INTERMEDIATE, ArmPoseID.SCORE_MED);
         group.addCommands(cmd);
 
         // Wait for the arm to stabilize
@@ -184,7 +184,7 @@ public final class AutoCommandFactory {
         group.addCommands(cmd);
 
         // Position the arm to score the preloaded game piece
-        cmd = new SequenceArmPosesCommand(arm, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_MED);
+        cmd = new SequenceArmPosesCommand(arm, ArmPoseID.PLACE_INTERMEDIATE, ArmPoseID.SCORE_MED);
         group.addCommands(cmd);
 
         // Wait for the arm to stabilize
@@ -215,7 +215,7 @@ public final class AutoCommandFactory {
         group.addCommands(cmd);
 
         // Position the arm to score the game piece
-        cmd = new SequenceArmPosesCommand(arm, ArmPoseID.INTERMEDIATE, ArmPoseID.SCORE_MED);
+        cmd = new SequenceArmPosesCommand(arm, ArmPoseID.PLACE_INTERMEDIATE, ArmPoseID.SCORE_MED);
         group.addCommands(cmd);
 
         // Wait for the arm to stabilize

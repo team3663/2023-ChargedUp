@@ -32,7 +32,7 @@ public class PickupCommand extends CommandBase {
                 arm.setTargetPose(ArmPoseLibrary.get(ArmPoseID.SINGLE_STATION_PICKUP));
                 break;
             case DOUBLE_STATION:
-                arm.setTargetPose(ArmPoseLibrary.get(ArmPoseID.INTERMEDIATE));
+                arm.setTargetPose(ArmPoseLibrary.get(ArmPoseID.PICKUP_INTERMEDIATE));
                 sequenced = true;
                 break;
             default:

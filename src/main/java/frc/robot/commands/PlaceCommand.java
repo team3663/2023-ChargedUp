@@ -27,11 +27,11 @@ public class PlaceCommand extends CommandBase {
                 arm.setTargetPose(ArmPoseLibrary.get(ArmPoseID.SCORE_LOW));
                 break;
             case MIDDLE:
-                arm.setTargetPose(ArmPoseLibrary.get(ArmPoseID.INTERMEDIATE));
+                arm.setTargetPose(ArmPoseLibrary.get(ArmPoseID.PLACE_INTERMEDIATE));
                 sequenced = true;
                 break;
             case HIGH:
-                arm.setTargetPose(ArmPoseLibrary.get(ArmPoseID.INTERMEDIATE));
+                arm.setTargetPose(ArmPoseLibrary.get(ArmPoseID.PLACE_INTERMEDIATE));
                 sequenced = true;
                 break;
             default:
