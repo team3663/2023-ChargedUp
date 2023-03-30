@@ -46,7 +46,7 @@ public class ArmPoseLibrary {
 
         // Generic poses that are the same for either cubes or cones
         genericPoses.put(ArmPoseID.STOWED, new Pose2d(-0.018, 0.080, Rotation2d.fromDegrees(113.6)));
-        genericPoses.put(ArmPoseID.RELEASE, new Pose2d(-0.28, 0.87, Rotation2d.fromDegrees(105.0)));
+        genericPoses.put(ArmPoseID.RELEASE, new Pose2d(-0.018, 0.87, Rotation2d.fromDegrees(105.0)));
         genericPoses.put(ArmPoseID.PLACE_INTERMEDIATE, new Pose2d(0.226, 0.920, Rotation2d.fromDegrees(90.0)));
         genericPoses.put(ArmPoseID.PICKUP_INTERMEDIATE, new Pose2d(0.1, 0.75, Rotation2d.fromDegrees(105.0)));
     }
