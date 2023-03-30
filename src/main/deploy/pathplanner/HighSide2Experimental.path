@@ -24,16 +24,16 @@
     },
     {
       "anchorPoint": {
-        "x": 3.684380341733657,
-        "y": 4.694203983002561
+        "x": 4.1242451168176375,
+        "y": 4.716563454479223
       },
       "prevControl": {
-        "x": 2.6856702417283764,
-        "y": 4.643428633201291
+        "x": 3.125535016812357,
+        "y": 4.665788104677953
       },
       "nextControl": {
-        "x": 4.685287947088351,
-        "y": 4.745091056018412
+        "x": 5.12515272217233,
+        "y": 4.767450527495074
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -64,7 +64,7 @@
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": true,
+      "isStopPoint": false,
       "stopEvent": {
         "names": [
           "intake"
@@ -98,6 +98,18 @@
     }
   ],
   "markers": [
+    {
+      "position": 0.0,
+      "names": [
+        "stowArm"
+      ]
+    },
+    {
+      "position": 2.0,
+      "names": [
+        "runIntake"
+      ]
+    },
     {
       "position": 1.5,
       "names": [
