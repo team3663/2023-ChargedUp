@@ -78,18 +78,23 @@ public final class AutoCommandFactory {
      */
     public static SequentialCommandGroup createPlaceOnlyAuto() {
 
+        Command cmd;
+
         SequentialCommandGroup group = new SequentialCommandGroup();
 
         // Raise the arm from its resting position to release the kick-stand
-        Command cmd = new SetArmPoseCommand(arm, ArmPoseID.RELEASE);
-        group.addCommands(cmd);       
+        // cmd = new SetArmPoseCommand(arm, ArmPoseID.RELEASE);
+        // group.addCommands(cmd);
 
         // Ensure we are in the game piece mode associated with the preloaded game piece (always a cube)
         cmd = new SetGamePieceCommand(GamePiece.CUBE);
         group.addCommands(cmd);
 
+        // Hold onto the cube
+        group.addCommands(new InstantCommand(() -> intake.setPower(0.1)));
+
         // Position the arm to score the preloaded game piece
-        cmd = new SequenceArmPosesCommand(arm, ArmPoseID.PLACE_INTERMEDIATE, ArmPoseID.SCORE_MED);
+        cmd = new SequenceArmPosesCommand(arm, ArmPoseID.PLACE_INTERMEDIATE, ArmPoseID.SCORE_HI);
         group.addCommands(cmd);
 
         // Wait for the arm to stabilize

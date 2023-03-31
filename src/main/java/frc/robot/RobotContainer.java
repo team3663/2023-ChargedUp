@@ -177,8 +177,8 @@ public class RobotContainer {
         // Register all the supported auto commands
         autoChooser.registerDefaultCreator("Do Nothing", () -> AutoCommandFactory.createNullAuto());
         autoChooser.registerCreator("Place Only", () -> AutoCommandFactory.createPlaceOnlyAuto());
-        autoChooser.registerCreator("Mid Place-Balance", () -> AutoCommandFactory.createMidBalanceAuto());
-        autoChooser.registerCreator("Mid Place-Exit-Balance", () -> AutoCommandFactory.createMidMobilityBalanceAuto());
+        autoChooser.registerCreator("Hi Place-Balance", () -> AutoCommandFactory.createMidBalanceAuto());
+        autoChooser.registerCreator("Hi Place-Exit-Balance", () -> AutoCommandFactory.createMidMobilityBalanceAuto());
         autoChooser.registerCreator("BumpSide Place-Move", () -> AutoCommandFactory.createBumpSideAuto());
         autoChooser.registerCreator("NoBumpSide Place-Move", () -> AutoCommandFactory.createNoBumpSide1Auto());
         autoChooser.registerCreator("NoBumpSide Place-Move-Place", () -> AutoCommandFactory.createNoBumpSide2Auto());
