@@ -29,9 +29,11 @@ import frc.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.utility.AutoCommandChooser;
 import frc.robot.utility.ControllerHelper;
+import frc.robot.utility.GameMode;
 import frc.robot.utility.RobotIdentity;
 import frc.robot.utility.config.RobotConfig;
 import frc.robot.utility.GameMode.GamePiece;
+import frc.robot.utility.GameMode.PickupLocation;
 import frc.robot.utility.GameMode.ScoringPosition;
 
 /**
@@ -145,7 +147,8 @@ public class RobotContainer {
         //
 
         // Set the current game piece we are handling
-        operatorController.a().onTrue(new InstantCommand(() -> armSubsystem.logPose()));
+        operatorController.a().onTrue(new InstantCommand(() -> GameMode.setPickupLocation(PickupLocation.FLOOR)));
+        operatorController.b().onTrue(new InstantCommand(() -> GameMode.setPickupLocation(PickupLocation.DOUBLE_STATION)));
         operatorController.x().onTrue(new SetGamePieceCommand(GamePiece.CUBE));
         operatorController.y().onTrue(new SetGamePieceCommand(GamePiece.CONE));
 
@@ -153,6 +156,8 @@ public class RobotContainer {
         operatorController.povUp().onTrue(new SetScoringPositionCommand(ScoringPosition.HIGH));
         operatorController.povRight().onTrue(new SetScoringPositionCommand(ScoringPosition.MIDDLE));       
         operatorController.povDown().onTrue(new SetScoringPositionCommand(ScoringPosition.LOW));
+
+        operatorController.leftBumper().onTrue(new InstantCommand(() -> armSubsystem.logPose()));
        
         //
         // Test controller bindings
