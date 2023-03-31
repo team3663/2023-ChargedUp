@@ -24,9 +24,8 @@ public final class AutoCommandFactory {
     private static final PIDConstants AUTO_TRANSLATION_PID_CONSTANTS = new PIDConstants(2.5, 0.0, 0.0);
     private static final PIDConstants AUTO_ROTATION_PID_CONSTANTS = new PIDConstants(7.0, 0.0, 0.25);
 
-    // TODO: reset this back to 4 and 3
     private static PathConstraints normalConstraints = new PathConstraints(4.0, 3.0);
-    private static PathConstraints intakeConstraints = new PathConstraints(0.5, 3.0);
+    private static PathConstraints intakeConstraints = new PathConstraints(1.0, 3.0);
     private static PathConstraints chargeStationConstraints = new PathConstraints(2.0, 1.0);
 
     private static HashMap<String, Command> eventMap = new HashMap<>();
@@ -183,8 +182,11 @@ public final class AutoCommandFactory {
         cmd = new SetGamePieceCommand(GamePiece.CONE);
         group.addCommands(cmd);
 
+        // Hold on to the cone
+        group.addCommands(new InstantCommand(() -> intake.setPower(0.1)));
+
         // Position the arm to score the preloaded game piece
-        cmd = new SequenceArmPosesCommand(arm, ArmPoseID.PLACE_INTERMEDIATE, ArmPoseID.SCORE_MED);
+        cmd = new SequenceArmPosesCommand(arm, ArmPoseID.PLACE_INTERMEDIATE, ArmPoseID.SCORE_HI);
         group.addCommands(cmd);
 
         // Wait for the arm to stabilize
@@ -215,12 +217,12 @@ public final class AutoCommandFactory {
         group.addCommands(cmd);
 
         // Position the arm to score the game piece
-        cmd = new SequenceArmPosesCommand(arm, ArmPoseID.PLACE_INTERMEDIATE, ArmPoseID.SCORE_MED);
+        cmd = new SequenceArmPosesCommand(arm, ArmPoseID.PLACE_INTERMEDIATE, ArmPoseID.SCORE_HI);
         group.addCommands(cmd);
 
         // Wait for the arm to stabilize
-        // cmd = new WaitCommand(0.5);
-        // group.addCommands(cmd);
+        cmd = new WaitCommand(0.25);
+        group.addCommands(cmd);
 
         // Eject the preloaded game piece
         cmd = new EjectGamePieceCommand(intake);
