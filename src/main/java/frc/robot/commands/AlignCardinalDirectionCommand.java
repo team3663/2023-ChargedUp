@@ -9,29 +9,41 @@ import edu.wpi.first.math.util.Units;
 
 public class AlignCardinalDirectionCommand extends CommandBase {
 
-  private static final double POSITION_TOLERANCE_RADIANS = Units.degreesToRadians(2.0);
+  private static final double POSITION_TOLERANCE_RADIANS = Units.degreesToRadians(3.0);
 
   private final DrivetrainSubsystem drivetrain;
-  private PIDController pid = new PIDController(5, 0, 0);
+  private double targetAngleRad;
+  private boolean angleProvided = false;
+  private PIDController pid = new PIDController(7.0, 0.0, 0.25);
 
   public AlignCardinalDirectionCommand(DrivetrainSubsystem drivetrain) {
     this.drivetrain = drivetrain;
-    addRequirements(this.drivetrain);
+
+    addRequirements(drivetrain);
+  }
+
+  public AlignCardinalDirectionCommand(DrivetrainSubsystem drivetrain, double angle) {
+    this.drivetrain = drivetrain;
+    this.targetAngleRad = angle;
+    angleProvided = true;
+
+    addRequirements(drivetrain);
   }
 
   @Override
   public void initialize() {
-    double currentAngleRad = drivetrain.getPose().getRotation().getRadians();
-    double targetAngleRad;
+    if (!angleProvided) {
+      double currentAngleRad = drivetrain.getPose().getRotation().getRadians();
 
-    if (currentAngleRad < Math.toRadians(45.0) && currentAngleRad >= Math.toRadians(-45.0)) {
-      targetAngleRad = 0;
-    } else if ( currentAngleRad < Math.toRadians(135.0) && currentAngleRad >= Math.toRadians(45.0)) {
-      targetAngleRad = Math.PI / 2; 
-    } else if ( currentAngleRad < Math.toRadians(-45.0) && currentAngleRad >= Math.toRadians(-135.0)) {
-      targetAngleRad = -Math.PI / 2;
-    } else {
-      targetAngleRad = Math.PI;
+      if (currentAngleRad < Math.toRadians(45.0) && currentAngleRad >= Math.toRadians(-45.0)) {
+        targetAngleRad = 0;
+      } else if ( currentAngleRad < Math.toRadians(135.0) && currentAngleRad >= Math.toRadians(45.0)) {
+        targetAngleRad = Math.PI / 2; 
+      } else if ( currentAngleRad < Math.toRadians(-45.0) && currentAngleRad >= Math.toRadians(-135.0)) {
+        targetAngleRad = -Math.PI / 2;
+      } else {
+        targetAngleRad = Math.PI;
+      }
     }
     
     pid.enableContinuousInput(-Math.PI, Math.PI);

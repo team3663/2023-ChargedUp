@@ -33,6 +33,7 @@ import frc.robot.utility.GameMode;
 import frc.robot.utility.RobotIdentity;
 import frc.robot.utility.config.RobotConfig;
 import frc.robot.utility.GameMode.GamePiece;
+import frc.robot.utility.GameMode.PickupLocation;
 import frc.robot.utility.GameMode.ScoringPosition;
 
 /**
@@ -134,29 +135,29 @@ public class RobotContainer {
         driverController.x().onTrue(new SetGamePieceCommand(GamePiece.CUBE));
         driverController.y().onTrue(new SetGamePieceCommand(GamePiece.CONE));
 
-        driverController.povUp().onTrue(new InstantCommand(() -> GameMode.setScoringPosition(ScoringPosition.HIGH)));
-        driverController.povRight().onTrue(new InstantCommand(() -> GameMode.setScoringPosition(ScoringPosition.MIDDLE)));
-        driverController.povDown().onTrue(new InstantCommand(() -> GameMode.setScoringPosition(ScoringPosition.LOW)));
+        driverController.povUp().onTrue(new SetScoringPositionCommand(ScoringPosition.HIGH));
+        driverController.povRight().onTrue(new SetScoringPositionCommand(ScoringPosition.MIDDLE));       
+        driverController.povDown().onTrue(new SetScoringPositionCommand(ScoringPosition.LOW));  
 
         // Snap to cardinal direction on right stick click
         driverController.rightStick().onTrue(new AlignCardinalDirectionCommand(drivetrainSubsystem));
-
+        
         //
         // Operator controller bindings
         //
 
-        // Nudge intake angle up and down
-        operatorController.leftBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(2)));
-        operatorController.rightBumper().onTrue(new AdjustArmPoseCommand(armSubsystem, 0, 0, Units.degreesToRadians(-2)));
-
         // Set the current game piece we are handling
+        operatorController.a().onTrue(new InstantCommand(() -> GameMode.setPickupLocation(PickupLocation.FLOOR)));
+        operatorController.b().onTrue(new InstantCommand(() -> GameMode.setPickupLocation(PickupLocation.DOUBLE_STATION)));
         operatorController.x().onTrue(new SetGamePieceCommand(GamePiece.CUBE));
         operatorController.y().onTrue(new SetGamePieceCommand(GamePiece.CONE));
 
         // Set the target scoring position
         operatorController.povUp().onTrue(new SetScoringPositionCommand(ScoringPosition.HIGH));
         operatorController.povRight().onTrue(new SetScoringPositionCommand(ScoringPosition.MIDDLE));       
-        operatorController.povDown().onTrue(new SetScoringPositionCommand(ScoringPosition.LOW));   
+        operatorController.povDown().onTrue(new SetScoringPositionCommand(ScoringPosition.LOW));
+
+        operatorController.leftBumper().onTrue(new InstantCommand(() -> armSubsystem.logPose()));
        
         //
         // Test controller bindings
@@ -181,10 +182,11 @@ public class RobotContainer {
         // Register all the supported auto commands
         autoChooser.registerDefaultCreator("Do Nothing", () -> AutoCommandFactory.createNullAuto());
         autoChooser.registerCreator("Place Only", () -> AutoCommandFactory.createPlaceOnlyAuto());
-        autoChooser.registerCreator("Mid Place-Balance", () -> AutoCommandFactory.createMidBalanceAuto());
+        autoChooser.registerCreator("Hi Place-Balance", () -> AutoCommandFactory.createMidBalanceAuto());
+        autoChooser.registerCreator("Hi Place-Exit-Balance", () -> AutoCommandFactory.createMidMobilityBalanceAuto());
         autoChooser.registerCreator("BumpSide Place-Move", () -> AutoCommandFactory.createBumpSideAuto());
         autoChooser.registerCreator("NoBumpSide Place-Move", () -> AutoCommandFactory.createNoBumpSide1Auto());
-        //autoChooser.registerCreator("NoBumpSide Place-Move-Place", () -> AutoCommandFactory.createNoBumpSide2Auto());
+        autoChooser.registerCreator("NoBumpSide Place-Move-Place", () -> AutoCommandFactory.createNoBumpSide2Auto());
 
         // Test auto commands that we only register with the chooser if we are not running in competition
         if (!Constants.COMPETITION_MODE) {

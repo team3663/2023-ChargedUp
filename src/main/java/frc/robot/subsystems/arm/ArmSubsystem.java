@@ -31,10 +31,9 @@ public class ArmSubsystem extends SubsystemBase {
 
     // While the elbow is inside the danger zone, the wrist must stay within its safety zone to prevent damage.
     private static final double ELBOW_DANGER_ZONE_RAD = Units.degreesToRadians(-130);
-    private static final double WRIST_SAFETY_ANGLE_RAD = Units.degreesToRadians(45);
+    private static final double WRIST_SAFETY_ANGLE_RAD = Units.degreesToRadians(31);
 
-    // private static final double ELBOW_VELOCITY_CONSTANT = 1.6;
-    private static final double ELBOW_GRAVITY_GAIN_COEFFICIENT = 0.5;
+    private static final double ELBOW_GRAVITY_GAIN_COEFFICIENT = 0.2;
 
     private final ArmIO io;
     private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
@@ -69,9 +68,9 @@ public class ArmSubsystem extends SubsystemBase {
     private final Color8Bit validStateColor = new Color8Bit(255, 255, 255);
     private final Color8Bit invalidStateColor = new Color8Bit(255, 0, 0);
 
-    private final ProfiledPIDController shoulderController = new ProfiledPIDController(10.0, 0.0, 0.0,
+    private final ProfiledPIDController shoulderController = new ProfiledPIDController(15.0, 0.0, 0.0,
         new TrapezoidProfile.Constraints(Units.degreesToRadians(200.0), Units.degreesToRadians(400.0)));
-    private final ProfiledPIDController elbowController = new ProfiledPIDController(3.0, 0.0, 0.0,
+    private final ProfiledPIDController elbowController = new ProfiledPIDController(4.0, 0.0, 0.0,
         new TrapezoidProfile.Constraints(Units.degreesToRadians(200.0), Units.degreesToRadians(400.0)));
     private final ProfiledPIDController wristController = new ProfiledPIDController(10.0, 0.0, 0.0,
         new TrapezoidProfile.Constraints(Units.degreesToRadians(400.0), Units.degreesToRadians(800.0)));
@@ -123,7 +122,8 @@ public class ArmSubsystem extends SubsystemBase {
         }
 
         double shoulderVoltage = shoulderController.calculate(inputs.shoulderAngleRad, targetShoulderAngle);
-        double elbowVoltage = elbowController.calculate(inputs.elbowAngleRad, targetElbowAngle) + elbowGravityGain;
+        double elbowVoltage = elbowController.calculate(inputs.elbowAngleRad, targetElbowAngle);
+        if (elbowVoltage != 0.0) elbowVoltage += elbowGravityGain;
         double wristVoltage = wristController.calculate(inputs.wristAngleRad, targetWristAngle);
         
         if (enabled) {
