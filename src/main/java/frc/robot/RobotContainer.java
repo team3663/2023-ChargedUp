@@ -124,8 +124,6 @@ public class RobotContainer {
         ));
 
         driverController.leftTrigger().whileTrue(new PickupCommand(armSubsystem, intakeSubsystem));
-            driverController.leftTrigger().onTrue(
-                new AlignCardinalDirectionCommand(drivetrainSubsystem, Units.degreesToRadians(180)));
         driverController.rightTrigger().whileTrue(new PlaceCommand(armSubsystem));
 
         driverController.leftBumper().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> -0.5));
