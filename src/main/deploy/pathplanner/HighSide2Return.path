@@ -2,12 +2,12 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 6.85,
+        "x": 6.7,
         "y": 4.4
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.828846006090591,
+        "x": 5.678846006090591,
         "y": 4.826072654992285
       },
       "holonomicAngle": 0.0,
@@ -71,11 +71,11 @@
     }
   ],
   "maxVelocity": 4.0,
-  "maxAcceleration": null,
+  "maxAcceleration": 4.0,
   "isReversed": null,
   "markers": [
     {
-      "position": 0.09696969696967506,
+      "position": 0.1,
       "names": [
         "stowArm"
       ]
