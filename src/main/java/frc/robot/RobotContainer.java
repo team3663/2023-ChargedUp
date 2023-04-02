@@ -162,8 +162,8 @@ public class RobotContainer {
         operatorController.povRight().onTrue(new SetScoringPositionCommand(ScoringPosition.MIDDLE));       
         operatorController.povDown().onTrue(new SetScoringPositionCommand(ScoringPosition.LOW));
 
-        operatorController.leftBumper().onTrue(new InstantCommand(() -> armSubsystem.logPose()));
-       
+        operatorController.leftBumper().onTrue(new InstantCommand(() -> armSubsystem.logPose()));        // over the charge station. This is not meant for regular use.
+
         //
         // Test controller bindings
         //
