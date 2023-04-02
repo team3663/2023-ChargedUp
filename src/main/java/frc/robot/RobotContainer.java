@@ -36,6 +36,8 @@ import frc.robot.utility.GameMode.GamePiece;
 import frc.robot.utility.GameMode.PickupLocation;
 import frc.robot.utility.GameMode.ScoringPosition;
 
+// USB IP is 172.22.11.2
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
