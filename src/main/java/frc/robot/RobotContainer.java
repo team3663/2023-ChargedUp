@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerPorts;
 import frc.robot.commands.AdjustArmPoseCommand;
@@ -149,7 +150,9 @@ public class RobotContainer {
         //
 
         // Set the current game piece we are handling
-        operatorController.a().onTrue(new InstantCommand(() -> GameMode.setPickupLocation(PickupLocation.FLOOR)));
+        operatorController.a().onTrue(new SequentialCommandGroup(
+            new SetGamePieceCommand(GamePiece.CONE),
+            new InstantCommand(() -> GameMode.setPickupLocation(PickupLocation.FLOOR))));
         operatorController.b().onTrue(new InstantCommand(() -> GameMode.setPickupLocation(PickupLocation.DOUBLE_STATION)));
         operatorController.x().onTrue(new SetGamePieceCommand(GamePiece.CUBE));
         operatorController.y().onTrue(new SetGamePieceCommand(GamePiece.CONE));
