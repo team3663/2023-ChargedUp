@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerPorts;
 import frc.robot.commands.AdjustArmPoseCommand;
@@ -35,6 +36,8 @@ import frc.robot.utility.config.RobotConfig;
 import frc.robot.utility.GameMode.GamePiece;
 import frc.robot.utility.GameMode.PickupLocation;
 import frc.robot.utility.GameMode.ScoringPosition;
+
+// USB IP is 172.22.11.2
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -147,7 +150,9 @@ public class RobotContainer {
         //
 
         // Set the current game piece we are handling
-        operatorController.a().onTrue(new InstantCommand(() -> GameMode.setPickupLocation(PickupLocation.FLOOR)));
+        operatorController.a().onTrue(new SequentialCommandGroup(
+            new SetGamePieceCommand(GamePiece.CONE),
+            new InstantCommand(() -> GameMode.setPickupLocation(PickupLocation.FLOOR))));
         operatorController.b().onTrue(new InstantCommand(() -> GameMode.setPickupLocation(PickupLocation.DOUBLE_STATION)));
         operatorController.x().onTrue(new SetGamePieceCommand(GamePiece.CUBE));
         operatorController.y().onTrue(new SetGamePieceCommand(GamePiece.CONE));
@@ -157,8 +162,8 @@ public class RobotContainer {
         operatorController.povRight().onTrue(new SetScoringPositionCommand(ScoringPosition.MIDDLE));       
         operatorController.povDown().onTrue(new SetScoringPositionCommand(ScoringPosition.LOW));
 
-        operatorController.leftBumper().onTrue(new InstantCommand(() -> armSubsystem.logPose()));
-       
+        operatorController.leftBumper().onTrue(new InstantCommand(() -> armSubsystem.logPose()));        // over the charge station. This is not meant for regular use.
+
         //
         // Test controller bindings
         //

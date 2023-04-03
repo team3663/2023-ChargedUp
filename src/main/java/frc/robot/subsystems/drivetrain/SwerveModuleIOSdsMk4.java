@@ -44,7 +44,7 @@ public class SwerveModuleIOSdsMk4 implements SwerveModuleIO {
     ) {
         drivePositionCoefficient = (1.0 / 2048.0) * (1.0 / gearRatio.getReduction()) * (Math.PI * WHEEL_DIAMETER_METERS);
         driveVelocityCoefficient = drivePositionCoefficient * 10.0;
-        driveMaximumVelocity = DCMotor.getFalcon500(1).freeSpeedRadPerSec * (2048.0 / 10.0) * (1.0 / (2.0 * Math.PI)) * driveVelocityCoefficient;
+         driveMaximumVelocity = DCMotor.getFalcon500(1).freeSpeedRadPerSec * (2048.0 / 10.0) * (1.0 / (2.0 * Math.PI)) * driveVelocityCoefficient;
 
         steerPositionCoefficient = (1.0 / 2048.0) * (1.0 / STEER_REDUCTION) * (2.0 * Math.PI);
         steerVelocityCoefficient = steerPositionCoefficient * 10.0;

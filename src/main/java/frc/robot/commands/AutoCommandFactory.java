@@ -237,13 +237,6 @@ public final class AutoCommandFactory {
         cmd = new SetArmPoseCommand(arm, ArmPoseID.STOWED);
         group.addCommands(cmd);
 
-        // Go to charge station and balance. This is experimental code that should not be implemented unless we know what we're doing.
-        // cmd = builder.fullAuto(PathPlanner.loadPath("HighSideChargeStation", chargeStationConstraints));
-        // group.addCommands(cmd);
-
-        // cmd = new AutoBalanceCommand(drivetrain);
-        // group.addCommands(cmd);
-
         return group;
     }
 
