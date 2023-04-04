@@ -44,6 +44,7 @@ public final class AutoCommandFactory {
         eventMap.put("floorPickup", new SetArmPoseCommand(arm, ArmPoseID.FLOOR_PICKUP));
         eventMap.put("stowArm", new SetArmPoseCommand(arm, ArmPoseID.STOWED));
         eventMap.put("runIntake", new IntakeGamePieceCommand(intake, 5000));
+        eventMap.put("eject", new EjectGamePieceCommand(intake));
 
         builder = new SwerveAutoBuilder(
                 () -> drivetrain.getPose(),
@@ -158,6 +159,26 @@ public final class AutoCommandFactory {
         SequentialCommandGroup group = createPlaceOnlyAuto();
 
         Command cmd = builder.fullAuto(PathPlanner.loadPath("LowSide", normalConstraints));
+        group.addCommands(cmd);
+
+        return group;
+    }
+
+    public static SequentialCommandGroup createBumpSide2Auto() {
+
+        // We start with the PlaceOnly auto and add to it
+        SequentialCommandGroup group = createPlaceOnlyAuto();
+
+        // Go to and pickup the cube
+        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("Bump-2", normalConstraints, intakeConstraints);
+        Command cmd = builder.fullAuto(pathGroup.get(0));
+        group.addCommands(cmd);
+        cmd = builder.fullAuto(pathGroup.get(1));
+        group.addCommands(new ParallelRaceGroup(cmd, new IntakeGamePieceCommand(intake, 4000)));
+        group.addCommands(new InstantCommand(() -> intake.setPower(0.1)));
+
+        // Return to community
+        cmd = builder.fullAuto(PathPlanner.loadPath("Bump-2-Return", normalConstraints));
         group.addCommands(cmd);
 
         return group;
