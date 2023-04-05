@@ -103,6 +103,12 @@
       "names": [
         "floorPickup"
       ]
+    },
+    {
+      "position": 0.0,
+      "names": [
+        "stowArm"
+      ]
     }
   ]
 }

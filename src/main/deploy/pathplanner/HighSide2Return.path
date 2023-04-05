@@ -49,11 +49,11 @@
     },
     {
       "anchorPoint": {
-        "x": 1.75,
+        "x": 1.8610553947086559,
         "y": 4.32
       },
       "prevControl": {
-        "x": 2.631484646528013,
+        "x": 2.7425400412366683,
         "y": 4.741164660122915
       },
       "nextControl": null,
@@ -75,7 +75,7 @@
   "isReversed": null,
   "markers": [
     {
-      "position": 0.1,
+      "position": 0.0,
       "names": [
         "stowArm"
       ]
