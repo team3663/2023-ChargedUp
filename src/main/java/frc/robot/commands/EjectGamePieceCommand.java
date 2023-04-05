@@ -10,12 +10,21 @@ import frc.robot.subsystems.intake.IntakeSubsystem;
 public class EjectGamePieceCommand extends CommandBase {
     private final IntakeSubsystem intake;
     private long startTime;
-    private final long EJECT_DURATION_MS = 500;
+    private long ejectDuration;
     private final double EJECT_POWER = -1.0;
 
     public EjectGamePieceCommand(IntakeSubsystem intake) {
         this.intake = intake;
         addRequirements(intake);
+
+        ejectDuration = 500;
+    }
+
+    public EjectGamePieceCommand(IntakeSubsystem intake, long ejectDuration) {
+        this.intake = intake;
+        addRequirements(intake);
+
+        this.ejectDuration = ejectDuration;
     }
 
     // Called when the command is initially scheduled.
@@ -40,6 +49,6 @@ public class EjectGamePieceCommand extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return (System.currentTimeMillis() - startTime) > EJECT_DURATION_MS;
+        return (System.currentTimeMillis() - startTime) > ejectDuration;
     }
 }

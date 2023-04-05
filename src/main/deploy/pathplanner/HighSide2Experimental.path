@@ -78,13 +78,13 @@
       ]
     },
     {
-      "position": 1.5,
+      "position": 1.3,
       "names": [
         "runIntake"
       ]
     },
     {
-      "position": 1.3,
+      "position": 1.2,
       "names": [
         "floorPickup"
       ]

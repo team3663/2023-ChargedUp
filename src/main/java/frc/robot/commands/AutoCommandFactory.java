@@ -37,6 +37,8 @@ public final class AutoCommandFactory {
     private static ArmSubsystem arm;
     private static IntakeSubsystem intake;
 
+    private static SequentialCommandGroup noBumpSideSpecial;
+
     public static void init(DrivetrainSubsystem drivetrain, ArmSubsystem arm, IntakeSubsystem intake) {
 
         AutoCommandFactory.drivetrain = drivetrain;
@@ -58,6 +60,8 @@ public final class AutoCommandFactory {
                 eventMap,
                 true,
                 drivetrain);
+        // Cache auto routines
+        noBumpSideSpecial = createNoBumpSide3Auto();
     }
 
     /**
@@ -303,11 +307,11 @@ public final class AutoCommandFactory {
         group.addCommands(cmd);
 
         // Wait for the arm to stabilize
-        cmd = new WaitCommand(0.25);
+        cmd = new WaitCommand(0.15);
         group.addCommands(cmd);
 
         // Eject the preloaded game piece
-        cmd = new EjectGamePieceCommand(intake);
+        cmd = new EjectGamePieceCommand(intake, 200);
         group.addCommands(cmd);
 
         // Return the arm to the stowed position
@@ -328,7 +332,7 @@ public final class AutoCommandFactory {
         group.addCommands(new InstantCommand(() -> intake.setPower(0.1)));
 
         // Return to community
-        cmd = builder.fullAuto(PathPlanner.loadPath("HighSide2Return", normalConstraints));
+        cmd = builder.fullAuto(PathPlanner.loadPath("HighSide2ReturnAlt", normalConstraints));
         group.addCommands(cmd);
 
         // Position the arm to score the game piece
@@ -339,9 +343,9 @@ public final class AutoCommandFactory {
         // cmd = new WaitCommand(0.25);
         // group.addCommands(cmd);
 
-        // Eject the preloaded game piece
-        cmd = new EjectGamePieceCommand(intake);
-        group.addCommands(cmd);
+        // Eject the game piece
+        // cmd = new EjectGamePieceCommand(intake);
+        // group.addCommands(cmd);
 
         // Return the arm to the stowed position
         // cmd = new SetArmPoseCommand(arm, ArmPoseID.STOWED);
@@ -356,18 +360,22 @@ public final class AutoCommandFactory {
         // Return to grid and score piece
         cmd = builder.fullAuto(PathPlanner.loadPath("HighSide3Return", normalConstraints));
         group.addCommands(cmd);
-        cmd = new SetArmPoseCommand(arm, ArmPoseID.SCORE_MED);
-        group.addCommands(cmd);
+        // cmd = new SetArmPoseCommand(arm, ArmPoseID.SCORE_MED);
+        // group.addCommands(cmd);
 
-        // Eject the preloaded game piece
-        cmd = new EjectGamePieceCommand(intake);
-        group.addCommands(cmd);
+        // Eject the game piece
+        // cmd = new EjectGamePieceCommand(intake);
+        // group.addCommands(cmd);
 
         // Stow the arm
-        cmd = new SetArmPoseCommand(arm, ArmPoseID.STOWED);
-        group.addCommands(cmd);
+        // cmd = new SetArmPoseCommand(arm, ArmPoseID.STOWED);
+        // group.addCommands(cmd);
 
         return group;
+    }
+
+    public static SequentialCommandGroup getnoBumpSide3Auto() {
+        return noBumpSideSpecial;
     }
 
     public static Command createTestAuto() {

@@ -49,11 +49,11 @@
     },
     {
       "anchorPoint": {
-        "x": 1.8610553947086559,
+        "x": 1.94,
         "y": 4.32
       },
       "prevControl": {
-        "x": 2.7425400412366683,
+        "x": 2.8214846465280123,
         "y": 4.741164660122915
       },
       "nextControl": null,
@@ -70,5 +70,21 @@
       }
     }
   ],
-  "markers": []
+  "maxVelocity": 4.0,
+  "maxAcceleration": 4.0,
+  "isReversed": null,
+  "markers": [
+    {
+      "position": 0.0,
+      "names": [
+        "stowArm"
+      ]
+    },
+    {
+      "position": 1.95,
+      "names": [
+        "eject"
+      ]
+    }
+  ]
 }
