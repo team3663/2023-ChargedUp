@@ -21,7 +21,7 @@ import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.utility.GameMode.GamePiece;
 
 public final class AutoCommandFactory {
-    private static final PIDConstants AUTO_TRANSLATION_PID_CONSTANTS = new PIDConstants(2.5, 0.0, 0.0);
+    private static final PIDConstants AUTO_TRANSLATION_PID_CONSTANTS = new PIDConstants(2.4, 0.0, 0.0);
     private static final PIDConstants AUTO_ROTATION_PID_CONSTANTS = new PIDConstants(7.0, 0.0, 0.25);
 
     private static PathConstraints normalConstraints = new PathConstraints(4.0, 3.0);
@@ -45,6 +45,7 @@ public final class AutoCommandFactory {
         eventMap.put("floorPickup", new SetArmPoseCommand(arm, ArmPoseID.FLOOR_PICKUP));
         eventMap.put("stowArm", new SetArmPoseCommand(arm, ArmPoseID.STOWED));
         eventMap.put("runIntake", new IntakeGamePieceCommand(intake, 5000));
+        eventMap.put("eject", new EjectGamePieceCommand(intake));
 
         builder = new SwerveAutoBuilder(
                 () -> drivetrain.getPose(),
@@ -159,6 +160,47 @@ public final class AutoCommandFactory {
         SequentialCommandGroup group = createPlaceOnlyAuto();
 
         Command cmd = builder.fullAuto(PathPlanner.loadPath("LowSide", normalConstraints));
+        group.addCommands(cmd);
+
+        return group;
+    }
+
+    public static SequentialCommandGroup createBumpSide2Auto() {
+
+        // We start with the PlaceOnly auto and add to it
+        SequentialCommandGroup group = createPlaceOnlyAuto();
+
+        Command cmd;
+
+        // Go to and pickup the cube
+        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("Bump-2", normalConstraints, intakeConstraints);
+        cmd = builder.fullAuto(pathGroup.get(0));
+        group.addCommands(cmd);
+        cmd = builder.fullAuto(pathGroup.get(1));
+        group.addCommands(new ParallelRaceGroup(cmd, new IntakeGamePieceCommand(intake, 10000)));
+        group.addCommands(new InstantCommand(() -> intake.setPower(0.1)));
+
+        // Experimental path
+        cmd = builder.fullAuto(PathPlanner.loadPath("Bump-2-Experimental", normalConstraints));
+
+        // Return to community
+        cmd = builder.fullAuto(PathPlanner.loadPath("Bump-2-Return", normalConstraints));
+        group.addCommands(cmd);
+
+        // Go to and pickup another cube
+        pathGroup = PathPlanner.loadPathGroup("Bump-3", normalConstraints, intakeConstraints);
+        cmd = builder.fullAuto(pathGroup.get(0));
+        group.addCommands(cmd);
+        cmd = builder.fullAuto(pathGroup.get(1));
+        group.addCommands(new ParallelRaceGroup(cmd, new IntakeGamePieceCommand(intake, 10000)));
+        group.addCommands(new InstantCommand(() -> intake.setPower(0.1)));
+
+        // Experimental path
+        // cmd = builder.fullAuto(PathPlanner.loadPath("Bump-3-Experimental", normalConstraints));
+        // group.addCommands(cmd);
+
+        // Stow the arm
+        cmd = new SetArmPoseCommand(arm, ArmPoseID.STOWED);
         group.addCommands(cmd);
 
         return group;

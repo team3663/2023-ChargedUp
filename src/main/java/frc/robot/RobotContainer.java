@@ -190,6 +190,7 @@ public class RobotContainer {
         autoChooser.registerCreator("Hi Place-Balance", () -> AutoCommandFactory.createMidBalanceAuto());
         autoChooser.registerCreator("Hi Place-Exit-Balance", () -> AutoCommandFactory.createMidMobilityBalanceAuto());
         autoChooser.registerCreator("BumpSide Place-Move", () -> AutoCommandFactory.createBumpSideAuto());
+        autoChooser.registerCreator("BumpSide Place-Move-Toss", () -> AutoCommandFactory.createBumpSide2Auto());
         autoChooser.registerCreator("NoBumpSide Place-Move", () -> AutoCommandFactory.createNoBumpSide1Auto());
         autoChooser.registerCreator("NoBumpSide Place-Move-Place", () -> AutoCommandFactory.createNoBumpSide2Auto());
 
