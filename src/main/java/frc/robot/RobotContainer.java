@@ -187,13 +187,13 @@ public class RobotContainer {
         // Register all the supported auto commands
         autoChooser.registerDefaultCreator("Do Nothing", () -> AutoCommandFactory.createNullAuto());
         autoChooser.registerCreator("Place Only", () -> AutoCommandFactory.createPlaceOnlyAuto());
-        autoChooser.registerCreator("Hi Place-Balance", () -> AutoCommandFactory.createMidBalanceAuto());
-        autoChooser.registerCreator("Hi Place-Exit-Balance", () -> AutoCommandFactory.createMidMobilityBalanceAuto());
-        autoChooser.registerCreator("BumpSide Place-Move", () -> AutoCommandFactory.createBumpSideAuto());
-        autoChooser.registerCreator("BumpSide Place-Move-Toss", () -> AutoCommandFactory.createBumpSide2Auto());
-        autoChooser.registerCreator("NoBumpSide Place-Move", () -> AutoCommandFactory.createNoBumpSide1Auto());
-        autoChooser.registerCreator("NoBumpSide Place-Move-Place", () -> AutoCommandFactory.createNoBumpSide2Auto());
-        autoChooser.registerCreator("NoBumpSide Special", () -> AutoCommandFactory.getnoBumpSide3Auto());
+        autoChooser.registerCreator("Balance", () -> AutoCommandFactory.createMidBalanceAuto());
+        autoChooser.registerCreator("Balance-Mobility", () -> AutoCommandFactory.createMidMobilityBalanceAuto());
+        autoChooser.registerCreator("BumpSide 1", () -> AutoCommandFactory.createBumpSideAuto());
+        autoChooser.registerCreator("BumpSide 2", () -> AutoCommandFactory.createBumpSide2Auto());
+        autoChooser.registerCreator("NoBumpSide 1", () -> AutoCommandFactory.createNoBumpSide1Auto());
+        autoChooser.registerCreator("NoBumpSide 2", () -> AutoCommandFactory.createNoBumpSide2Auto());
+        autoChooser.registerCreator("NoBumpSide 3", () -> AutoCommandFactory.getNoBumpSide3Auto());
 
         // Test auto commands that we only register with the chooser if we are not running in competition
         if (!Constants.COMPETITION_MODE) {
