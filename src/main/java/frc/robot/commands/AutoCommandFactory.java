@@ -50,6 +50,7 @@ public final class AutoCommandFactory {
         eventMap.put("scoreMed", new SetArmPoseCommand(arm, ArmPoseID.SCORE_MED));
         eventMap.put("runIntake", new IntakeGamePieceCommand(intake, 5000));
         eventMap.put("eject", new EjectGamePieceCommand(intake));
+        eventMap.put("ejectSmol", new EjectGamePieceCommand(intake, -0.5, "Yes"));
 
         builder = new SwerveAutoBuilder(
                 () -> drivetrain.getPose(),
@@ -315,19 +316,9 @@ public final class AutoCommandFactory {
         cmd = new EjectGamePieceCommand(intake, 200);
         group.addCommands(cmd);
 
-        // Return the arm to the stowed position
-        // cmd = new SetArmPoseCommand(arm, ArmPoseID.STOWED);
-        // group.addCommands(cmd);
-
         cmd = new SetGamePieceCommand(GamePiece.CUBE);
         group.addCommands(cmd);
 
-        // Go to and pickup the cube
-        // List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("HighSide2", normalConstraints, intakeConstraints);
-        // cmd = builder.fullAuto(pathGroup.get(0));
-        // group.addCommands(cmd);
-        // cmd = builder.fullAuto(pathGroup.get(1));
-        // group.addCommands(new ParallelRaceGroup(cmd, new IntakeGamePieceCommand(intake, 4000)));
         cmd = builder.fullAuto(PathPlanner.loadPath("HighSide2Experimental", experimentalConstraints));
         group.addCommands(cmd);
         group.addCommands(new InstantCommand(() -> intake.setPower(0.1)));
@@ -335,22 +326,6 @@ public final class AutoCommandFactory {
         // Return to community
         cmd = builder.fullAuto(PathPlanner.loadPath("HighSide2ReturnAlt", normalConstraints));
         group.addCommands(cmd);
-
-        // Position the arm to score the game piece
-        // cmd = new SetArmPoseCommand(arm, ArmPoseID.SCORE_LOW);
-        // group.addCommands(cmd);
-
-        // Wait for the arm to stabilize
-        // cmd = new WaitCommand(0.25);
-        // group.addCommands(cmd);
-
-        // Eject the game piece
-        // cmd = new EjectGamePieceCommand(intake);
-        // group.addCommands(cmd);
-
-        // Return the arm to the stowed position
-        // cmd = new SetArmPoseCommand(arm, ArmPoseID.STOWED);
-        // group.addCommands(cmd);
 
         // Go to and pickup third piece
         cmd = builder.fullAuto(PathPlanner.loadPath("HighSide3", experimentalConstraints));
@@ -361,16 +336,6 @@ public final class AutoCommandFactory {
         // Return to grid and score piece
         cmd = builder.fullAuto(PathPlanner.loadPath("HighSide3Return", normalConstraints));
         group.addCommands(cmd);
-        // cmd = new SetArmPoseCommand(arm, ArmPoseID.SCORE_MED);
-        // group.addCommands(cmd);
-
-        // Eject the game piece
-        // cmd = new EjectGamePieceCommand(intake);
-        // group.addCommands(cmd);
-
-        // Stow the arm
-        // cmd = new SetArmPoseCommand(arm, ArmPoseID.STOWED);
-        // group.addCommands(cmd);
 
         return group;
     }

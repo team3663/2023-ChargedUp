@@ -143,7 +143,7 @@ public class RobotContainer {
         driverController.povDown().onTrue(new SetScoringPositionCommand(ScoringPosition.LOW));  
 
         // Snap to cardinal direction on right stick click
-        driverController.rightStick().onTrue(new AlignCardinalDirectionCommand(drivetrainSubsystem));
+        driverController.rightStick().onTrue(new AlignCardinalDirectionCommand(drivetrainSubsystem, Units.degreesToRadians(180)));
         
         //
         // Operator controller bindings
