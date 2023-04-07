@@ -37,6 +37,7 @@ public final class AutoCommandFactory {
     private static ArmSubsystem arm;
     private static IntakeSubsystem intake;
 
+    private static SequentialCommandGroup noBumpSide2Command;
     private static SequentialCommandGroup noBumpSide3Command;
 
     public static void init(DrivetrainSubsystem drivetrain, ArmSubsystem arm, IntakeSubsystem intake) {
@@ -62,8 +63,9 @@ public final class AutoCommandFactory {
                 true,
                 drivetrain);
 
-        // Pre-create auto commands that take a significant length of time to generate
+        // Pre-cache auto commands that take a significant length of time to generate
         noBumpSide3Command = createNoBumpSide3Auto();
+        noBumpSide2Command = createNoBumpSide2Auto();
     }
 
     /**
@@ -289,6 +291,10 @@ public final class AutoCommandFactory {
         group.addCommands(cmd);
 
         return group;
+    }
+
+    public static SequentialCommandGroup getNoBumpSide2Auto() {
+        return noBumpSide2Command;
     }
 
     public static SequentialCommandGroup createNoBumpSide3Auto() {
