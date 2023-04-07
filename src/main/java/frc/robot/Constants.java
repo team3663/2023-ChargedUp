@@ -8,7 +8,7 @@ public final class Constants {
 
     // This flag tells us whether to configure for a competition match (as opposed to practice)
     // We mostly use it to disable diagnostics that should not run at competition.
-    public static final boolean COMPETITION_MODE = true;
+    public static final boolean COMPETITION_MODE = false;
 
     public static class ControllerPorts {
         public static final int DRIVER = 0;
