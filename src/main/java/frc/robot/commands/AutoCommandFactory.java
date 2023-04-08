@@ -182,7 +182,7 @@ public final class AutoCommandFactory {
         Command cmd;
 
         // We start with the place-only auto
-        // group.addCommands(createPlaceOnlyAuto());
+        group.addCommands(createPlaceOnlyAuto());
 
         // Go to and pickup the cube
         List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("Bump-2", normalConstraints, intakeConstraints);
