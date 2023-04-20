@@ -7,8 +7,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.778846006090591,
-        "y": 5.0260726549922845
+        "x": 5.693522080378775,
+        "y": 4.6
       },
       "holonomicAngle": 0.0,
       "isReversal": false,
@@ -25,15 +25,15 @@
     {
       "anchorPoint": {
         "x": 3.68,
-        "y": 4.69
+        "y": 4.8
       },
       "prevControl": {
-        "x": 4.171190148123969,
-        "y": 4.7028595550226235
+        "x": 4.171358453442521,
+        "y": 4.8
       },
       "nextControl": {
-        "x": 2.8785398496063914,
-        "y": 4.669017451913907
+        "x": 2.8782652308941996,
+        "y": 4.8
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -50,11 +50,11 @@
     {
       "anchorPoint": {
         "x": 1.94,
-        "y": 4.32
+        "y": 4.45
       },
       "prevControl": {
         "x": 2.8214846465280123,
-        "y": 4.741164660122915
+        "y": 4.871164660122915
       },
       "nextControl": null,
       "holonomicAngle": 180.0,
@@ -81,7 +81,7 @@
       ]
     },
     {
-      "position": 1.95,
+      "position": 1.98,
       "names": [
         "ejectSmol"
       ]

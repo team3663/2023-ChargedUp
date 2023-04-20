@@ -330,6 +330,10 @@ public final class AutoCommandFactory {
         cmd = builder.fullAuto(PathPlanner.loadPath("HighSide2ReturnAlt", normalConstraints));
         group.addCommands(cmd);
 
+        // Wait
+        cmd = new WaitCommand(0.05);
+        group.addCommands(cmd);
+
         // Go to and pickup third piece
         cmd = builder.fullAuto(PathPlanner.loadPath("HighSide3", experimentalConstraints));
         group.addCommands(cmd);
@@ -338,10 +342,6 @@ public final class AutoCommandFactory {
 
         // Return to grid
         cmd = builder.fullAuto(PathPlanner.loadPath("HighSide3Return", normalConstraints));
-        group.addCommands(cmd);
-
-        // Score the piece
-        cmd = new SetArmPoseCommand(arm, ArmPoseID.SCORE_LOW);
         group.addCommands(cmd);
 
         return group;

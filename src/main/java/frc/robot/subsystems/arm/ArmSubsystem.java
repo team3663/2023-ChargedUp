@@ -40,8 +40,8 @@ public class ArmSubsystem extends SubsystemBase {
     private IArmKinematics kinematics;
     private Mechanism2d mechanism;
 
-    // Initial target pose, keeps us inside frame perimeter at start of match
-    private Pose2d targetPose = ArmPoseLibrary.get(ArmPoseID.RELEASE);
+    // Initial target pose
+    private Pose2d targetPose = ArmPoseLibrary.get(ArmPoseID.STOWED);
 
     // Arms current target state
     private ArmState targetState;

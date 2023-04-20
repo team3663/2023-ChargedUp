@@ -134,7 +134,7 @@ public class RobotContainer {
         //     new PlaceCommand(armSubsystem), new AlignCardinalDirectionCommand(drivetrainSubsystem, Units.degreesToRadians(180))));
 
         driverController.leftBumper().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> -0.5));
-        driverController.rightBumper().whileTrue(new ScaleJoystickCommand(driverHelper, 0.5));
+        driverController.rightBumper().whileTrue(new ScaleJoystickCommand(driverHelper, 0.6));
 
         driverController.b().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.STOWED));
         driverController.x().onTrue(new SetGamePieceCommand(GamePiece.CUBE));
