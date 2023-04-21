@@ -2,13 +2,38 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.8610553947086559,
-        "y": 5.0
+        "x": 6.7,
+        "y": 4.4
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.4044784374464565,
-        "y": 4.620683711988149
+        "x": 5.450625193777079,
+        "y": 5.082514279619307
+      },
+      "holonomicAngle": 0.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 3.68,
+        "y": 4.69
+      },
+      "prevControl": {
+        "x": 4.171190148123969,
+        "y": 4.7028595550226235
+      },
+      "nextControl": {
+        "x": 2.8785398496063914,
+        "y": 4.669017451913907
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -24,40 +49,15 @@
     },
     {
       "anchorPoint": {
-        "x": 4.1242451168176375,
-        "y": 4.85
+        "x": 1.8610553947086559,
+        "y": 4.55
       },
       "prevControl": {
-        "x": 3.12424511681764,
-        "y": 4.85
-      },
-      "nextControl": {
-        "x": 5.797935255690447,
-        "y": 4.85
-      },
-      "holonomicAngle": 45.0,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": false,
-      "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 6.8,
-        "y": 4.7
-      },
-      "prevControl": {
-        "x": 5.203544217555276,
-        "y": 4.7
+        "x": 2.8119754460149506,
+        "y": 4.697545053453096
       },
       "nextControl": null,
-      "holonomicAngle": 0,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -75,18 +75,6 @@
       "position": 0.0,
       "names": [
         "stowArm"
-      ]
-    },
-    {
-      "position": 1.3,
-      "names": [
-        "runIntake"
-      ]
-    },
-    {
-      "position": 1.2,
-      "names": [
-        "floorPickup"
       ]
     }
   ]
