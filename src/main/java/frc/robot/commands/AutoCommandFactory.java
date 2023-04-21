@@ -39,6 +39,7 @@ public final class AutoCommandFactory {
 
     private static SequentialCommandGroup noBumpSide2Command;
     private static SequentialCommandGroup noBumpSide3Command;
+    private static SequentialCommandGroup red3Command;
 
     public static void init(DrivetrainSubsystem drivetrain, ArmSubsystem arm, IntakeSubsystem intake) {
 
@@ -66,6 +67,7 @@ public final class AutoCommandFactory {
         // Pre-cache auto commands that take a significant length of time to generate
         noBumpSide3Command = createNoBumpSide3Auto();
         noBumpSide2Command = createNoBumpSide2Auto();
+        red3Command = createRed3Auto();
     }
 
     /**
@@ -349,6 +351,63 @@ public final class AutoCommandFactory {
 
     public static SequentialCommandGroup getNoBumpSide3Auto() {
         return noBumpSide3Command;
+    }
+
+    public static SequentialCommandGroup createRed3Auto() {
+
+        SequentialCommandGroup group = new SequentialCommandGroup();
+
+        Command cmd;
+
+        // Ensure we are in the game piece mode associated with the preloaded game piece
+        cmd = new SetGamePieceCommand(GamePiece.CONE);
+        group.addCommands(cmd);
+
+        // Hold on to the cone
+        group.addCommands(new InstantCommand(() -> intake.setPower(0.1)));
+
+        // Position the arm to score the preloaded game piece
+        cmd = new SequenceArmPosesCommand(arm, ArmPoseID.PLACE_INTERMEDIATE, ArmPoseID.SCORE_MED);
+        group.addCommands(cmd);
+
+        // Wait for the arm to stabilize
+        cmd = new WaitCommand(0.15);
+        group.addCommands(cmd);
+
+        // Eject the preloaded game piece
+        cmd = new EjectGamePieceCommand(intake, 200);
+        group.addCommands(cmd);
+
+        cmd = new SetGamePieceCommand(GamePiece.CUBE);
+        group.addCommands(cmd);
+
+        cmd = builder.fullAuto(PathPlanner.loadPath("HighSide2Red", experimentalConstraints));
+        group.addCommands(cmd);
+        group.addCommands(new InstantCommand(() -> intake.setPower(0.1)));
+
+        // Return to community
+        cmd = builder.fullAuto(PathPlanner.loadPath("HighSide2ReturnRed", normalConstraints));
+        group.addCommands(cmd);
+
+        // Wait
+        cmd = new WaitCommand(0.05);
+        group.addCommands(cmd);
+
+        // Go to and pickup third piece
+        cmd = builder.fullAuto(PathPlanner.loadPath("HighSide3Red", experimentalConstraints));
+        group.addCommands(cmd);
+
+        group.addCommands(new InstantCommand(() -> intake.setPower(0.1)));
+
+        // Return to grid
+        cmd = builder.fullAuto(PathPlanner.loadPath("HighSide3ReturnRed", normalConstraints));
+        group.addCommands(cmd);
+
+        return group;
+    }
+
+    public static SequentialCommandGroup getRed3Auto() {
+        return red3Command;
     }
 
     public static Command createTestAuto() {

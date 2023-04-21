@@ -198,6 +198,7 @@ public class RobotContainer {
         autoChooser.registerCreator("NoBumpSide 1", () -> AutoCommandFactory.createNoBumpSide1Auto());
         autoChooser.registerCreator("NoBumpSide 2", () -> AutoCommandFactory.getNoBumpSide2Auto());
         autoChooser.registerCreator("NoBumpSide 3 *", () -> AutoCommandFactory.getNoBumpSide3Auto());
+        autoChooser.registerCreator("3Place-Red", () -> AutoCommandFactory.getRed3Auto());
 
         // Test auto commands that we only register with the chooser if we are not running in competition
         if (!Constants.COMPETITION_MODE) {
