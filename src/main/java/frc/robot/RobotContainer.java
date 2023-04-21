@@ -134,7 +134,7 @@ public class RobotContainer {
         //     new PlaceCommand(armSubsystem), new AlignCardinalDirectionCommand(drivetrainSubsystem, Units.degreesToRadians(180))));
 
         driverController.leftBumper().whileTrue(new IntakeFeedCommand(intakeSubsystem, () -> -0.5));
-        driverController.rightBumper().whileTrue(new ScaleJoystickCommand(driverHelper, 0.6));
+        driverController.rightBumper().whileTrue(new ScaleJoystickCommand(driverHelper, 0.5));
 
         driverController.b().onTrue(new SetArmPoseCommand(armSubsystem, ArmPoseID.STOWED));
         driverController.x().onTrue(new SetGamePieceCommand(GamePiece.CUBE));
@@ -142,7 +142,7 @@ public class RobotContainer {
 
         driverController.povUp().onTrue(new SetScoringPositionCommand(ScoringPosition.HIGH));
         driverController.povRight().onTrue(new SetScoringPositionCommand(ScoringPosition.MIDDLE));
-        driverController.povDown().onTrue(new SetScoringPositionCommand(ScoringPosition.LOW));  
+        driverController.povDown().onTrue(new SetScoringPositionCommand(ScoringPosition.LOW));
 
         // Snap to cardinal direction on right stick click
         driverController.rightStick().onTrue(new AlignCardinalDirectionCommand(drivetrainSubsystem, Units.degreesToRadians(180)));
