@@ -53,7 +53,7 @@ public final class AutoCommandFactory {
         eventMap.put("scoreMed", new SetArmPoseCommand(arm, ArmPoseID.SCORE_MED));
         eventMap.put("runIntake", new IntakeGamePieceCommand(intake, 5000));
         eventMap.put("eject", new EjectGamePieceCommand(intake));
-        eventMap.put("ejectSmol", new EjectGamePieceCommand(intake, -0.5, "Yes"));
+        eventMap.put("ejectSmol", new EjectGamePieceCommand(intake, -0.3, "Yes"));
 
         builder = new SwerveAutoBuilder(
                 () -> drivetrain.getPose(),
@@ -481,10 +481,6 @@ public final class AutoCommandFactory {
         cmd = new SequenceArmPosesCommand(arm, ArmPoseID.PLACE_INTERMEDIATE, ArmPoseID.SCORE_MED);
         group.addCommands(cmd);
 
-        // Wait for the arm to stabilize
-        cmd = new WaitCommand(0.15);
-        group.addCommands(cmd);
-
         // Eject the preloaded game piece
         cmd = new EjectGamePieceCommand(intake, 200);
         group.addCommands(cmd);
@@ -498,10 +494,6 @@ public final class AutoCommandFactory {
 
         // Return to community
         cmd = builder.fullAuto(PathPlanner.loadPath("HighSide2ReturnRed", normalConstraints));
-        group.addCommands(cmd);
-
-        // Wait
-        cmd = new WaitCommand(0.05);
         group.addCommands(cmd);
 
         // Go to and pickup third piece

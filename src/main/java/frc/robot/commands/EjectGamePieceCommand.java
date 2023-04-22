@@ -25,7 +25,7 @@ public class EjectGamePieceCommand extends CommandBase {
         this.ejectDuration = ejectDuration;
     }
 
-    public EjectGamePieceCommand(IntakeSubsystem intake, double ejectPower, String isPower) {
+    public EjectGamePieceCommand(IntakeSubsystem intake, double ejectPower, String isPowerControl) {
         this.intake = intake;
         addRequirements(intake);
 

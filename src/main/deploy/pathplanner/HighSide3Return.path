@@ -2,12 +2,12 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 7.08,
+        "x": 7.07,
         "y": 3.4
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.636207998394647,
+        "x": 5.626207998394647,
         "y": 4.855765865766607
       },
       "holonomicAngle": 320.0,
@@ -78,7 +78,7 @@
       ]
     },
     {
-      "position": 1.95,
+      "position": 1.97,
       "names": [
         "ejectSmol"
       ]
