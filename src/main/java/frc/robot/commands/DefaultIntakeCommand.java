@@ -7,7 +7,7 @@ import frc.robot.utility.GameMode.GamePiece;
 
 public class DefaultIntakeCommand extends CommandBase {
 
-  private static final double CONE_HOLD_POWER = 0.05;
+  private static final double CONE_HOLD_POWER = 0.1;
   private static final double CUBE_HOLD_POWER = 0.05;
 
   private IntakeSubsystem intake;
